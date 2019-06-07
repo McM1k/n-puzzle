@@ -33,6 +33,24 @@ pub fn check_numbers_or_spaces(lines: & Vec<String>)  {
 		 })
 }
 
+pub fn check_values_are_incremental(size: &usize, data: &Vec<Vec<u32>>) {
+	let all_the_values = vec![0 .. size * size; size * size];
+
+	data
+	.iter()
+	.for_each(|one_line_data| {
+		one_line_data
+		.iter()
+		.for_each(|value| {
+			all_the_values
+			.remove(one_line_data.iter()
+									.position(|x| x == value)
+									.unwrap())
+		})
+	});
+
+}
+
 /*
 fn get_size(lines: & mut Vec<String>) -> u32 {
 	let mut first_digit_line = lines.iter()
