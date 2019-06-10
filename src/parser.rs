@@ -41,15 +41,18 @@ pub fn check_values_are_incremental(size: &usize, data: &Vec<Vec<u32>>) {
 
     data.iter().for_each(|one_line_data| {
         one_line_data.iter().for_each(|value| {
-            let immutable_all_the_values = all_the_values.clone();
             all_the_values.remove(
-                immutable_all_the_values
+                all_the_values
+                    .clone()
                     .iter()
                     .position(|&x| x == *value as usize)
                     .unwrap(),
             );
         })
     });
+    if !all_the_values.is_empty() {
+        panic!("All the values needed for chosen size are not present.")
+    }
 }
 
 /*
@@ -77,32 +80,32 @@ pub fn get_data(lines: Vec<String>, size: u32) -> [[u32; size]; size] { // could
 
 #[cfg(test)]
 mod tests {
-    use crate::parser;
+    use crate::parser::*;
 
     #[test]
     #[should_panic]
     fn remove_comments_panic_because_empty_line() {
         let lines: Vec<String> = vec!["".to_string()];
-        parser::remove_comments(lines);
+        remove_comments(lines);
     }
 
     #[test]
     fn remove_comments_no_panic() {
         let lines: Vec<String> = vec!["1".to_string()];
-        parser::remove_comments(lines);
+        remove_comments(lines);
     }
 
     #[test]
     #[should_panic]
     fn check_empty_vec_panic_because_empty_vec() {
         let lines: Vec<String> = vec![];
-        parser::check_empty_vec(&lines);
+        check_empty_vec(&lines);
     }
 
     #[test]
     fn check_empty_vec_no_panic() {
         let lines: Vec<String> = vec!["1".to_string()];
-        parser::check_empty_vec(&lines);
+        check_empty_vec(&lines);
     }
 
     #[test]
@@ -110,13 +113,29 @@ mod tests {
     fn check_values_are_incremental_panic_because_value_out_of_scope() {
         let size: usize = 2;
         let tab = vec![vec![0, 1], vec![2, 5]];
-        parser::check_values_are_incremental(&size, &tab);
+        check_values_are_incremental(&size, &tab);
+    }
+
+    #[test]
+    #[should_panic]
+    fn check_values_are_incremental_panic_because_two_time_same_value() {
+        let size: usize = 2;
+        let tab = vec![vec![0, 1], vec![2, 2]];
+        check_values_are_incremental(&size, &tab);
+    }
+
+    #[test]
+    #[should_panic]
+    fn check_values_are_incremental_panic_because_too_few_values() {
+        let size: usize = 2;
+        let tab = vec![vec![0, 1], vec![2]];
+        check_values_are_incremental(&size, &tab);
     }
 
     #[test]
     fn check_values_are_incremental_no_panic() {
         let size: usize = 2;
         let tab = vec![vec![0, 1], vec![2, 3]];
-        parser::check_values_are_incremental(&size, &tab);
+        check_values_are_incremental(&size, &tab);
     }
 }
