@@ -56,19 +56,14 @@ pub fn check_values_are_incremental(size: &usize, data: &Vec<Vec<u32>>) {
 }
 
 pub fn check_values_form_correct_square(size: &usize, data: &Vec<Vec<u32>>) {
-    let mut all_the_values: Vec<usize> = (0..(size * size)).collect();
+    if data.clone().iter().count() != *size {
+        panic!("Too few lines !")
+    }
 
-    //if data.clone().iter().count() != 2;
     data.iter().for_each(|one_line_data| {
-        one_line_data.iter().for_each(|value| {
-            all_the_values.remove(
-                all_the_values
-                    .clone()
-                    .iter()
-                    .position(|&x| x == *value as usize)
-                    .unwrap(),
-            );
-        })
+        if one_line_data.clone().iter().count() != *size {
+            panic!("Too few columns in a line !")
+        }
     });
 }
 
@@ -206,8 +201,8 @@ mod parser_tests {
 
         #[test]
         fn no_panic() {
-            let size: usize = 2;
-            let tab = vec![vec![0, 1], vec![2, 3]];
+            let size: usize = 3;
+            let tab = vec![vec![0, 1, 4], vec![2, 3, 5], vec![8, 7, 6]];
             check_values_form_correct_square(&size, &tab);
         }
     }
