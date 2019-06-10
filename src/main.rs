@@ -28,6 +28,6 @@ fn main() {
     lines = parser::remove_comments(lines);
     parser::check_empty_vec(&lines);
     parser::check_numbers_or_spaces(&lines);
-    parser::check_size(&lines);
+    //parser::check_size(&lines);
     println!("{:?}", lines);
 }

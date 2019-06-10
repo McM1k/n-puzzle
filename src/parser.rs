@@ -52,13 +52,33 @@ fn get_size(lines: & mut Vec<String>) -> u32 {
 	size
 }
 */
-pub fn get_data(lines: Vec<String>, size: u32) -> [[mut u32; size]; size] { // could fail because fo lifetime
-		let data = [[mut u32; size] size];
+pub fn get_data(lines: Vec<String>) ->  Vec<Vec<usize>>{ // could fail because fo lifetime
+	lines.iter()
+			.map(|line| -> Vec<usize> {
+				line.split_whitespace()
+	 				.into_iter()
+					.map(|token| -> usize {
+ 						token.parse::<usize>()
+ 					  			.expect("Unable to parse data into u32")
+					})
+ 					.collect()
+			})
+			.collect()
+}
 
-		lines.iter()
-				.for_each(|line| line.split_whitespace()
-			 							.iter()
-			 							.map(|token| token.parse::<u32>()
-			 					  							.expect("Unable to parse data into u32")
-			 					  							.unwrap())
+#[cfg(test)]
+mod tests {
+	use crate::parser::*;
+
+	#[test]
+	fn get_data_use_case_test() {
+		let data_string : Vec<String> = vec!["0  3  4".to_string(), 
+											"1 5     6".to_string(),
+											"   2 7 8   ".to_string()];
+		let data_number : Vec<Vec<usize>> = vec![vec![0, 3, 4],
+												vec![1, 5, 6],
+												vec![2, 7, 8]];
+
+		assert_eq!(get_data(data_string), data_number);
+	}
 }
