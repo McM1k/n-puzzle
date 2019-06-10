@@ -36,7 +36,7 @@ pub fn check_numbers_or_spaces(lines: &Vec<String>) {
 		 })
 }
 
-pub fn check_values_are_incremental(size: &usize, data: &Vec<Vec<u32>>) {
+pub fn check_values_are_incremental(size: &usize, data: &Vec<Vec<usize>>) {
     let mut all_the_values: Vec<usize> = (0..(size * size)).collect();
 
     data.iter().for_each(|one_line_data| {
@@ -45,7 +45,7 @@ pub fn check_values_are_incremental(size: &usize, data: &Vec<Vec<u32>>) {
                 all_the_values
                     .clone()
                     .iter()
-                    .position(|&x| x == *value as usize)
+                    .position(|&x| x == *value)
                     .unwrap(),
             );
         })
@@ -55,7 +55,7 @@ pub fn check_values_are_incremental(size: &usize, data: &Vec<Vec<u32>>) {
     }
 }
 
-pub fn check_values_form_correct_square(size: &usize, data: &Vec<Vec<u32>>) {
+pub fn check_values_form_correct_square(size: &usize, data: &Vec<Vec<usize>>) {
     if data.clone().iter().count() != *size {
         panic!("Too few lines !")
     }
@@ -67,34 +67,25 @@ pub fn check_values_form_correct_square(size: &usize, data: &Vec<Vec<u32>>) {
     });
 }
 
-/*
-fn get_size(lines: & mut Vec<String>) -> u32 {
-    let mut first_digit_line = lines.iter()
-                                    .nth(0)
-                                    .unwrap()
-                                    .split_whitespace();
-    if first_digit_line.clone().count() != 1 {
-        panic!("First line should contain only one number.")
-    }
-    let size = first_digit_line.nth(0)
-                                .unwrap()
-                                .parse::<u32>()
-                                .expect("Unable to parse size into u32")
-                                .unwrap();
-    lines.remove(0);
-
-    size
+pub fn get_data(lines: Vec<String>) -> Vec<Vec<usize>> {
+    // could fail because of lifetime
+    lines
+        .iter()
+        .map(|line| -> Vec<usize> {
+            line.split_whitespace()
+                .into_iter()
+                .map(|token| -> usize {
+                    token
+                        .parse::<usize>()
+                        .expect("Unable to parse data into u32")
+                })
+                .collect()
+        })
+        .collect()
 }
-
-pub fn get_data(lines: Vec<String>, size: u32) -> [[u32; size]; size] { // could fail because fo lifetime
-
-}
-*/
 
 #[cfg(test)]
 mod parser_tests {
-    use crate::parser::*;
-
     mod remove_comments {
         use crate::parser::*;
 
@@ -206,33 +197,21 @@ mod parser_tests {
             check_values_form_correct_square(&size, &tab);
         }
     }
-pub fn get_data(lines: Vec<String>) ->  Vec<Vec<usize>>{ // could fail because fo lifetime
-	lines.iter()
-			.map(|line| -> Vec<usize> {
-				line.split_whitespace()
-	 				.into_iter()
-					.map(|token| -> usize {
- 						token.parse::<usize>()
- 					  			.expect("Unable to parse data into u32")
-					})
- 					.collect()
-			})
-			.collect()
-}
 
-#[cfg(test)]
-mod tests {
-	use crate::parser::*;
+    mod get_data {
+        use crate::parser::*;
 
-	#[test]
-	fn get_data_use_case_test() {
-		let data_string : Vec<String> = vec!["0  3  4".to_string(),
-											"1 5     6".to_string(),
-											"   2 7 8   ".to_string()];
-		let data_number : Vec<Vec<usize>> = vec![vec![0, 3, 4],
-												vec![1, 5, 6],
-												vec![2, 7, 8]];
+        #[test]
+        fn use_case_test() {
+            let data_string: Vec<String> = vec![
+                "0  3  4".to_string(),
+                "1 5     6".to_string(),
+                "   2 7 8   ".to_string(),
+            ];
+            let data_number: Vec<Vec<usize>> = vec![vec![0, 3, 4], vec![1, 5, 6], vec![2, 7, 8]];
 
-		assert_eq!(get_data(data_string), data_number);
-	}
+            assert_eq!(get_data(data_string), data_number);
+        }
+    }
+
 }
