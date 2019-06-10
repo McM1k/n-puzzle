@@ -1,3 +1,6 @@
+
+use std::io::BufReader;
+use std::io::BufRead;
 use std::fs::File;
 use std::io::BufRead;
 use std::io::BufReader;
@@ -27,8 +30,6 @@ fn main() {
     lines = parser::remove_comments(lines);
     parser::check_empty_vec(&lines);
     parser::check_numbers_or_spaces(&lines);
-    let size: usize = 2;
-    let tab = vec![vec![0, 1], vec![2, 3]];
-    parser::check_values_are_incremental(&size, &tab);
+    //parser::check_size(&lines);
     println!("{:?}", lines);
 }
