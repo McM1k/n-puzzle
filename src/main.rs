@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::BufRead;
 use std::io::BufReader;
 
+mod generator;
 mod parser;
 
 fn open_file(filename: String) -> File {
