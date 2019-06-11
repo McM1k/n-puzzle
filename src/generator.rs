@@ -43,11 +43,6 @@ mod generator_tests {
         }
 
         #[test]
-        fn no_panic() {
-            new_puzzle(3);
-        }
-
-        #[test]
         fn correct_puzzle_of_size_three() {
             let size: usize = 3;
             let mut all_the_values: Vec<usize> = (0..(size * size)).collect();
