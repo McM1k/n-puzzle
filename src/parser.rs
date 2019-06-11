@@ -56,8 +56,11 @@ pub fn check_values_are_incremental(size: &usize, data: &Vec<Vec<usize>>) {
 }
 
 pub fn check_values_form_correct_square(size: &usize, data: &Vec<Vec<usize>>) {
+    if *size < 3 {
+        panic!("Square too little, must be at least 3 of size !")
+    }
     if data.clone().iter().count() != *size {
-        panic!("Too few lines !")
+        panic!("Wrong number of lines !")
     }
 
     data.iter().for_each(|one_line_data| {
@@ -161,32 +164,32 @@ mod parser_tests {
         #[test]
         #[should_panic]
         fn panic_because_too_few_values_in_one_line() {
-            let size: usize = 2;
-            let tab = vec![vec![0, 1], vec![2]];
+            let size: usize = 3;
+            let tab = vec![vec![0, 1, 2], vec![3, 5], vec![6, 7, 8]];
             check_values_form_correct_square(&size, &tab);
         }
 
         #[test]
         #[should_panic]
         fn panic_because_too_much_values_in_one_line() {
-            let size: usize = 2;
-            let tab = vec![vec![0, 1], vec![2, 2, 2]];
+            let size: usize = 3;
+            let tab = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 7, 8, 9]];
             check_values_form_correct_square(&size, &tab);
         }
 
         #[test]
         #[should_panic]
-        fn panic_because_too_few_lines() {
-            let size: usize = 2;
-            let tab = vec![vec![0, 1]];
+        fn panic_because_wrong_number_of_lines() {
+            let size: usize = 3;
+            let tab = vec![vec![0, 1, 2], vec![3, 4, 5]];
             check_values_form_correct_square(&size, &tab);
         }
 
         #[test]
         #[should_panic]
-        fn panic_because_too_much_lines() {
+        fn panic_because_square_is_too_little() {
             let size: usize = 2;
-            let tab = vec![vec![0, 1], vec![0, 1], vec![0, 1]];
+            let tab = vec![vec![0, 1], vec![2, 3]];
             check_values_form_correct_square(&size, &tab);
         }
 
