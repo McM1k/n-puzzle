@@ -37,7 +37,7 @@ impl Puzzle {
 }
 
 #[cfg(test)]
-mod generator_tests {
+mod puzzle_tests {
     mod new {
         use crate::puzzle::*;
 
