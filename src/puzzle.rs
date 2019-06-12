@@ -40,8 +40,8 @@ impl Puzzle {
         puzzle.iter().for_each(|line| line.iter().for_each(|value| data.push(*value)));
         let mut sort_count = 0;
 
-        for _ in 0 ..= data.len() {
-            for i in 0 .. data.len() {
+        for _ in 0 .. data.len() {
+            for i in 0 .. data.len() - 1 {
                 if data[i] > data[i + 1] {
                     sort_count += 1;
                     data.swap(i, i + 1);
@@ -49,11 +49,18 @@ impl Puzzle {
             }
         }
 
+        /*
+        *	The solvable pattern is a snail one
+        *	1  2  3
+        *	8  0  4
+        *	7  6  5
+        */
+
         if sort_count % 2 == 0 {
-            return true;
+            return false;
         }
         else {
-            return false;
+            return true;
         }
     }
 }
@@ -120,20 +127,20 @@ mod puzzle_tests {
         use crate::puzzle::*;
 
         #[test]
-        fn solvable_puzzle_already_solved() {
-            let puzzle: Vec<Vec<usize>> = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 7, 8]];
+        fn solvable_puzzle() {
+            let puzzle: Vec<Vec<usize>> = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
             assert_eq!(Puzzle::is_solvable(&puzzle), true);
         }
 
         #[test]
-        fn solvable_puzzle() {
-            let puzzle: Vec<Vec<usize>> = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 7, 8]];
+        fn solvable_puzzle_already_solved() {
+            let puzzle: Vec<Vec<usize>> = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
             assert_eq!(Puzzle::is_solvable(&puzzle), true);
         }
 
         #[test]
         fn unsolvable_puzzle() {
-            let puzzle: Vec<Vec<usize>> = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
+            let puzzle: Vec<Vec<usize>> = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 7, 8]];
             assert_eq!(Puzzle::is_solvable(&puzzle), false);
         }
     }
