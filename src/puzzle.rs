@@ -1,20 +1,21 @@
 extern crate rand;
 use self::rand::Rng;
 
+#[derive(Debug)]
 struct Puzzle {
     data: Vec<Vec<usize>>,
 }
 
 impl Puzzle {
-    pub fn new(size: usize) -> Vec<Vec<usize>> {
+    pub fn new(size: usize) -> Puzzle {
         if size < 3 {
             panic!("Size should be higher than 3")
         }
 
         let mut all_the_values: Vec<usize> = (0..(size * size)).collect();
-        let mut puzzle = vec![vec![0usize; size]; size];
+        let mut data = vec![vec![0usize; size]; size];
 
-        puzzle.iter_mut().for_each(|one_line_data| {
+        data.iter_mut().for_each(|one_line_data| {
             one_line_data.iter_mut().for_each(|value| {
                 while {
                     *value = *(all_the_values
@@ -32,7 +33,14 @@ impl Puzzle {
             })
         });
 
-        puzzle
+
+        if Puzzle::is_solvable(&data) {
+            let puzzle = Puzzle{ data };
+            puzzle
+        } else {
+            println!("{:?}", data);
+            Puzzle::new(size)
+        }
     }
 
     pub fn is_solvable(puzzle: & Vec<Vec<usize>>) -> bool {
@@ -83,9 +91,7 @@ mod puzzle_tests {
 
             let puzzle = Puzzle::new(size);
 
-            println!("{:?}", puzzle);
-
-            puzzle.iter().for_each(|one_line_data| {
+            puzzle.data.iter().for_each(|one_line_data| {
                 one_line_data.iter().for_each(|value| {
                     all_the_values.remove(
                         all_the_values
@@ -106,9 +112,7 @@ mod puzzle_tests {
 
             let puzzle = Puzzle::new(size);
 
-            println!("{:?}", puzzle);
-
-            puzzle.iter().for_each(|one_line_data| {
+            puzzle.data.iter().for_each(|one_line_data| {
                 one_line_data.iter().for_each(|value| {
                     all_the_values.remove(
                         all_the_values
