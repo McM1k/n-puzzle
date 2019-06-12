@@ -35,6 +35,15 @@ impl Puzzle {
         puzzle
     }
 
+    pub fn new_from_file(data: Vec<Vec<usize>>) -> Puzzle {
+        if !Puzzle::is_solvable(&data) {
+            panic!("Unsolvable puzzle");
+        }
+        else {
+            Puzzle{data}
+        }
+    }
+
     pub fn is_solvable(puzzle: & Vec<Vec<usize>>) -> bool {
         let mut data : Vec<usize> = Vec::new();
         puzzle.iter().for_each(|line| line.iter().for_each(|value| data.push(*value)));
