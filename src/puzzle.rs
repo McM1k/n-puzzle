@@ -38,7 +38,6 @@ impl Puzzle {
             let puzzle = Puzzle{ data };
             puzzle
         } else {
-            println!("{:?}", data);
             Puzzle::new(size)
         }
     }
