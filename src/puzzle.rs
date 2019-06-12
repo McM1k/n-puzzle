@@ -117,24 +117,24 @@ mod puzzle_tests {
     }
 
     mod is_solvable {
-        use crate::generator::is_solvable;
+        use crate::puzzle::*;
 
         #[test]
         fn solvable_puzzle_already_solved() {
             let puzzle: Vec<Vec<usize>> = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 7, 8]];
-            assert_eq!(is_solvable(puzzle), true);
+            assert_eq!(Puzzle::is_solvable(&puzzle), true);
         }
 
         #[test]
         fn solvable_puzzle() {
             let puzzle: Vec<Vec<usize>> = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 7, 8]];
-            assert_eq!(is_solvable(puzzle), true);
+            assert_eq!(Puzzle::is_solvable(&puzzle), true);
         }
 
         #[test]
         fn unsolvable_puzzle() {
             let puzzle: Vec<Vec<usize>> = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
-            assert_eq!(is_solvable(puzzle), false);
+            assert_eq!(Puzzle::is_solvable(&puzzle), false);
         }
     }
 }
