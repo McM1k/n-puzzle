@@ -4,6 +4,7 @@ use self::rand::Rng;
 #[derive(Debug)]
 struct Puzzle {
     data: Vec<Vec<usize>>,
+    size: usize,
 }
 
 impl Puzzle {
@@ -35,7 +36,7 @@ impl Puzzle {
 
 
         if Puzzle::is_solvable(&data) {
-            let puzzle = Puzzle{ data };
+            let puzzle = Puzzle{ data, size };
             puzzle
         } else {
             Puzzle::new(size)
@@ -47,7 +48,7 @@ impl Puzzle {
             panic!("Unsolvable puzzle");
         }
         else {
-            Puzzle{data}
+            Puzzle{data, data.len()}
         }
     }
 
