@@ -47,9 +47,8 @@ impl Puzzle {
             })
         });
 
-
         if Puzzle::is_solvable(&data) {
-            let puzzle = Puzzle{ data, size };
+            let puzzle = Puzzle { data, size };
             puzzle
         } else {
             Puzzle::new(size)
@@ -60,19 +59,20 @@ impl Puzzle {
         let size = data.len();
         if !Puzzle::is_solvable(&data) {
             panic!("Unsolvable puzzle");
-        }
-        else {
-            Puzzle{data, size}
+        } else {
+            Puzzle { data, size }
         }
     }
 
-    pub fn is_solvable(puzzle: & Vec<Vec<usize>>) -> bool {
-        let mut data : Vec<usize> = Vec::new();
-        puzzle.iter().for_each(|line| line.iter().for_each(|value| data.push(*value)));
+    pub fn is_solvable(puzzle: &Vec<Vec<usize>>) -> bool {
+        let mut data: Vec<usize> = Vec::new();
+        puzzle
+            .iter()
+            .for_each(|line| line.iter().for_each(|value| data.push(*value)));
         let mut sort_count = 0;
 
-        for _ in 0 .. data.len() {
-            for i in 0 .. data.len() - 1 {
+        for _ in 0..data.len() {
+            for i in 0..data.len() - 1 {
                 if data[i] > data[i + 1] {
                     sort_count += 1;
                     data.swap(i, i + 1);
@@ -81,16 +81,15 @@ impl Puzzle {
         }
 
         /*
-        *	The solvable pattern is a snail one
-        *	1  2  3
-        *	8  0  4
-        *	7  6  5
-        */
+         *	The solvable pattern is a snail one
+         *	1  2  3
+         *	8  0  4
+         *	7  6  5
+         */
 
         if sort_count % 2 == 0 {
             return false;
-        }
-        else {
+        } else {
             return true;
         }
     }

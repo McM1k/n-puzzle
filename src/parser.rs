@@ -1,3 +1,5 @@
+use crate::puzzle::Puzzle;
+
 pub fn remove_comments(mut lines: Vec<String>) -> Vec<String> {
     //unsafe if used before check_empty_lines
 
@@ -27,7 +29,7 @@ pub fn check_empty_vec(lines: &Vec<String>) {
     }
 }
 
-pub fn check_numbers_or_spaces(lines: &Vec<String>) {
+pub fn check_only_numbers_and_spaces(lines: &Vec<String>) {
     lines.iter()
 		 .for_each(|line| {
 		 	if !line.chars().all(|c| c.is_digit(10) || c.is_whitespace()) {
@@ -73,6 +75,9 @@ pub fn check_values_form_correct_square(size: &usize, data: &Vec<Vec<usize>>) {
 pub fn get_data(lines: Vec<String>) -> (usize, Vec<Vec<usize>>) {
     let mut raw_data = get_raw_data(lines);
     let size_line = raw_data.remove(0);
+    if size_line.len() != 1 {
+        panic!("first line should only contain one value");
+    }
     let size = size_line.get(0).unwrap();
 
     (*size, raw_data)
@@ -95,8 +100,46 @@ pub fn get_raw_data(lines: Vec<String>) -> Vec<Vec<usize>> {
         .collect()
 }
 
+pub fn parse(mut lines: Vec<String>) -> Puzzle {
+    check_empty_lines(&lines);
+    lines = remove_comments(lines);
+    check_empty_vec(&lines);
+    check_only_numbers_and_spaces(&lines);
+    let (size, data) = get_data(lines);
+    check_values_are_incremental(&size, &data);
+    check_values_form_correct_square(&size, &data);
+
+    Puzzle::new_from_file(data)
+}
+
 #[cfg(test)]
 mod parser_tests {
+    mod parse {
+        use crate::parser::*;
+
+        #[test]
+        #[should_panic]
+        fn panic_no_size() {
+            let lines: Vec<String> = vec![
+                "0  3  4".to_string(),
+                "1 5     6".to_string(),
+                "   2 7 8   ".to_string(),
+            ];
+            parse(lines);
+        }
+
+        #[test]
+        fn no_panic() {
+            let lines: Vec<String> = vec![
+                "3".to_string(),
+                "0  3  4".to_string(),
+                "1 5     6".to_string(),
+                "   2 7 8   ".to_string(),
+            ];
+            parse(lines);
+        }
+    }
+
     mod remove_comments {
         use crate::parser::*;
 
@@ -220,7 +263,8 @@ mod parser_tests {
                 "1 5     6".to_string(),
                 "   2 7 8   ".to_string(),
             ];
-            let data_number: (usize, Vec<Vec<usize>>) = (3, vec![vec![0, 3, 4], vec![1, 5, 6], vec![2, 7, 8]]);
+            let data_number: (usize, Vec<Vec<usize>>) =
+                (3, vec![vec![0, 3, 4], vec![1, 5, 6], vec![2, 7, 8]]);
 
             assert_eq!(get_data(data_string), data_number);
         }
@@ -229,7 +273,8 @@ mod parser_tests {
         #[should_panic]
         fn panic_if_cannot_get_size() {
             let data_string: Vec<String> = vec![];
-            let data_number: (usize, Vec<Vec<usize>>) = (3, vec![vec![0, 3, 4], vec![1, 5, 6], vec![2, 7, 8]]);
+            let data_number: (usize, Vec<Vec<usize>>) =
+                (3, vec![vec![0, 3, 4], vec![1, 5, 6], vec![2, 7, 8]]);
 
             assert_eq!(get_data(data_string), data_number);
         }
