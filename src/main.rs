@@ -4,6 +4,7 @@ use std::io::BufReader;
 
 mod puzzle;
 mod parser;
+mod graph;
 
 use puzzle::Puzzle;
 
