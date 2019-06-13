@@ -70,7 +70,15 @@ pub fn check_values_form_correct_square(size: &usize, data: &Vec<Vec<usize>>) {
     });
 }
 
-pub fn get_data(lines: Vec<String>) -> Vec<Vec<usize>> {
+pub fn get_data(lines: Vec<String>) -> (usize, Vec<Vec<usize>>) {
+    let mut raw_data = get_raw_data(lines);
+    let size_line = raw_data.remove(0);
+    let size = size_line.get(0).unwrap();
+
+    (*size, raw_data)
+}
+
+pub fn get_raw_data(lines: Vec<String>) -> Vec<Vec<usize>> {
     // could fail because of lifetime
     lines
         .iter()
@@ -207,13 +215,39 @@ mod parser_tests {
         #[test]
         fn use_case_test() {
             let data_string: Vec<String> = vec![
+                "3".to_string(),
+                "0  3  4".to_string(),
+                "1 5     6".to_string(),
+                "   2 7 8   ".to_string(),
+            ];
+            let data_number: (usize, Vec<Vec<usize>>) = (3, vec![vec![0, 3, 4], vec![1, 5, 6], vec![2, 7, 8]]);
+
+            assert_eq!(get_data(data_string), data_number);
+        }
+
+        #[test]
+        #[should_panic]
+        fn panic_if_cannot_get_size() {
+            let data_string: Vec<String> = vec![];
+            let data_number: (usize, Vec<Vec<usize>>) = (3, vec![vec![0, 3, 4], vec![1, 5, 6], vec![2, 7, 8]]);
+
+            assert_eq!(get_data(data_string), data_number);
+        }
+    }
+
+    mod get_raw_data {
+        use crate::parser::*;
+
+        #[test]
+        fn use_case_test() {
+            let data_string: Vec<String> = vec![
                 "0  3  4".to_string(),
                 "1 5     6".to_string(),
                 "   2 7 8   ".to_string(),
             ];
             let data_number: Vec<Vec<usize>> = vec![vec![0, 3, 4], vec![1, 5, 6], vec![2, 7, 8]];
 
-            assert_eq!(get_data(data_string), data_number);
+            assert_eq!(get_raw_data(data_string), data_number);
         }
     }
 

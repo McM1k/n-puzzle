@@ -30,9 +30,7 @@ fn main() {
     lines = parser::remove_comments(lines);
     parser::check_empty_vec(&lines);
     parser::check_numbers_or_spaces(&lines);
-    let data = parser::get_data(lines);
-    //parser::check_values_form_correct_square(data.get(0).unwrap().get(0).unwrap(), &data);
-    //parser::check_size(&lines);
+    let mut data = parser::get_data(lines);
     println!("{:?}", data);
-    println!("{}", Puzzle::new(3));
+    println!("{}", Puzzle::new_from_file(data.1));
 }
