@@ -24,10 +24,19 @@ fn file_to_vec(filename: String) -> Vec<String> {
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    let filename = &args[1];
-    let lines = file_to_vec(filename.to_string());
-    let mut puzzle = parser::parse(lines);
-    println!("{}", puzzle);
-    puzzle = Puzzle::new(3);
-    println!("{}", puzzle);
+    if args.len() == 2 {
+        let filename = &args[1];
+        let lines = file_to_vec(filename.to_string());
+        let puzzle = parser::parse(lines);
+        println!("{}", puzzle);
+    } else if args.len() == 3 && args[1] == "-g" {
+        let puzzle = Puzzle::new(
+            args[2]
+                .parse::<usize>()
+                .expect("Unable to parse data into u32"),
+        );
+        println!("{}", puzzle);
+    } else {
+        panic!("Something went wrong with the parameters !")
+    }
 }

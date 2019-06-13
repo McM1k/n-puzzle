@@ -132,9 +132,9 @@ mod parser_tests {
         fn no_panic() {
             let lines: Vec<String> = vec![
                 "3".to_string(),
-                "0  3  4".to_string(),
-                "1 5     6".to_string(),
-                "   2 7 8   ".to_string(),
+                "1 2 3".to_string(),
+                "8 0 4".to_string(),
+                "7 6 5".to_string(),
             ];
             parse(lines);
         }
