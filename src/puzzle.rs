@@ -55,8 +55,7 @@ impl Puzzle {
         }
     }
 
-    pub fn new_from_file(data: Vec<Vec<usize>>) -> Puzzle {
-        let size = data.len();
+    pub fn new_from_file(data: Vec<Vec<usize>>, size: usize) -> Puzzle {
         if !Puzzle::is_solvable(&data) {
             panic!("Unsolvable puzzle");
         } else {

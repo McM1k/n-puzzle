@@ -25,7 +25,9 @@ fn file_to_vec(filename: String) -> Vec<String> {
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let filename = &args[1];
-    let mut lines = file_to_vec(filename.to_string());
-    let puzzle = parser::parse(lines);
+    let lines = file_to_vec(filename.to_string());
+    let mut puzzle = parser::parse(lines);
+    println!("{}", puzzle);
+    puzzle = Puzzle::new(3);
     println!("{}", puzzle);
 }

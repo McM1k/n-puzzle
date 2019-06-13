@@ -109,7 +109,7 @@ pub fn parse(mut lines: Vec<String>) -> Puzzle {
     check_values_are_incremental(&size, &data);
     check_values_form_correct_square(&size, &data);
 
-    Puzzle::new_from_file(data)
+    Puzzle::new_from_file(data, size)
 }
 
 #[cfg(test)]
