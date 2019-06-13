@@ -1,9 +1,22 @@
 extern crate rand;
 use self::rand::Rng;
+use std::fmt;
 
 #[derive(Debug)]
-struct Puzzle {
+pub struct Puzzle {
     data: Vec<Vec<usize>>,
+}
+
+impl fmt::Display for Puzzle {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        for line_data in self.data.iter() {
+            for value in line_data.iter() {
+                write!(f, "{} ", value)?;
+            }
+            write!(f, "\n")?;
+        }
+        Ok(())
+    }
 }
 
 impl Puzzle {

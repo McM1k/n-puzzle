@@ -5,6 +5,8 @@ use std::io::BufReader;
 mod puzzle;
 mod parser;
 
+use puzzle::Puzzle;
+
 fn open_file(filename: String) -> File {
     let file = File::open(filename).expect("Could not open file");
 
@@ -29,7 +31,8 @@ fn main() {
     parser::check_empty_vec(&lines);
     parser::check_numbers_or_spaces(&lines);
     let data = parser::get_data(lines);
-    parser::check_values_form_correct_square(data.get(0).unwrap().get(0).unwrap(), &data);
+    //parser::check_values_form_correct_square(data.get(0).unwrap().get(0).unwrap(), &data);
     //parser::check_size(&lines);
     println!("{:?}", data);
+    println!("{}", Puzzle::new(3));
 }
