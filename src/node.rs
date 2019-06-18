@@ -109,9 +109,9 @@ impl Node {
 }
 
 #[cfg(test)]
-mod graph_tests {
+mod node_tests {
 	mod swap_two_positions {
-		use crate::graph::*;
+		use crate::node::*;
 
 		#[test]
 		fn down_swap() {
@@ -137,7 +137,7 @@ mod graph_tests {
 	}
 
 	mod get_void_position {
-		use crate::graph::*;
+		use crate::node::*;
 
 		#[test]
 		fn center_pos() {
@@ -171,7 +171,7 @@ mod graph_tests {
 	}
 
 	mod calculate_next_state {
-		use crate::graph::*;
+		use crate::node::*;
 
 		#[test]
 		fn wrong_direction() {
@@ -196,7 +196,7 @@ mod graph_tests {
 	}
 
 	mod partial_eq {
-		use crate::graph::*;
+		use crate::node::*;
 
 		#[test]
 		fn equals() {

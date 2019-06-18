@@ -3,7 +3,7 @@ use std::io::BufRead;
 use std::io::BufReader;
 
 mod parser;
-mod graph;
+mod node;
 mod puzzle;
 
 use puzzle::Puzzle;
@@ -30,7 +30,7 @@ fn main() {
         let lines = file_to_vec(filename.to_string());
         let puzzle = parser::parse(lines);
         println!("{}", puzzle);
-    } else if args.len() == 3 && args[1] == "-g" {
+    } else if args.len() == 3 && args[1] == "-g".to_string() {
         let puzzle = Puzzle::new(
             args[2]
                 .parse::<usize>()
