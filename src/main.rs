@@ -2,8 +2,8 @@ use std::fs::File;
 use std::io::BufRead;
 use std::io::BufReader;
 
-mod parser;
 mod node;
+mod parser;
 mod puzzle;
 
 use puzzle::Puzzle;

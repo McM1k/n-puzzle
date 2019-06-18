@@ -1,7 +1,7 @@
 extern crate rand;
 use self::rand::Rng;
-use std::fmt;
 use std::cmp;
+use std::fmt;
 
 #[derive(Debug, Clone)]
 pub struct Puzzle {
@@ -111,10 +111,10 @@ mod puzzle_tests {
             let size = 3;
 
             let data = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
-            let puzzle = Puzzle{data, size};
+            let puzzle = Puzzle { data, size };
 
             let data2 = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
-            let puzzle2 = Puzzle{data: data2, size};
+            let puzzle2 = Puzzle { data: data2, size };
 
             assert!(puzzle == puzzle2);
         }
@@ -124,10 +124,10 @@ mod puzzle_tests {
             let size = 3;
 
             let data = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
-            let puzzle = Puzzle{data, size};
+            let puzzle = Puzzle { data, size };
 
             let data2 = vec![vec![0, 2, 1], vec![3, 4, 5], vec![6, 8, 7]];
-            let puzzle2 = Puzzle{data: data2, size};
+            let puzzle2 = Puzzle { data: data2, size };
             assert!(puzzle != puzzle2);
         }
     }
