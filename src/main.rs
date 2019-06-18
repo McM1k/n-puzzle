@@ -3,6 +3,7 @@ use std::io::BufRead;
 use std::io::BufReader;
 
 mod parser;
+mod graph;
 mod puzzle;
 
 use puzzle::Puzzle;

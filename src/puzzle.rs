@@ -1,11 +1,12 @@
 extern crate rand;
 use self::rand::Rng;
 use std::fmt;
+use std::cmp;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Puzzle {
-    data: Vec<Vec<usize>>,
-    size: usize,
+    pub data: Vec<Vec<usize>>,
+    pub size: usize,
 }
 
 impl fmt::Display for Puzzle {
@@ -17,6 +18,12 @@ impl fmt::Display for Puzzle {
             write!(f, "\n")?;
         }
         Ok(())
+    }
+}
+
+impl cmp::PartialEq for Puzzle {
+    fn eq(&self, other: &Self) -> bool {
+        self.data == other.data && self.size == other.size
     }
 }
 
@@ -96,6 +103,35 @@ impl Puzzle {
 
 #[cfg(test)]
 mod puzzle_tests {
+    mod partial_eq {
+        use crate::puzzle::*;
+
+        #[test]
+        fn equals() {
+            let size = 3;
+
+            let data = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
+            let puzzle = Puzzle{data, size};
+
+            let data2 = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
+            let puzzle2 = Puzzle{data: data2, size};
+
+            assert!(puzzle == puzzle2);
+        }
+
+        #[test]
+        fn not_equals() {
+            let size = 3;
+
+            let data = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
+            let puzzle = Puzzle{data, size};
+
+            let data2 = vec![vec![0, 2, 1], vec![3, 4, 5], vec![6, 8, 7]];
+            let puzzle2 = Puzzle{data: data2, size};
+            assert!(puzzle != puzzle2);
+        }
+    }
+
     mod new {
         use crate::puzzle::*;
 
