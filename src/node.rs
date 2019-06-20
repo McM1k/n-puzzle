@@ -11,12 +11,12 @@ pub enum Direction {
 
 #[derive(Debug, Clone)]
 pub struct Node {
-    state: Puzzle,
-    distance: usize,
-    upper_state: Option<Box<Node>>,
-    lower_state: Option<Box<Node>>,
-    left_state: Option<Box<Node>>,
-    right_state: Option<Box<Node>>,
+    pub state: Puzzle,
+    pub distance: usize,
+    pub upper_state: Option<Box<Node>>,
+    pub lower_state: Option<Box<Node>>,
+    pub left_state: Option<Box<Node>>,
+    pub right_state: Option<Box<Node>>,
 }
 
 impl fmt::Display for Node {
@@ -35,10 +35,9 @@ impl cmp::PartialEq for Node {
 
 impl Node {
     pub fn new_starting_node(state: Puzzle) -> Node {
-        let start = 0;
         Node {
             state,
-            distance: start,
+            distance: 0,
             upper_state: None,
             lower_state: None,
             left_state: None,
@@ -83,7 +82,7 @@ impl Node {
         (x, y)
     }
 
-    pub fn calculate_next_state(puzzle: &Puzzle, dir: &Direction) -> Option<Puzzle> {
+    pub fn calculate_next_state(puzzle: &Puzzle, dir: Direction) -> Option<Puzzle> {
         let (x, y) = Node::get_void_position(puzzle);
         let mut new_puzzle;
 
@@ -119,6 +118,55 @@ impl Node {
         }
 
         Some(new_puzzle)
+    }
+
+    pub fn calculate_next_nodes(mut node: Node) -> Node {
+        match Node::calculate_next_state(&node.state, Direction::Left) {
+            Some(new_puzzle) => node.left_state = Some(Box::new(Node{
+                state: new_puzzle,
+                distance: node.distance + 1,
+                left_state: None,
+                upper_state: None,
+                lower_state: None,
+                right_state: None,
+            })),
+            None => node.left_state = None,
+        }
+        match Node::calculate_next_state(&node.state, Direction::Right) {
+            Some(new_puzzle) => node.right_state = Some(Box::new(Node{
+                state: new_puzzle,
+                distance: node.distance + 1,
+                left_state: None,
+                upper_state: None,
+                lower_state: None,
+                right_state: None,
+            })),
+            None => node.right_state = None,
+        }
+        match Node::calculate_next_state(&node.state, Direction::Down) {
+            Some(new_puzzle) => node.lower_state = Some(Box::new(Node{
+                state: new_puzzle,
+                distance: node.distance + 1,
+                left_state: None,
+                upper_state: None,
+                lower_state: None,
+                right_state: None,
+            })),
+            None => node.lower_state = None,
+        }
+        match Node::calculate_next_state(&node.state, Direction::Up) {
+            Some(new_puzzle) => node.upper_state = Some(Box::new(Node{
+                state: new_puzzle,
+                distance: node.distance + 1,
+                left_state: None,
+                upper_state: None,
+                lower_state: None,
+                right_state: None,
+            })),
+            None => node.upper_state = None,
+        }
+
+        node
     }
 }
 
@@ -199,7 +247,7 @@ mod node_tests {
             let data = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
             let puzzle = Puzzle { data, size };
 
-            assert!(Node::calculate_next_state(&puzzle, &Direction::Up) == None);
+            assert!(Node::calculate_next_state(&puzzle, Direction::Up) == None);
         }
 
         #[test]
@@ -215,7 +263,7 @@ mod node_tests {
             };
 
             assert!(
-                Node::calculate_next_state(&puzzle, &Direction::Down).unwrap() == result_puzzle
+                Node::calculate_next_state(&puzzle, Direction::Down).unwrap() == result_puzzle
             );
         }
     }
