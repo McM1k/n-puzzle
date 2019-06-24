@@ -6,6 +6,7 @@ mod heuristic;
 mod node;
 mod parser;
 mod puzzle;
+mod inputs;
 
 use puzzle::Puzzle;
 
@@ -25,7 +26,7 @@ fn file_to_vec(filename: String) -> Vec<String> {
 }
 
 fn main() {
-    let args: Vec<String> = std::env::args().collect();
+    let args: Vec<String> = std::env::args().map(|x| x.to_string()).collect();
     if args.len() == 2 {
         let filename = &args[1];
         let lines = file_to_vec(filename.to_string());
