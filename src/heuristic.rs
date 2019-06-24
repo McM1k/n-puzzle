@@ -1,5 +1,4 @@
 use crate::puzzle::Puzzle;
-use std::ops::Range;
 
 fn get_distance(x1: &usize, y1: &usize, x2: &usize, y2: &usize) -> usize {
     let x = (*x1 as i32 - *x2 as i32).abs();
