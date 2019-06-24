@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::BufRead;
 use std::io::BufReader;
 
+mod heuristic;
 mod node;
 mod parser;
 mod puzzle;
