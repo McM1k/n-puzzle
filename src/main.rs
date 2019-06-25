@@ -1,17 +1,17 @@
 use std::fs::File;
 use std::io::BufRead;
 use std::io::BufReader;
-use structopt::StructOpt;
 use std::path::PathBuf;
+use structopt::StructOpt;
 
 mod heuristic;
 mod node;
+mod options;
 mod parser;
 mod puzzle;
-mod options;
 
-use puzzle::Puzzle;
 use options::Opt;
+use puzzle::Puzzle;
 
 fn open_file(filename: PathBuf) -> File {
     let file = File::open(filename).expect("Could not open file");
