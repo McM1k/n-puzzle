@@ -1,9 +1,9 @@
 [package]
 name = "n-puzzle"
-version = "0.1.0"
-authors = ["McM1k <gboudrie@student.42.fr>"]
+version = "0.9.0"
+authors = ["McM1k <gboudrie@student.42.fr>", "Raokk <vroussea@student.42.fr>"]
 edition = "2018"
 
 [dependencies]
 rand = "0.6"
-getopts = "0.2.19"
+structopt = "0.2"

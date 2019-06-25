@@ -1,22 +1,25 @@
 use std::fs::File;
 use std::io::BufRead;
 use std::io::BufReader;
+use structopt::StructOpt;
+use std::path::PathBuf;
 
 mod heuristic;
 mod node;
 mod parser;
 mod puzzle;
-mod inputs;
+mod options;
 
 use puzzle::Puzzle;
+use options::Opt;
 
-fn open_file(filename: String) -> File {
+fn open_file(filename: PathBuf) -> File {
     let file = File::open(filename).expect("Could not open file");
 
     file
 }
 
-fn file_to_vec(filename: String) -> Vec<String> {
+fn file_to_vec(filename: PathBuf) -> Vec<String> {
     let file = open_file(filename);
     let br_file = BufReader::new(file);
 
@@ -26,20 +29,16 @@ fn file_to_vec(filename: String) -> Vec<String> {
 }
 
 fn main() {
-    let args: Vec<String> = std::env::args().map(|x| x.to_string()).collect();
-    if args.len() == 2 {
-        let filename = &args[1];
-        let lines = file_to_vec(filename.to_string());
-        let puzzle = parser::parse(lines);
+    let opt = Opt::from_args();
+    println!("{:?}", opt);
+    if opt.size != None {
+        let puzzle = Puzzle::new(opt.size.unwrap());
         println!("{}", puzzle);
-    } else if args.len() == 3 && args[1] == "-g".to_string() {
-        let puzzle = Puzzle::new(
-            args[2]
-                .parse::<usize>()
-                .expect("Unable to parse data into u32"),
-        );
+    } else if opt.file != None {
+        let filename = opt.file.unwrap();
+        let puzzle = parser::parse(file_to_vec(filename));
         println!("{}", puzzle);
     } else {
-        panic!("Something went wrong with the parameters !")
+        panic!("Something went wrong with the parameters !");
     }
 }
