@@ -2,10 +2,10 @@ use std::fs::File;
 use std::io::BufRead;
 use std::io::BufReader;
 
+mod graph;
 mod node;
 mod parser;
 mod puzzle;
-mod graph;
 
 use puzzle::Puzzle;
 

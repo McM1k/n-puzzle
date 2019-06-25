@@ -122,47 +122,55 @@ impl Node {
 
     pub fn calculate_next_nodes(mut node: Node) -> Node {
         match Node::calculate_next_state(&node.state, Direction::Left) {
-            Some(new_puzzle) => node.left_state = Some(Box::new(Node{
-                state: new_puzzle,
-                distance: node.distance + 1,
-                left_state: None,
-                upper_state: None,
-                lower_state: None,
-                right_state: None,
-            })),
+            Some(new_puzzle) => {
+                node.left_state = Some(Box::new(Node {
+                    state: new_puzzle,
+                    distance: node.distance + 1,
+                    left_state: None,
+                    upper_state: None,
+                    lower_state: None,
+                    right_state: None,
+                }))
+            }
             None => node.left_state = None,
         }
         match Node::calculate_next_state(&node.state, Direction::Right) {
-            Some(new_puzzle) => node.right_state = Some(Box::new(Node{
-                state: new_puzzle,
-                distance: node.distance + 1,
-                left_state: None,
-                upper_state: None,
-                lower_state: None,
-                right_state: None,
-            })),
+            Some(new_puzzle) => {
+                node.right_state = Some(Box::new(Node {
+                    state: new_puzzle,
+                    distance: node.distance + 1,
+                    left_state: None,
+                    upper_state: None,
+                    lower_state: None,
+                    right_state: None,
+                }))
+            }
             None => node.right_state = None,
         }
         match Node::calculate_next_state(&node.state, Direction::Down) {
-            Some(new_puzzle) => node.lower_state = Some(Box::new(Node{
-                state: new_puzzle,
-                distance: node.distance + 1,
-                left_state: None,
-                upper_state: None,
-                lower_state: None,
-                right_state: None,
-            })),
+            Some(new_puzzle) => {
+                node.lower_state = Some(Box::new(Node {
+                    state: new_puzzle,
+                    distance: node.distance + 1,
+                    left_state: None,
+                    upper_state: None,
+                    lower_state: None,
+                    right_state: None,
+                }))
+            }
             None => node.lower_state = None,
         }
         match Node::calculate_next_state(&node.state, Direction::Up) {
-            Some(new_puzzle) => node.upper_state = Some(Box::new(Node{
-                state: new_puzzle,
-                distance: node.distance + 1,
-                left_state: None,
-                upper_state: None,
-                lower_state: None,
-                right_state: None,
-            })),
+            Some(new_puzzle) => {
+                node.upper_state = Some(Box::new(Node {
+                    state: new_puzzle,
+                    distance: node.distance + 1,
+                    left_state: None,
+                    upper_state: None,
+                    lower_state: None,
+                    right_state: None,
+                }))
+            }
             None => node.upper_state = None,
         }
 
@@ -262,9 +270,7 @@ mod node_tests {
                 size,
             };
 
-            assert!(
-                Node::calculate_next_state(&puzzle, Direction::Down).unwrap() == result_puzzle
-            );
+            assert!(Node::calculate_next_state(&puzzle, Direction::Down).unwrap() == result_puzzle);
         }
     }
 
