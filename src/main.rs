@@ -4,8 +4,8 @@ use std::io::BufReader;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
-mod heuristic;
 mod graph;
+mod heuristic;
 mod node;
 mod options;
 mod parser;
