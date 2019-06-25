@@ -1,6 +1,7 @@
 use crate::puzzle::Puzzle;
 use std::cmp;
 use std::fmt;
+use std::cmp::Ordering;
 
 pub enum Direction {
     Up,
@@ -30,6 +31,12 @@ impl fmt::Display for Node {
 impl cmp::PartialEq for Node {
     fn eq(&self, other: &Self) -> bool {
         self.state == other.state
+    }
+}
+
+impl cmp::PartialOrd for Node {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.distance.partial_cmp(&other.distance)
     }
 }
 

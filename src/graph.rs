@@ -1,11 +1,11 @@
 use crate::node::Node;
 use crate::puzzle::Puzzle;
 
-#[derive(Debug)]
 pub struct Graph {
     open_list: Vec<Node>,
     closed_list: Vec<Node>,
     start_node: Node,
+    heuristic: fn(&Node) -> usize,
 }
 
 impl Graph {
@@ -21,34 +21,42 @@ impl Graph {
         self.closed_list.push(new_node);
     }
 
-    fn add_if_higher_cost(&mut self, opt: Option<Box<Node>>) {
+    fn is_lower_cost(&self, node: &Node) -> bool {
+        if self
+            .open_list
+            .iter()
+            .any(|n| n == node && n.distance < node.distance)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    fn add_in_sorted_open_list(&mut self, opt: Option<Box<Node>>) {
         if opt == None {
             ()
         }
         let node = *opt.unwrap();
 
-        if self
-            .open_list
-            .iter()
-            .any(|n| n == &node && n.distance > node.distance)
-        {
+        if self.is_lower_cost(&node) {
             self.open_list.insert(
                 self.open_list
                     .iter()
-                    .position(|n| self.heuristic(node) <= self.heuristic(n))
+                    .position(|n| (self.heuristic)(&node) <= (self.heuristic)(n))
                     .unwrap_or(0),
                 node,
             );
         }
     }
 
-    pub fn a_star(state: Puzzle) {
+    pub fn a_star(state: Puzzle, heuristic: fn(&Node) -> usize) {
         let mut graph = Graph {
             open_list: vec![],
             closed_list: vec![],
             start_node: Node::new_starting_node(state),
+            heuristic,
         };
-        graph.add_to_open_list(graph.start_node);
+        graph.add_to_open_list(graph.start_node.clone());
 
         let mut curr_node;
         while !graph.open_list.is_empty() {
@@ -58,10 +66,10 @@ impl Graph {
             //                ()
             //            }
             curr_node = Node::calculate_next_nodes(curr_node);
-            graph.add_if_higher_cost(curr_node.left_state);
-            graph.add_if_higher_cost(curr_node.upper_state);
-            graph.add_if_higher_cost(curr_node.lower_state);
-            graph.add_if_higher_cost(curr_node.right_state);
+            graph.add_in_sorted_open_list(curr_node.left_state.clone());
+            graph.add_in_sorted_open_list(curr_node.upper_state.clone());
+            graph.add_in_sorted_open_list(curr_node.lower_state.clone());
+            graph.add_in_sorted_open_list(curr_node.right_state.clone());
 
             graph.add_to_closed_list(curr_node);
         }
@@ -70,9 +78,135 @@ impl Graph {
 }
 
 #[cfg(test)]
-mod graph_tests {
-    mod add_if_higher_cost {}
-    //    mod add_to_closed_list {
-    //
-    //    }
+mod graph_tests {/*
+    mod is_lower_cost {
+
+        #[test]
+        fn lower_cost() {
+
+        }
+
+        #[test]
+        fn not_lower_cost() {
+
+        }
+    }
+
+    mod add_in_sorted_open_list {
+        use crate::graph::*;
+        use crate::node::*;
+        use crate::puzzle::*;
+        use std::ptr::null;
+
+        #[test]
+        fn dont_add_if_unnecessary() {
+            let mut graph = Graph {
+                open_list: vec![],
+                closed_list: vec![],
+                start_node: Node {
+                    state: Puzzle {
+                        data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
+                        size: 3,
+                    },
+                    distance: 1,
+                    upper_state: None,
+                    lower_state: None,
+                    left_state: None,
+                    right_state: None,
+                },
+                heuristic: null(),
+            };
+
+            let node1 = Node {
+                state: Puzzle {
+                    data: vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]],
+                    size: 3,
+                },
+                distance: 2,
+                upper_state: None,
+                lower_state: None,
+                left_state: None,
+                right_state: None,
+            };
+
+            let node2 = Node {
+                state: Puzzle {
+                    data: vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]],
+                    size: 3,
+                },
+                distance: 3,
+                upper_state: None,
+                lower_state: None,
+                left_state: None,
+                right_state: None,
+            };
+
+            graph.add_in_sorted_open_list(Some(Box::new(node1)));
+            graph.add_in_sorted_open_list(Some(Box::new(node2)));
+
+            assert!(graph.open_list.iter().len() == 1);
+        }
+
+        #[test]
+        fn list_is_sorted() {
+            let mut graph = Graph {
+                open_list: vec![],
+                closed_list: vec![],
+                start_node: Node {
+                    state: Puzzle {
+                        data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
+                        size: 3,
+                    },
+                    distance: 1,
+                    upper_state: None,
+                    lower_state: None,
+                    left_state: None,
+                    right_state: None,
+                },
+                heuristic: null(),
+            };
+
+            let node1 = Node {
+                state: Puzzle {
+                    data: vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]],
+                    size: 3,
+                },
+                distance: 2,
+                upper_state: None,
+                lower_state: None,
+                left_state: None,
+                right_state: None,
+            };
+
+            let node2 = Node {
+                state: Puzzle {
+                    data: vec![vec![0, 2, 1], vec![3, 4, 5], vec![6, 8, 7]],
+                    size: 3,
+                },
+                distance: 3,
+                upper_state: None,
+                lower_state: None,
+                left_state: None,
+                right_state: None,
+            };
+
+            let node3 = Node {
+                state: Puzzle {
+                    data: vec![vec![0, 2, 5], vec![3, 4, 1], vec![6, 8, 7]],
+                    size: 3,
+                },
+                distance: 1,
+                upper_state: None,
+                lower_state: None,
+                left_state: None,
+                right_state: None,
+            };
+
+            graph.add_in_sorted_open_list(Some(Box::new(node1)));
+            graph.add_in_sorted_open_list(Some(Box::new(node2)));
+            graph.add_in_sorted_open_list(Some(Box::new(node3)));
+
+            assert!(graph.open_list.is_sorted());
+        }
+    }*/
 }
