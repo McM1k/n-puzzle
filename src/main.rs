@@ -5,6 +5,7 @@ use std::path::PathBuf;
 use structopt::StructOpt;
 
 mod heuristic;
+mod graph;
 mod node;
 mod options;
 mod parser;
