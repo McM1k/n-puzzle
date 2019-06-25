@@ -1,7 +1,7 @@
 use crate::puzzle::Puzzle;
 use std::cmp;
-use std::fmt;
 use std::cmp::Ordering;
+use std::fmt;
 
 pub enum Direction {
     Up,

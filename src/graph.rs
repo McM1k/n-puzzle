@@ -78,7 +78,8 @@ impl Graph {
 }
 
 #[cfg(test)]
-mod graph_tests {/*
+mod graph_tests {
+    /*
     mod is_lower_cost {
 
         #[test]
