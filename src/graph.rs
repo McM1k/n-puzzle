@@ -34,7 +34,7 @@ impl Graph {
 
     fn add_in_sorted_open_list(&mut self, opt: Option<Box<Node>>) {
         if opt == None {
-            ()
+            return;
         }
         let node = *opt.unwrap();
 
