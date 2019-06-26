@@ -14,6 +14,7 @@ mod puzzle;
 use crate::options::HeuristicValues;
 use options::Opt;
 use puzzle::Puzzle;
+use crate::graph::Graph;
 
 fn open_file(filename: PathBuf) -> File {
     let file = File::open(filename).expect("Could not open file");
@@ -46,10 +47,12 @@ fn main() {
     if opt.size != None {
         let puzzle = Puzzle::new(opt.size.unwrap());
         println!("{}", puzzle);
+        Graph::a_star(puzzle, heuristic);
     } else if opt.file != None {
         let filename = opt.file.unwrap();
         let puzzle = parser::parse(file_to_vec(filename));
         println!("{}", puzzle);
+        Graph::a_star(puzzle, heuristic);
     } else {
         panic!("Something went wrong with the parameters !");
     }
