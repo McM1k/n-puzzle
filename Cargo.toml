@@ -6,4 +6,5 @@ edition = "2018"
 
 [dependencies]
 rand = "0.6"
-structopt = "0.2"
+structopt = "0.2.16"
+clap = { version = "2.33", default-features = false }

@@ -5,7 +5,7 @@ pub struct Graph {
     open_list: Vec<Node>,
     closed_list: Vec<Node>,
     start_node: Node,
-    heuristic: fn(&Node) -> usize,
+    heuristic: fn(&Puzzle) -> usize,
 }
 
 impl Graph {
@@ -42,14 +42,14 @@ impl Graph {
             self.open_list.insert(
                 self.open_list
                     .iter()
-                    .position(|n| (self.heuristic)(&node) <= (self.heuristic)(n))
+                    .position(|n| (self.heuristic)(&(node.state)) <= (self.heuristic)(&(n.state)))
                     .unwrap_or(0),
                 node,
             );
         }
     }
 
-    pub fn a_star(state: Puzzle, heuristic: fn(&Node) -> usize) {
+    pub fn a_star(state: Puzzle, heuristic: fn(&Puzzle) -> usize) {
         let mut graph = Graph {
             open_list: vec![],
             closed_list: vec![],
