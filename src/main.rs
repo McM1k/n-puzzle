@@ -4,6 +4,7 @@ use std::io::BufReader;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
+mod print_result;
 mod graph;
 mod heuristic;
 mod node;

@@ -2,10 +2,11 @@ use crate::node::Node;
 use crate::puzzle::Puzzle;
 
 pub struct Graph {
-    open_list: Vec<Node>,
-    closed_list: Vec<Node>,
-    start_node: Node,
-    heuristic: fn(&Puzzle) -> usize,
+    pub open_list: Vec<Node>,
+    pub closed_list: Vec<Node>,
+    pub start_node: Node,
+    pub heuristic: fn(&Puzzle) -> usize,
+    /* add max_states */
 }
 
 impl Graph {
@@ -34,7 +35,7 @@ impl Graph {
 
     fn add_in_sorted_open_list(&mut self, opt: Option<Box<Node>>) {
         if opt == None {
-            ()
+            return;
         }
         let node = *opt.unwrap();
 
