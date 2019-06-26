@@ -143,7 +143,7 @@ fn check_row_conflict(
 
 pub fn hamming_distance(puzzle: &Puzzle) -> usize {
     // +1 per misplaced tiles (except empty one)
-    let final_data = puzzle.get_final_state();
+    let final_data = Puzzle::get_final_state(puzzle.size);
     let current_data = &puzzle.data;
     let mut heuristic = 0;
 
@@ -160,7 +160,7 @@ pub fn hamming_distance(puzzle: &Puzzle) -> usize {
 
 pub fn manhattan_distance(puzzle: &Puzzle) -> usize {
     // +1 per move a misplaced tile as to do (except empty one)
-    let final_data = puzzle.get_final_state();
+    let final_data = Puzzle::get_final_state(puzzle.size);
     let current_data = &puzzle.data;
     let mut heuristic = 0;
 
@@ -179,7 +179,7 @@ pub fn manhattan_distance(puzzle: &Puzzle) -> usize {
 
 pub fn linear_conflict(puzzle: &Puzzle) -> usize {
     // +2 when two tiles are in their goal row or column, but are reversed relative to their goal positions.  (except empty one)
-    let final_data = puzzle.get_final_state();
+    let final_data = Puzzle::get_final_state(puzzle.size);
     let current_data = &puzzle.data;
     let mut heuristic = 0;
     let size = puzzle.size;
@@ -341,7 +341,7 @@ mod heuristic_tests {
             let puzzle = Puzzle { data, size };
             let x = 0;
             let value = 1;
-            let in_correct_column = check_in_correct_column(&puzzle.get_final_state(), &value, &x);
+            let in_correct_column = check_in_correct_column(&Puzzle::get_final_state(puzzle.size), &value, &x);
 
             assert!(in_correct_column);
         }
@@ -353,7 +353,7 @@ mod heuristic_tests {
             let puzzle = Puzzle { data, size };
             let x = 1;
             let value = 1;
-            let in_correct_column = check_in_correct_column(&puzzle.get_final_state(), &value, &x);
+            let in_correct_column = check_in_correct_column(&Puzzle::get_final_state(puzzle.size), &value, &x);
 
             assert!(!in_correct_column);
         }
@@ -369,7 +369,7 @@ mod heuristic_tests {
             let puzzle = Puzzle { data, size };
             let y = 0;
             let value = 1;
-            let in_correct_column = check_in_correct_row(&puzzle.get_final_state(), &value, &y);
+            let in_correct_column = check_in_correct_row(&Puzzle::get_final_state(puzzle.size), &value, &y);
 
             assert!(in_correct_column);
         }
@@ -381,7 +381,7 @@ mod heuristic_tests {
             let puzzle = Puzzle { data, size };
             let y = 1;
             let value = 1;
-            let in_correct_column = check_in_correct_row(&puzzle.get_final_state(), &value, &y);
+            let in_correct_column = check_in_correct_row(&Puzzle::get_final_state(puzzle.size), &value, &y);
 
             assert!(!in_correct_column);
         }
@@ -400,7 +400,7 @@ mod heuristic_tests {
             let x = 0;
             let heuristic = check_column_conflict(
                 &puzzle.data,
-                &puzzle.get_final_state(),
+                &Puzzle::get_final_state(puzzle.size),
                 &value,
                 &x,
                 &number_list,
@@ -419,7 +419,7 @@ mod heuristic_tests {
             let x = 0;
             let heuristic = check_column_conflict(
                 &puzzle.data,
-                &puzzle.get_final_state(),
+                &Puzzle::get_final_state(puzzle.size),
                 &value,
                 &x,
                 &number_list,
@@ -442,7 +442,7 @@ mod heuristic_tests {
             let y = 0;
             let heuristic = check_row_conflict(
                 &puzzle.data,
-                &puzzle.get_final_state(),
+                &Puzzle::get_final_state(puzzle.size),
                 &value,
                 &y,
                 &number_list,
@@ -461,7 +461,7 @@ mod heuristic_tests {
             let y = 0;
             let heuristic = check_row_conflict(
                 &puzzle.data,
-                &puzzle.get_final_state(),
+                &Puzzle::get_final_state(puzzle.size),
                 &value,
                 &y,
                 &number_list,

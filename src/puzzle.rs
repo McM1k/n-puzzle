@@ -100,8 +100,7 @@ impl Puzzle {
         }
     }
 
-    pub fn get_final_state(&self) -> Vec<Vec<usize>> {
-        let size = self.size;
+    pub fn get_final_state(size: usize) -> Vec<Vec<usize>> {
         let mut data = vec![vec![0usize; size]; size];
 
         let mut current_number = 1;
@@ -156,7 +155,7 @@ mod puzzle_tests {
             let data = vec![vec![0usize; size]; size];
             let puzzle = Puzzle { data, size };
             let expected_final_state_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let result_data = puzzle.get_final_state();
+            let result_data = Puzzle::get_final_state(3);
 
             assert_eq!(result_data, expected_final_state_data);
         }
@@ -178,7 +177,7 @@ mod puzzle_tests {
                 vec![14, 23, 22, 21, 8],
                 vec![13, 12, 11, 10, 9],
             ];
-            let result_data = puzzle.get_final_state();
+            let result_data = Puzzle::get_final_state(5);
 
             assert_eq!(result_data, expected_final_state_data);
         }
@@ -207,7 +206,7 @@ mod puzzle_tests {
                 vec![29, 58, 57, 56, 55, 54, 53, 52, 51, 18],
                 vec![28, 27, 26, 25, 24, 23, 22, 21, 20, 19],
             ];
-            let result_data = puzzle.get_final_state();
+            let result_data = Puzzle::get_final_state(10);
 
             assert_eq!(result_data, expected_final_state_data);
         }
