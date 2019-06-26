@@ -61,10 +61,10 @@ impl Graph {
         let mut curr_node;
         while !graph.open_list.is_empty() {
             curr_node = graph.open_list.pop().unwrap(); /* TODO : choose the node with lowest score(heuristic + distance) */
-                        if curr_node == Node::get_final_node(curr_node.state.size) {
-                            /* TODO : afficher les trucs demandes dans le sujet */
-                            ()
-                        }
+            if curr_node == Node::get_final_node(curr_node.state.size) {
+                /* TODO : afficher les trucs demandes dans le sujet */
+                ()
+            }
             curr_node = Node::calculate_next_nodes(curr_node);
             graph.add_in_sorted_open_list(curr_node.left_state.clone());
             graph.add_in_sorted_open_list(curr_node.upper_state.clone());

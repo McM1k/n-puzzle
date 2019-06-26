@@ -341,7 +341,8 @@ mod heuristic_tests {
             let puzzle = Puzzle { data, size };
             let x = 0;
             let value = 1;
-            let in_correct_column = check_in_correct_column(&Puzzle::get_final_state(puzzle.size), &value, &x);
+            let in_correct_column =
+                check_in_correct_column(&Puzzle::get_final_state(puzzle.size), &value, &x);
 
             assert!(in_correct_column);
         }
@@ -353,7 +354,8 @@ mod heuristic_tests {
             let puzzle = Puzzle { data, size };
             let x = 1;
             let value = 1;
-            let in_correct_column = check_in_correct_column(&Puzzle::get_final_state(puzzle.size), &value, &x);
+            let in_correct_column =
+                check_in_correct_column(&Puzzle::get_final_state(puzzle.size), &value, &x);
 
             assert!(!in_correct_column);
         }
@@ -369,7 +371,8 @@ mod heuristic_tests {
             let puzzle = Puzzle { data, size };
             let y = 0;
             let value = 1;
-            let in_correct_column = check_in_correct_row(&Puzzle::get_final_state(puzzle.size), &value, &y);
+            let in_correct_column =
+                check_in_correct_row(&Puzzle::get_final_state(puzzle.size), &value, &y);
 
             assert!(in_correct_column);
         }
@@ -381,7 +384,8 @@ mod heuristic_tests {
             let puzzle = Puzzle { data, size };
             let y = 1;
             let value = 1;
-            let in_correct_column = check_in_correct_row(&Puzzle::get_final_state(puzzle.size), &value, &y);
+            let in_correct_column =
+                check_in_correct_row(&Puzzle::get_final_state(puzzle.size), &value, &y);
 
             assert!(!in_correct_column);
         }

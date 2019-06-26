@@ -1,14 +1,20 @@
-extern crate structopt;
 extern crate clap;
+extern crate structopt;
 
 use clap::arg_enum;
-use structopt::StructOpt;
 use std::path::PathBuf;
+use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
 #[structopt(about = "A* driven n puzzle solver.")]
 pub struct Opt {
-    #[structopt(short = "h", long = "heuristic", default_value = "hamming", raw(possible_values = "&HeuristicValues::variants()"), case_insensitive = true)]
+    #[structopt(
+        short = "h",
+        long = "heuristic",
+        default_value = "hamming",
+        raw(possible_values = "&HeuristicValues::variants()"),
+        case_insensitive = true
+    )]
     pub heuristic: HeuristicValues,
 
     #[structopt(short = "g", long = "generate", conflicts_with = "FILE")]

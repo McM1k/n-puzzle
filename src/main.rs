@@ -11,9 +11,9 @@ mod options;
 mod parser;
 mod puzzle;
 
+use crate::options::HeuristicValues;
 use options::Opt;
 use puzzle::Puzzle;
-use crate::options::HeuristicValues;
 
 fn open_file(filename: PathBuf) -> File {
     let file = File::open(filename).expect("Could not open file");
@@ -30,7 +30,7 @@ fn file_to_vec(filename: PathBuf) -> Vec<String> {
     lines
 }
 
-pub fn get_heuristic(heuristic_value: &HeuristicValues) -> fn(&Puzzle) -> usize  {
+pub fn get_heuristic(heuristic_value: &HeuristicValues) -> fn(&Puzzle) -> usize {
     match heuristic_value {
         Hamming => heuristic::hamming_distance,
         Manhattan => heuristic::manhattan_distance,
