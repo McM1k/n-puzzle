@@ -216,7 +216,7 @@ mod heuristic_tests {
         fn five_moved_tiles() {
             let size = 3;
             let data = vec![vec![1, 2, 8], vec![0, 3, 4], vec![7, 5, 6]];
-            let puzzle = Puzzle { data, size };
+            let puzzle = super::super::Puzzle { data, size };
             let heuristic = hamming_distance(&puzzle);
 
             assert_eq!(heuristic, 4);
@@ -226,7 +226,7 @@ mod heuristic_tests {
         fn no_moved_tile() {
             let size = 3;
             let data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let puzzle = Puzzle { data, size };
+            let puzzle = super::super::Puzzle { data, size };
             let heuristic = hamming_distance(&puzzle);
 
             assert_eq!(heuristic, 0);
@@ -236,7 +236,7 @@ mod heuristic_tests {
         fn every_tiles_moved() {
             let size = 3;
             let data = vec![vec![7, 5, 6], vec![1, 2, 3], vec![8, 0, 4]];
-            let puzzle = Puzzle { data, size };
+            let puzzle = super::super::Puzzle { data, size };
             let heuristic = hamming_distance(&puzzle);
 
             assert_eq!(heuristic, 8);
@@ -250,7 +250,7 @@ mod heuristic_tests {
         fn five_moved_tiles() {
             let size = 3;
             let data = vec![vec![1, 2, 8], vec![0, 3, 4], vec![7, 5, 6]];
-            let puzzle = Puzzle { data, size };
+            let puzzle = super::super::Puzzle { data, size };
             let heuristic = manhattan_distance(&puzzle);
 
             assert_eq!(heuristic, 7);
@@ -260,7 +260,7 @@ mod heuristic_tests {
         fn no_moved_tile() {
             let size = 3;
             let data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let puzzle = Puzzle { data, size };
+            let puzzle = super::super::Puzzle { data, size };
             let heuristic = manhattan_distance(&puzzle);
 
             assert_eq!(heuristic, 0);
@@ -270,7 +270,7 @@ mod heuristic_tests {
         fn every_tiles_moved() {
             let size = 3;
             let data = vec![vec![7, 5, 6], vec![1, 2, 3], vec![8, 0, 4]];
-            let puzzle = Puzzle { data, size };
+            let puzzle = super::super::Puzzle { data, size };
             let heuristic = manhattan_distance(&puzzle);
 
             assert_eq!(heuristic, 13);
@@ -284,7 +284,7 @@ mod heuristic_tests {
         fn one_conflict_in_one_row() {
             let size = 3;
             let data = vec![vec![2, 1, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let puzzle = Puzzle { data, size };
+            let puzzle = super::super::Puzzle { data, size };
             let heuristic = linear_conflict(&puzzle);
 
             assert_eq!(heuristic, 2);
@@ -294,7 +294,7 @@ mod heuristic_tests {
         fn two_conflicts_in_one_row() {
             let size = 3;
             let data = vec![vec![3, 2, 1], vec![8, 0, 4], vec![7, 6, 5]];
-            let puzzle = Puzzle { data, size };
+            let puzzle = super::super::Puzzle { data, size };
             let heuristic = linear_conflict(&puzzle);
 
             assert_eq!(heuristic, 4);
@@ -304,7 +304,7 @@ mod heuristic_tests {
         fn one_conflict_in_one_column() {
             let size = 3;
             let data = vec![vec![8, 2, 3], vec![1, 0, 4], vec![7, 6, 5]];
-            let puzzle = Puzzle { data, size };
+            let puzzle = super::super::Puzzle { data, size };
             let heuristic = linear_conflict(&puzzle);
 
             assert_eq!(heuristic, 2);
@@ -314,7 +314,7 @@ mod heuristic_tests {
         fn two_conflicts_in_one_column() {
             let size = 3;
             let data = vec![vec![7, 2, 3], vec![8, 0, 4], vec![1, 6, 5]];
-            let puzzle = Puzzle { data, size };
+            let puzzle = super::super::Puzzle { data, size };
             let heuristic = linear_conflict(&puzzle);
 
             assert_eq!(heuristic, 4);
@@ -324,7 +324,7 @@ mod heuristic_tests {
         fn no_conflict() {
             let size = 3;
             let data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let puzzle = Puzzle { data, size };
+            let puzzle = super::super::Puzzle { data, size };
             let heuristic = linear_conflict(&puzzle);
 
             assert_eq!(heuristic, 0);
