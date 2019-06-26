@@ -183,6 +183,20 @@ impl Node {
 
         node
     }
+
+    pub fn get_final_node(size: usize) -> Node{
+        Node {
+            state: Puzzle {
+                data: Puzzle::get_final_state(size),
+                size: size,
+            },
+            distance: 0,
+            upper_state: None,
+            lower_state: None,
+            left_state: None,
+            right_state: None
+        }
+    }
 }
 
 #[cfg(test)]
