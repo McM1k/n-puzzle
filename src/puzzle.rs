@@ -13,9 +13,9 @@ impl fmt::Display for Puzzle {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         for line_data in self.data.iter() {
             for value in line_data.iter() {
-                write!(f, "{} ", value)?;
+                print!("{:4}", value);
             }
-            write!(f, "\n")?;
+            print!("\n");
         }
         Ok(())
     }

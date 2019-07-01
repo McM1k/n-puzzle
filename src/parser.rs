@@ -18,14 +18,14 @@ pub fn remove_comments(mut lines: Vec<String>) -> Vec<String> {
 pub fn check_empty_lines(lines: &Vec<String>) {
     lines.iter().for_each(|line| {
         if line.is_empty() {
-            panic!("There is an empty line in the file")
+            panic!("There is an empty line in the file\n")
         }
     })
 }
 
 pub fn check_empty_vec(lines: &Vec<String>) {
     if lines.is_empty() {
-        panic!("No data.")
+        panic!("No data.\n")
     }
 }
 
@@ -33,7 +33,7 @@ pub fn check_only_numbers_and_spaces(lines: &Vec<String>) {
     lines.iter()
 		 .for_each(|line| {
 		 	if !line.chars().all(|c| c.is_digit(10) || c.is_whitespace()) {
-		 		panic!("Unexpected character in file (only spaces and numbers are allowed beside comments)")
+		 		panic!("Unexpected character in file (only spaces and numbers are allowed beside comments)\n")
 		 	}
 		 })
 }
@@ -53,21 +53,21 @@ pub fn check_values_are_incremental(size: &usize, data: &Vec<Vec<usize>>) {
         })
     });
     if !all_the_values.is_empty() {
-        panic!("All the values needed for chosen size are not present.")
+        panic!("All the values needed for chosen size are not present.\n")
     }
 }
 
 pub fn check_values_form_correct_square(size: &usize, data: &Vec<Vec<usize>>) {
     if *size < 3 {
-        panic!("Square too little, must be at least 3 of size !")
+        panic!("Square too little, must be at least 3 of size !\n")
     }
     if data.clone().iter().count() != *size {
-        panic!("Wrong number of lines !")
+        panic!("Wrong number of lines !\n")
     }
 
     data.iter().for_each(|one_line_data| {
         if one_line_data.clone().iter().count() != *size {
-            panic!("Too few columns in a line !")
+            panic!("Too few columns in a line !\n")
         }
     });
 }
@@ -76,7 +76,7 @@ pub fn get_data(lines: Vec<String>) -> (usize, Vec<Vec<usize>>) {
     let mut raw_data = get_raw_data(lines);
     let size_line = raw_data.remove(0);
     if size_line.len() != 1 {
-        panic!("first line should only contain one value");
+        panic!("first line should only contain one value\n");
     }
     let size = size_line.get(0).unwrap();
 
@@ -93,7 +93,7 @@ pub fn get_raw_data(lines: Vec<String>) -> Vec<Vec<usize>> {
                 .map(|token| -> usize {
                     token
                         .parse::<usize>()
-                        .expect("Unable to parse data into u32")
+                        .expect("Unable to parse data into u32\n")
                 })
                 .collect()
         })

@@ -6,6 +6,7 @@ pub struct Graph {
     pub closed_list: Vec<Node>,
     pub start_node: Node,
     pub heuristic: fn(&Puzzle) -> usize,
+    pub max_states: usize,
     /* add max_states */
 }
 
@@ -56,6 +57,8 @@ impl Graph {
             closed_list: vec![],
             start_node: Node::new_starting_node(state),
             heuristic,
+            max_states: 0,
+
         };
         graph.add_to_open_list(graph.start_node.clone());
 
