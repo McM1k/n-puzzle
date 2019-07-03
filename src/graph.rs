@@ -2,10 +2,12 @@ use crate::node::Node;
 use crate::puzzle::Puzzle;
 
 pub struct Graph {
-    open_list: Vec<Node>,
-    closed_list: Vec<Node>,
-    start_node: Node,
-    heuristic: fn(&Puzzle) -> usize,
+    pub open_list: Vec<Node>,
+    pub closed_list: Vec<Node>,
+    pub start_node: Node,
+    pub heuristic: fn(&Puzzle) -> usize,
+    pub max_states: usize,
+    /* add max_states */
 }
 
 impl Graph {
@@ -55,6 +57,8 @@ impl Graph {
             closed_list: vec![],
             start_node: Node::new_starting_node(state),
             heuristic,
+            max_states: 0,
+
         };
         graph.add_to_open_list(graph.start_node.clone());
 
