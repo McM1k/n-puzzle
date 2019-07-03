@@ -1,6 +1,7 @@
 use crate::node::Node;
 use crate::puzzle::Puzzle;
 
+#[derive(Clone)]
 pub struct Graph {
     pub open_list: Vec<Node>,
     pub closed_list: Vec<Node>,
@@ -44,7 +45,7 @@ impl Graph {
             self.open_list.insert(
                 self.open_list
                     .iter()
-                    .position(|n| (self.heuristic)(&(node.state)) <= (self.heuristic)(&(n.state)))
+                    .position(|n| (self.heuristic)(&(node.state)) + node.distance <= (self.heuristic)(&(n.state)) + n.distance)
                     .unwrap_or(0),
                 node,
             );
@@ -63,10 +64,10 @@ impl Graph {
         graph.add_to_open_list(graph.start_node.clone());
 
         let mut curr_node;
-        while !graph.open_list.is_empty() {
-            curr_node = graph.open_list.pop().unwrap(); /* TODO : choose the node with lowest score(heuristic + distance) */
+        while !graph.clone().open_list.is_empty() {
+            curr_node = graph.open_list.pop().unwrap();
             if curr_node == Node::get_final_node(curr_node.state.size) {
-                /* TODO : afficher les trucs demandes dans le sujet */
+                crate::print_result::print_result(graph.clone(), curr_node.clone());
                 ()
             }
             curr_node = Node::calculate_next_nodes(curr_node);
