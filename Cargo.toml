@@ -8,3 +8,5 @@ edition = "2018"
 rand = "0.6"
 structopt = "0.2.16"
 clap = { version = "2.33", default-features = false }
+strum = "0.15.0"
+strum_macros = "0.15.0"

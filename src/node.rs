@@ -2,7 +2,12 @@ use crate::puzzle::Puzzle;
 use std::cmp;
 use std::cmp::Ordering;
 use std::fmt;
+extern crate strum;
+extern crate strum_macros;
+use strum::IntoEnumIterator;
+use strum_macros::{EnumIter};
 
+#[derive(EnumIter)]
 pub enum Direction {
     Up,
     Left,
@@ -10,7 +15,7 @@ pub enum Direction {
     Right,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Node {
     pub state: Puzzle,
     pub distance: usize,
@@ -18,6 +23,27 @@ pub struct Node {
     pub lower_state: Option<Box<Node>>,
     pub left_state: Option<Box<Node>>,
     pub right_state: Option<Box<Node>>,
+}
+
+/*
+impl Clone for Node {
+    fn clone(&self) -> Self {
+
+        Node {
+            state: self.state.clone(),
+            distance: self.distance,
+            upper_state: None,
+            lower_state: None,
+            left_state: None,
+            right_state: None,
+        }
+    }
+}*/
+
+impl fmt::Debug for Node {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{0:?}, {1}\n", self.state, self.distance)
+    }
 }
 
 impl fmt::Display for Node {
@@ -41,6 +67,17 @@ impl cmp::PartialOrd for Node {
 }
 
 impl Node {
+    pub fn partial_copy(&self) -> Node {
+        Node {
+            state: self.state.clone(),
+            distance: self.distance,
+            upper_state: None,
+            lower_state: None,
+            left_state: None,
+            right_state: None,
+        }
+    }
+
     pub fn new_starting_node(state: Puzzle) -> Node {
         Node {
             state,
@@ -87,6 +124,27 @@ impl Node {
         }
 
         (x, y)
+    }
+
+    pub fn next_nodes_to_vec(node: &Node) -> Vec<Node> {
+        let mut next_nodes = vec![];
+        let mut curr_puzzle;
+
+        for dir in Direction::iter() {
+            curr_puzzle = Node::calculate_next_state(&node.state, dir);
+            if curr_puzzle != None {
+                next_nodes.push(Node {
+                    state: curr_puzzle.unwrap(),
+                    distance: node.distance + 1,
+                    upper_state: None,
+                    lower_state: None,
+                    left_state: None,
+                    right_state: None
+                });
+            }
+        }
+
+        next_nodes
     }
 
     pub fn calculate_next_state(puzzle: &Puzzle, dir: Direction) -> Option<Puzzle> {

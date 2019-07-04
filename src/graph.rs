@@ -1,5 +1,7 @@
 use crate::node::Node;
+use crate::node::Direction;
 use crate::puzzle::Puzzle;
+use std::thread::sleep;
 
 #[derive(Clone)]
 pub struct Graph {
@@ -8,7 +10,6 @@ pub struct Graph {
     pub start_node: Node,
     pub heuristic: fn(&Puzzle) -> usize,
     pub max_states: usize,
-    /* add max_states */
 }
 
 impl Graph {
@@ -41,6 +42,10 @@ impl Graph {
         }
         let node = *opt.unwrap();
 
+        if self.closed_list.contains(&node) {
+            return;
+        }
+
         if self.is_lower_cost(&node) {
             self.open_list.insert(
                 self.open_list
@@ -50,15 +55,66 @@ impl Graph {
                 node,
             );
         }
+
+        if self.max_states < self.open_list.len() {
+            self.max_states += 1;
+        }
     }
 
-    pub fn a_star(state: Puzzle, heuristic: fn(&Puzzle) -> usize) {
+    pub fn a_star_greedy(state: Puzzle, heuristic: fn(&Puzzle) -> usize) {
         let mut graph = Graph {
             open_list: vec![],
             closed_list: vec![],
             start_node: Node::new_starting_node(state),
             heuristic,
-            max_states: 0,
+            max_states: 1,
+        };
+        graph.add_to_open_list(graph.start_node.partial_copy());
+
+        if graph.recursive_search(&graph.clone().start_node) {
+            return;
+        }
+        else {
+            panic!("Solution not found");
+        }
+    }
+
+    fn recursive_search(&mut self, curr_node: &Node) -> bool {
+        if curr_node == &Node::get_final_node(curr_node.state.size) {
+            crate::print_result::print_data(self.clone(), curr_node.partial_copy());
+            println!("{}", curr_node);
+            return true;
+        }
+        //println!("{}, score : {}",curr_node.clone(), curr_node.clone().distance + (self.clone().heuristic)(&(curr_node.clone().state)));
+        let mut next_nodes = Node::next_nodes_to_vec(curr_node);
+        next_nodes.sort_by(|a, b| (b.distance + (self.heuristic)(&(b.state))).partial_cmp(&(a.distance + (self.heuristic)(&(a.state)))).unwrap());
+
+        let mut child_node;
+        while !next_nodes.is_empty() {
+            child_node = next_nodes.pop().unwrap();
+
+            if !self.closed_list.contains(&child_node) && self.is_lower_cost(&child_node) {
+                self.add_to_open_list(child_node.partial_copy());
+                if self.recursive_search(&child_node) {
+                    println!("{}", curr_node);
+                    return true;
+                }
+            }
+        }
+
+        self.add_to_closed_list(curr_node.partial_copy());
+        println!("down");
+        false
+    }
+
+
+    pub fn a_star_gluttony(state: Puzzle, heuristic: fn(&Puzzle) -> usize) {
+        let mut graph = Graph {
+            open_list: vec![],
+            closed_list: vec![],
+            start_node: Node::new_starting_node(state),
+            heuristic,
+            max_states: 1,
 
         };
         graph.add_to_open_list(graph.start_node.clone());
@@ -66,17 +122,20 @@ impl Graph {
         let mut curr_node;
         while !graph.clone().open_list.is_empty() {
             curr_node = graph.open_list.pop().unwrap();
+            println!("{}, score : {}",curr_node.clone(), curr_node.clone().distance + (graph.clone().heuristic)(&(curr_node.clone().state)));
+            //println!("{:?}", &graph.open_list);
+            //println!("{:?}", &graph.closed_list);
             if curr_node == Node::get_final_node(curr_node.state.size) {
-                crate::print_result::print_result(graph.clone(), curr_node.clone());
-                ()
+                crate::print_result::print_data(graph.clone(), curr_node.clone());
+                crate::print_result::print_solution_with_retrieving(curr_node.clone());
+                return;
             }
+            graph.add_to_closed_list(curr_node.clone());
             curr_node = Node::calculate_next_nodes(curr_node);
             graph.add_in_sorted_open_list(curr_node.left_state.clone());
             graph.add_in_sorted_open_list(curr_node.upper_state.clone());
             graph.add_in_sorted_open_list(curr_node.lower_state.clone());
             graph.add_in_sorted_open_list(curr_node.right_state.clone());
-
-            graph.add_to_closed_list(curr_node);
         }
         panic!("The graph has been completely explored, yet the goal state hasn't been reached");
     }

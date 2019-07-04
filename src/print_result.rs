@@ -1,11 +1,14 @@
 use crate::graph::Graph;
 use crate::node::Node;
 
-pub fn print_result(graph: Graph, final_node: Node) {
+pub fn print_data(graph: Graph, final_node: Node) {
     println!("Total number of states ever selected in the opened set : {}\n", graph.closed_list.len() + graph.open_list.len());
     println!("Maximum number of states ever represented in  memory at the same time : {}\n", graph.max_states);
     println!("Number of moves : {}\n", final_node.distance);
     println!("solution sequence : \n");
+}
+
+pub fn print_solution_with_retrieving(final_node: Node) {
     println!("{}", recursive_path(&final_node));
 }
 
