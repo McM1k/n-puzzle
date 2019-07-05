@@ -2,8 +2,14 @@ use crate::graph::Graph;
 use crate::node::Node;
 
 pub fn print_data(graph: Graph, final_node: Node) {
-    println!("Total number of states ever selected in the opened set : {}\n", graph.closed_list.len() + graph.open_list.len());
-    println!("Maximum number of states ever represented in  memory at the same time : {}\n", graph.max_states);
+    println!(
+        "Total number of states ever selected in the opened set : {}\n",
+        graph.closed_list.len() + graph.open_list.len()
+    );
+    println!(
+        "Maximum number of states ever represented in  memory at the same time : {}\n",
+        graph.max_states
+    );
     println!("Number of moves : {}\n", final_node.distance);
     println!("solution sequence : \n");
 }
@@ -21,34 +27,42 @@ fn recursive_path(curr_node: &Node) -> String {
     return str + &curr_node.state.to_string() + "\n";
 }
 
-fn select_previous_node(node: Node) -> Node{
-    if node.left_state != None && (*node.clone().left_state.unwrap()).distance == node.distance - 1 {
+fn select_previous_node(node: Node) -> Node {
+    if node.left_state != None && (*node.clone().left_state.unwrap()).distance == node.distance - 1
+    {
         return *node.left_state.unwrap();
-    }
-    else if node.right_state != None && (*node.clone().right_state.unwrap()).distance == node.distance - 1 {
+    } else if node.right_state != None
+        && (*node.clone().right_state.unwrap()).distance == node.distance - 1
+    {
         return *node.right_state.unwrap();
-    }
-    else if node.upper_state != None && (*node.clone().upper_state.unwrap()).distance == node.distance - 1 {
+    } else if node.upper_state != None
+        && (*node.clone().upper_state.unwrap()).distance == node.distance - 1
+    {
         return *node.upper_state.unwrap();
-    }
-    else if node.lower_state != None && (*node.clone().lower_state.unwrap()).distance == node.distance - 1  {
+    } else if node.lower_state != None
+        && (*node.clone().lower_state.unwrap()).distance == node.distance - 1
+    {
         return *node.lower_state.unwrap();
+    } else {
+        panic!("dead end while going through the solving path\n");
     }
-    else { panic!("dead end while going through the solving path\n"); }
 }
 
 #[cfg(test)]
-mod print_result{
-    mod select_previous_node{
+mod print_result {
+    mod select_previous_node {
         use crate::node::*;
-        use crate::puzzle::*;
         use crate::print_result::*;
+        use crate::puzzle::*;
 
         #[test]
         fn normal_use_case() {
             let data1 = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
             let node1 = Node {
-                state: Puzzle { data: data1, size: 3 },
+                state: Puzzle {
+                    data: data1,
+                    size: 3,
+                },
                 distance: 1,
                 upper_state: None,
                 lower_state: None,
@@ -57,7 +71,10 @@ mod print_result{
             };
             let data3 = vec![vec![1, 2, 3], vec![8, 4, 5], vec![7, 6, 0]];
             let node3 = Node {
-                state: Puzzle {data: data3, size: 3},
+                state: Puzzle {
+                    data: data3,
+                    size: 3,
+                },
                 distance: 3,
                 upper_state: None,
                 lower_state: None,
@@ -66,7 +83,10 @@ mod print_result{
             };
             let data2 = vec![vec![1, 2, 3], vec![8, 4, 0], vec![7, 6, 5]];
             let node2 = Node {
-                state: Puzzle {data: data2, size: 3},
+                state: Puzzle {
+                    data: data2,
+                    size: 3,
+                },
                 distance: 2,
                 upper_state: None,
                 lower_state: Some(Box::new(node3)),
@@ -82,7 +102,10 @@ mod print_result{
         fn dead_end() {
             let data1 = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
             let node1 = Node {
-                state: Puzzle { data: data1, size: 3 },
+                state: Puzzle {
+                    data: data1,
+                    size: 3,
+                },
                 distance: 2,
                 upper_state: None,
                 lower_state: None,
@@ -93,16 +116,19 @@ mod print_result{
         }
     }
 
-    mod recursive_path{
+    mod recursive_path {
         use crate::node::*;
-        use crate::puzzle::*;
         use crate::print_result::*;
+        use crate::puzzle::*;
 
         #[test]
         fn print_small_solution() {
             let data1 = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
             let mut node1 = Node {
-                state: Puzzle {data: data1, size: 3},
+                state: Puzzle {
+                    data: data1,
+                    size: 3,
+                },
                 distance: 0,
                 upper_state: None,
                 lower_state: None,
@@ -111,7 +137,10 @@ mod print_result{
             };
             let data2 = vec![vec![1, 2, 3], vec![8, 4, 0], vec![7, 6, 5]];
             let mut node2 = Node {
-                state: Puzzle {data: data2, size: 3},
+                state: Puzzle {
+                    data: data2,
+                    size: 3,
+                },
                 distance: 1,
                 upper_state: None,
                 lower_state: None,
@@ -120,7 +149,10 @@ mod print_result{
             };
             let data3 = vec![vec![1, 2, 3], vec![8, 4, 5], vec![7, 6, 0]];
             let mut node3 = Node {
-                state: Puzzle {data: data3, size: 3},
+                state: Puzzle {
+                    data: data3,
+                    size: 3,
+                },
                 distance: 2,
                 upper_state: Some(Box::new(node2)),
                 lower_state: None,
@@ -128,18 +160,21 @@ mod print_result{
                 right_state: None,
             };
 
-            assert_eq!(recursive_path(&node3), "1   2   3   \n\
-                                                            8   0   4   \n\
-                                                            7   6   5   \n\
-                                                            \n\
-                                                            1   2   3   \n\
-                                                            8   4   0   \n\
-                                                            7   6   5   \n\
-                                                            \n\
-                                                            1   2   3   \n\
-                                                            8   4   5   \n\
-                                                            7   6   0   \n\
-                                                            \n");
+            assert_eq!(
+                recursive_path(&node3),
+                "1   2   3   \n\
+                 8   0   4   \n\
+                 7   6   5   \n\
+                 \n\
+                 1   2   3   \n\
+                 8   4   0   \n\
+                 7   6   5   \n\
+                 \n\
+                 1   2   3   \n\
+                 8   4   5   \n\
+                 7   6   0   \n\
+                 \n"
+            );
         }
     }
 }

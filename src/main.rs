@@ -4,18 +4,18 @@ use std::io::BufReader;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
-mod print_result;
 mod graph;
 mod heuristic;
 mod node;
 mod options;
 mod parser;
+mod print_result;
 mod puzzle;
 
+use crate::graph::Graph;
 use crate::options::HeuristicValues;
 use options::Opt;
 use puzzle::Puzzle;
-use crate::graph::Graph;
 
 fn open_file(filename: PathBuf) -> File {
     let file = File::open(filename).expect("Could not open file");

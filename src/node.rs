@@ -5,7 +5,7 @@ use std::fmt;
 extern crate strum;
 extern crate strum_macros;
 use strum::IntoEnumIterator;
-use strum_macros::{EnumIter};
+use strum_macros::EnumIter;
 
 #[derive(EnumIter)]
 pub enum Direction {
@@ -139,7 +139,7 @@ impl Node {
                     upper_state: None,
                     lower_state: None,
                     left_state: None,
-                    right_state: None
+                    right_state: None,
                 });
             }
         }

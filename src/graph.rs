@@ -1,5 +1,5 @@
-use crate::node::Node;
 use crate::node::Direction;
+use crate::node::Node;
 use crate::puzzle::Puzzle;
 use std::thread::sleep;
 
@@ -50,7 +50,10 @@ impl Graph {
             self.open_list.insert(
                 self.open_list
                     .iter()
-                    .position(|n| (self.heuristic)(&(node.state)) + node.distance <= (self.heuristic)(&(n.state)) + n.distance)
+                    .position(|n| {
+                        (self.heuristic)(&(node.state)) + node.distance
+                            <= (self.heuristic)(&(n.state)) + n.distance
+                    })
                     .unwrap_or(0),
                 node,
             );
@@ -73,8 +76,7 @@ impl Graph {
 
         if graph.recursive_search(&graph.clone().start_node) {
             return;
-        }
-        else {
+        } else {
             panic!("Solution not found");
         }
     }
@@ -87,7 +89,11 @@ impl Graph {
         }
         //println!("{}, score : {}",curr_node.clone(), curr_node.clone().distance + (self.clone().heuristic)(&(curr_node.clone().state)));
         let mut next_nodes = Node::next_nodes_to_vec(curr_node);
-        next_nodes.sort_by(|a, b| (b.distance + (self.heuristic)(&(b.state))).partial_cmp(&(a.distance + (self.heuristic)(&(a.state)))).unwrap());
+        next_nodes.sort_by(|a, b| {
+            (b.distance + (self.heuristic)(&(b.state)))
+                .partial_cmp(&(a.distance + (self.heuristic)(&(a.state))))
+                .unwrap()
+        });
 
         let mut child_node;
         while !next_nodes.is_empty() {
@@ -107,7 +113,6 @@ impl Graph {
         false
     }
 
-
     pub fn a_star_gluttony(state: Puzzle, heuristic: fn(&Puzzle) -> usize) {
         let mut graph = Graph {
             open_list: vec![],
@@ -115,14 +120,17 @@ impl Graph {
             start_node: Node::new_starting_node(state),
             heuristic,
             max_states: 1,
-
         };
         graph.add_to_open_list(graph.start_node.clone());
 
         let mut curr_node;
         while !graph.clone().open_list.is_empty() {
             curr_node = graph.open_list.pop().unwrap();
-            println!("{}, score : {}",curr_node.clone(), curr_node.clone().distance + (graph.clone().heuristic)(&(curr_node.clone().state)));
+            println!(
+                "{}, score : {}",
+                curr_node.clone(),
+                curr_node.clone().distance + (graph.clone().heuristic)(&(curr_node.clone().state))
+            );
             //println!("{:?}", &graph.open_list);
             //println!("{:?}", &graph.closed_list);
             if curr_node == Node::get_final_node(curr_node.state.size) {
