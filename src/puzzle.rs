@@ -122,7 +122,7 @@ impl Puzzle {
 
         for _ in 0..data.len() {
             for i in 0..data.len() - 1 {
-                if data[i] > data[i + 1] {
+                if data[i] > data[i + 1] && data[i] != 0 && data[i + 1] != 0 {
                     sort_count += 1;
                     data.swap(i, i + 1);
                 }
@@ -360,9 +360,27 @@ mod puzzle_tests {
         }
 
         #[test]
+        fn solvable_puzzle_with_one_move() {
+            let puzzle: Vec<Vec<usize>> = vec![vec![1, 2, 3], vec![0, 8, 4], vec![7, 6, 5]];
+            assert_eq!(Puzzle::is_solvable(&puzzle), true);
+        }
+
+        #[test]
         fn unsolvable_puzzle() {
             let puzzle: Vec<Vec<usize>> = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 7, 8]];
             assert_eq!(Puzzle::is_solvable(&puzzle), false);
         }
     }
 }
+
+/*0 1 2
+3 4 5
+6 8 7
+
+1 0 2
+3 4 5
+6 8 7
+
+1 2 0
+3 4 5
+6 8 7*/
