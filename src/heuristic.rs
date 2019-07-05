@@ -288,7 +288,7 @@ mod heuristic_tests {
             let puzzle = super::super::Puzzle { data, size };
             let heuristic = linear_conflict(&puzzle);
 
-            assert_eq!(heuristic, 2);
+            assert_eq!(heuristic, 1);
         }
 
         #[test]
@@ -298,7 +298,7 @@ mod heuristic_tests {
             let puzzle = super::super::Puzzle { data, size };
             let heuristic = linear_conflict(&puzzle);
 
-            assert_eq!(heuristic, 4);
+            assert_eq!(heuristic, 2);
         }
 
         #[test]
@@ -308,7 +308,7 @@ mod heuristic_tests {
             let puzzle = super::super::Puzzle { data, size };
             let heuristic = linear_conflict(&puzzle);
 
-            assert_eq!(heuristic, 2);
+            assert_eq!(heuristic, 1);
         }
 
         #[test]
@@ -318,7 +318,7 @@ mod heuristic_tests {
             let puzzle = super::super::Puzzle { data, size };
             let heuristic = linear_conflict(&puzzle);
 
-            assert_eq!(heuristic, 4);
+            assert_eq!(heuristic, 2);
         }
 
         #[test]
@@ -411,7 +411,7 @@ mod heuristic_tests {
                 &number_list,
             );
 
-            assert_eq!(heuristic, 2);
+            assert_eq!(heuristic, 1);
         }
 
         #[test]
@@ -453,7 +453,7 @@ mod heuristic_tests {
                 &number_list,
             );
 
-            assert_eq!(heuristic, 2);
+            assert_eq!(heuristic, 1);
         }
 
         #[test]
