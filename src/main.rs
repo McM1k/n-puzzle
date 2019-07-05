@@ -14,6 +14,7 @@ mod puzzle;
 
 use crate::graph::Graph;
 use crate::options::HeuristicValues;
+use crate::options::AlgorithmValues;
 use options::Opt;
 use puzzle::Puzzle;
 
@@ -41,19 +42,27 @@ pub fn get_heuristic(heuristic_value: &HeuristicValues) -> fn(&Puzzle) -> usize 
     }
 }
 
+pub fn get_algorithm(algorithm_value: &AlgorithmValues) -> fn(Puzzle, fn(&Puzzle) -> usize) {
+    match algorithm_value {
+        AlgorithmValues::Greedy => Graph::a_star_greedy,
+        AlgorithmValues::Gluttony => Graph::a_star_gluttony,
+    }
+}
+
 fn main() {
     let opt = Opt::from_args();
     println!("{:?}", opt);
     let heuristic = get_heuristic(&opt.heuristic);
+    let algorithm = get_algorithm(&opt.algorithm);
     if opt.size != None {
         let puzzle = Puzzle::new(opt.size.unwrap());
         println!("{}", puzzle);
-        Graph::a_star_greedy(puzzle, heuristic);
+        algorithm(puzzle, heuristic);
     } else if opt.file != None {
         let filename = opt.file.unwrap();
         let puzzle = parser::parse(file_to_vec(filename));
         println!("{}", puzzle);
-        Graph::a_star_greedy(puzzle, heuristic);
+        algorithm(puzzle, heuristic);
     } else {
         panic!("Something went wrong with the parameters !");
     }

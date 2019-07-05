@@ -17,6 +17,15 @@ pub struct Opt {
     )]
     pub heuristic: HeuristicValues,
 
+    #[structopt(
+    short = "a",
+    long = "algorithm",
+    default_value = "greedy",
+    raw(possible_values = "&AlgorithmValues::variants()"),
+    case_insensitive = true
+    )]
+    pub algorithm: AlgorithmValues,
+
     #[structopt(short = "g", long = "generate", conflicts_with = "FILE")]
     pub size: Option<usize>,
 
@@ -31,5 +40,13 @@ arg_enum! {
         Manhattan,
         Linear,
         M2L,
+    }
+}
+
+arg_enum! {
+    #[derive(Debug)]
+    pub enum AlgorithmValues {
+        Greedy,
+        Gluttony,
     }
 }
