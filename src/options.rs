@@ -30,5 +30,6 @@ arg_enum! {
         Hamming,
         Manhattan,
         Linear,
+        M2L,
     }
 }

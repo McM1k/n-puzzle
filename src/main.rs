@@ -36,7 +36,8 @@ pub fn get_heuristic(heuristic_value: &HeuristicValues) -> fn(&Puzzle) -> usize 
     match heuristic_value {
         HeuristicValues::Hamming => heuristic::hamming_distance,
         HeuristicValues::Manhattan => heuristic::manhattan_distance,
-        HeuristicValues::Linear => heuristic::manhattan_linear_conflict_heuristic,
+        HeuristicValues::Linear => heuristic::linear_conflict,
+        HeuristicValues::M2L => heuristic::manhattan_linear_conflict_heuristic,
     }
 }
 
