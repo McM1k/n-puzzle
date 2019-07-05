@@ -70,11 +70,57 @@ impl Puzzle {
         }
     }
 
-    pub fn is_solvable(puzzle: &Vec<Vec<usize>>) -> bool {
+    fn get_data(puzzle: &Vec<Vec<usize>>) -> Vec<usize> {
         let mut data: Vec<usize> = Vec::new();
-        puzzle
-            .iter()
-            .for_each(|line| line.iter().for_each(|value| data.push(*value)));
+        let size = puzzle.len();
+
+        let mut current_index = 1;
+        let mut min_x = 0;
+        let mut min_y = 0;
+        let mut max_x = size - 1;
+        let mut max_y = size - 1;
+
+        loop {
+            for right in min_x..=max_x {
+                data.push(puzzle[min_x][right]);
+                current_index += 1;
+                if current_index >= size * size {
+                    return data;
+                }
+            }
+            min_y += 1;
+            for down in min_y..=max_y {
+                data.push(puzzle[down][max_x]);
+                current_index += 1;
+                if current_index >= size * size {
+                    return data;
+                }
+            }
+            max_x -= 1;
+            for left in (min_x..=max_x).rev() {
+                data.push(puzzle[max_y][left]);
+                current_index += 1;
+                if current_index >= size * size {
+                    return data;
+                }
+            }
+            max_y -= 1;
+            for up in (min_y..=max_y).rev() {
+                data.push(puzzle[up][min_x]);
+                current_index += 1;
+                if current_index >= size * size {
+                    return data;
+                }
+            }
+            min_x += 1;
+        }
+    }
+
+    pub fn is_solvable(puzzle: &Vec<Vec<usize>>) -> bool {
+        let mut data = Puzzle::get_data(puzzle);
+        //puzzle
+        //    .iter()
+        //    .for_each(|line| line.iter().for_each(|value| data.push(*value)));
         let mut sort_count = 0;
 
         for _ in 0..data.len() {
@@ -93,11 +139,9 @@ impl Puzzle {
          *	7  6  5
          */
 
-        if sort_count % 2 == 0 {
-            return false;
-        } else {
-            return true;
-        }
+        println!("{}", sort_count);
+
+        return sort_count % 2 == 0;
     }
 
     pub fn get_final_state(size: usize) -> Vec<Vec<usize>> {
