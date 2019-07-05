@@ -34,10 +34,9 @@ fn file_to_vec(filename: PathBuf) -> Vec<String> {
 
 pub fn get_heuristic(heuristic_value: &HeuristicValues) -> fn(&Puzzle) -> usize {
     match heuristic_value {
-        Hamming => heuristic::hamming_distance,
-        Manhattan => heuristic::manhattan_distance,
-        Linear => heuristic::linear_conflict,
-        _ => panic!("Something went wrong with heuristic !"),
+        HeuristicValues::Hamming => heuristic::hamming_distance,
+        HeuristicValues::Manhattan => heuristic::manhattan_distance,
+        HeuristicValues::Linear => heuristic::manhattan_linear_conflict_heuristic,
     }
 }
 

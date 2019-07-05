@@ -116,7 +116,7 @@ fn check_column_conflict(
             && number_list.contains(&possible_value)
             && possible_value != 0
         {
-            return 2;
+            return 1;
         }
     }
     0
@@ -135,7 +135,7 @@ fn check_row_conflict(
             && number_list.contains(&possible_value)
             && possible_value != 0
         {
-            return 2;
+            return 1;
         }
     }
     0
@@ -194,7 +194,8 @@ pub fn linear_conflict(puzzle: &Puzzle) -> usize {
                         + check_row_conflict(&current_data, &final_data, &value, &y, &number_list);
                 if conflict_value != 0usize {
                     heuristic += conflict_value;
-                    number_list.remove(value);
+                    let index = number_list.iter().position(|x| *x == value).unwrap();
+                    number_list.remove(index);
                 }
             }
         }
@@ -204,7 +205,7 @@ pub fn linear_conflict(puzzle: &Puzzle) -> usize {
 }
 
 pub fn manhattan_linear_conflict_heuristic(puzzle: &Puzzle) -> usize {
-    manhattan_distance(puzzle) + linear_conflict(&puzzle)
+    manhattan_distance(puzzle) + 2 * linear_conflict(&puzzle)
 }
 
 #[cfg(test)]
