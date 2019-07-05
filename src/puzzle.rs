@@ -139,8 +139,6 @@ impl Puzzle {
          *	7  6  5
          */
 
-        println!("{}", sort_count);
-
         return sort_count % 2 == 0;
     }
 
