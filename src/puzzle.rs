@@ -70,7 +70,7 @@ impl Puzzle {
         }
     }
 
-    fn get_data(puzzle: &Vec<Vec<usize>>) -> Vec<usize> {
+    fn get_current_data_sequence(puzzle: &Vec<Vec<usize>>) -> Vec<usize> {
         let mut data: Vec<usize> = Vec::new();
         let size = puzzle.len();
 
@@ -117,10 +117,7 @@ impl Puzzle {
     }
 
     pub fn is_solvable(puzzle: &Vec<Vec<usize>>) -> bool {
-        let mut data = Puzzle::get_data(puzzle);
-        //puzzle
-        //    .iter()
-        //    .for_each(|line| line.iter().for_each(|value| data.push(*value)));
+        let mut data = Puzzle::get_current_data_sequence(puzzle);
         let mut sort_count = 0;
 
         for _ in 0..data.len() {
