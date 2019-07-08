@@ -124,7 +124,7 @@ mod print_result {
         #[test]
         fn print_small_solution() {
             let data1 = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let mut node1 = Node {
+            let node1 = Node {
                 state: Puzzle {
                     data: data1,
                     size: 3,
@@ -136,7 +136,7 @@ mod print_result {
                 right_state: None,
             };
             let data2 = vec![vec![1, 2, 3], vec![8, 4, 0], vec![7, 6, 5]];
-            let mut node2 = Node {
+            let node2 = Node {
                 state: Puzzle {
                     data: data2,
                     size: 3,
@@ -148,7 +148,7 @@ mod print_result {
                 right_state: None,
             };
             let data3 = vec![vec![1, 2, 3], vec![8, 4, 5], vec![7, 6, 0]];
-            let mut node3 = Node {
+            let node3 = Node {
                 state: Puzzle {
                     data: data3,
                     size: 3,

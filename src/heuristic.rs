@@ -8,8 +8,6 @@ fn get_distance(x1: &usize, y1: &usize, x2: &usize, y2: &usize) -> usize {
 }
 
 fn get_correct_point(
-    x1: &usize,
-    y2: &usize,
     data: &(Vec<Vec<usize>>),
     value: &usize,
 ) -> (usize, usize) {
@@ -168,7 +166,7 @@ pub fn manhattan_distance(puzzle: &Puzzle) -> usize {
         for x in 0..current_data.len() {
             if final_data[y][x] != current_data[y][x] && current_data[y][x] != 0 {
                 let value = current_data[y][x];
-                let (x2, y2) = get_correct_point(&x, &y, &final_data, &value);
+                let (x2, y2) = get_correct_point(&final_data, &value);
                 heuristic += get_distance(&x, &y, &x2, &y2);
             }
         }
@@ -400,7 +398,7 @@ mod heuristic_tests {
             let size = 3;
             let data = vec![vec![8, 2, 3], vec![1, 0, 4], vec![7, 6, 5]];
             let puzzle = Puzzle { data, size };
-            let mut number_list: Vec<usize> = (0..(puzzle.size * puzzle.size)).collect();
+            let number_list: Vec<usize> = (0..(puzzle.size * puzzle.size)).collect();
             let value = 1;
             let x = 0;
             let heuristic = check_column_conflict(
@@ -419,7 +417,7 @@ mod heuristic_tests {
             let size = 3;
             let data = vec![vec![2, 8, 3], vec![1, 0, 4], vec![7, 6, 5]];
             let puzzle = Puzzle { data, size };
-            let mut number_list: Vec<usize> = (0..(puzzle.size * puzzle.size)).collect();
+            let number_list: Vec<usize> = (0..(puzzle.size * puzzle.size)).collect();
             let value = 1;
             let x = 0;
             let heuristic = check_column_conflict(
@@ -442,7 +440,7 @@ mod heuristic_tests {
             let size = 3;
             let data = vec![vec![3, 2, 1], vec![8, 0, 4], vec![7, 6, 5]];
             let puzzle = Puzzle { data, size };
-            let mut number_list: Vec<usize> = (0..(puzzle.size * puzzle.size)).collect();
+            let number_list: Vec<usize> = (0..(puzzle.size * puzzle.size)).collect();
             let value = 1;
             let y = 0;
             let heuristic = check_row_conflict(
@@ -461,7 +459,7 @@ mod heuristic_tests {
             let size = 3;
             let data = vec![vec![8, 1, 3], vec![2, 0, 4], vec![7, 6, 5]];
             let puzzle = Puzzle { data, size };
-            let mut number_list: Vec<usize> = (0..(puzzle.size * puzzle.size)).collect();
+            let number_list: Vec<usize> = (0..(puzzle.size * puzzle.size)).collect();
             let value = 1;
             let y = 0;
             let heuristic = check_row_conflict(
@@ -491,7 +489,6 @@ mod heuristic_tests {
 
     mod get_possible_values_in_row {
         use super::super::*;
-        use std::fs::copy;
 
         #[test]
         fn row_distance_of_one_with_incremental_range() {
@@ -551,7 +548,6 @@ mod heuristic_tests {
 
     mod get_possible_values_in_column {
         use super::super::*;
-        use std::fs::copy;
 
         #[test]
         fn column_distance_of_one_with_incremental_range() {

@@ -1,7 +1,5 @@
-use crate::node::Direction;
 use crate::node::Node;
 use crate::puzzle::Puzzle;
-use std::thread::sleep;
 
 #[derive(Clone)]
 pub struct Graph {

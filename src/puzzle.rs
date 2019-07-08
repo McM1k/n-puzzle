@@ -13,9 +13,9 @@ impl fmt::Display for Puzzle {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         for line_data in self.data.iter() {
             for value in line_data.iter() {
-                write!(f, "{:<4}", value);
+                write!(f, "{:<4}", value)?;
             }
-            write!(f, "\n");
+            write!(f, "\n")?;
         }
         Ok(())
     }
@@ -191,10 +191,8 @@ mod puzzle_tests {
         #[test]
         fn size_three() {
             let size = 3;
-            let data = vec![vec![0usize; size]; size];
-            let puzzle = Puzzle { data, size };
             let expected_final_state_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let result_data = Puzzle::get_final_state(3);
+            let result_data = Puzzle::get_final_state(size);
 
             assert_eq!(result_data, expected_final_state_data);
         }
@@ -207,8 +205,6 @@ mod puzzle_tests {
         #[test]
         fn size_five() {
             let size = 5;
-            let data = vec![vec![0usize; size]; size];
-            let puzzle = Puzzle { data, size };
             let expected_final_state_data = vec![
                 vec![1, 2, 3, 4, 5],
                 vec![16, 17, 18, 19, 6],
@@ -216,7 +212,7 @@ mod puzzle_tests {
                 vec![14, 23, 22, 21, 8],
                 vec![13, 12, 11, 10, 9],
             ];
-            let result_data = Puzzle::get_final_state(5);
+            let result_data = Puzzle::get_final_state(size);
 
             assert_eq!(result_data, expected_final_state_data);
         }
@@ -231,8 +227,6 @@ mod puzzle_tests {
         #[test]
         fn size_ten() {
             let size = 10;
-            let data = vec![vec![0usize; size]; size];
-            let puzzle = Puzzle { data, size };
             let expected_final_state_data = vec![
                 vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                 vec![36, 37, 38, 39, 40, 41, 42, 43, 44, 11],
@@ -245,7 +239,7 @@ mod puzzle_tests {
                 vec![29, 58, 57, 56, 55, 54, 53, 52, 51, 18],
                 vec![28, 27, 26, 25, 24, 23, 22, 21, 20, 19],
             ];
-            let result_data = Puzzle::get_final_state(10);
+            let result_data = Puzzle::get_final_state(size);
 
             assert_eq!(result_data, expected_final_state_data);
         }
