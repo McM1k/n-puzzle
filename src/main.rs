@@ -13,8 +13,8 @@ mod print_result;
 mod puzzle;
 
 use crate::graph::Graph;
-use crate::options::HeuristicValues;
 use crate::options::AlgorithmValues;
+use crate::options::HeuristicValues;
 use options::Opt;
 use puzzle::Puzzle;
 

@@ -18,11 +18,11 @@ pub struct Opt {
     pub heuristic: HeuristicValues,
 
     #[structopt(
-    short = "a",
-    long = "algorithm",
-    default_value = "greedy",
-    raw(possible_values = "&AlgorithmValues::variants()"),
-    case_insensitive = true
+        short = "a",
+        long = "algorithm",
+        default_value = "greedy",
+        raw(possible_values = "&AlgorithmValues::variants()"),
+        case_insensitive = true
     )]
     pub algorithm: AlgorithmValues,
 

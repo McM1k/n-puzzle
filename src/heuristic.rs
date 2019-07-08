@@ -7,10 +7,7 @@ fn get_distance(x1: &usize, y1: &usize, x2: &usize, y2: &usize) -> usize {
     x as usize + y as usize
 }
 
-fn get_correct_point(
-    data: &(Vec<Vec<usize>>),
-    value: &usize,
-) -> (usize, usize) {
+fn get_correct_point(data: &(Vec<Vec<usize>>), value: &usize) -> (usize, usize) {
     let x2 = 0;
     let y2 = 0;
 
