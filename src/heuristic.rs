@@ -1,19 +1,19 @@
 use crate::puzzle::Puzzle;
 
-fn get_distance(x1: &usize, y1: &usize, x2: &usize, y2: &usize) -> usize {
-    let x = (*x1 as i32 - *x2 as i32).abs();
-    let y = (*y1 as i32 - *y2 as i32).abs();
+fn get_distance(x1: usize, y1: usize, x2: usize, y2: usize) -> usize {
+    let x = (x1 as i32 - x2 as i32).abs();
+    let y = (y1 as i32 - y2 as i32).abs();
 
     x as usize + y as usize
 }
 
-fn get_correct_point(data: &(Vec<Vec<usize>>), value: &usize) -> (usize, usize) {
+fn get_correct_point(data: &(Vec<Vec<usize>>), value: usize) -> (usize, usize) {
     let x2 = 0;
     let y2 = 0;
 
     for y2 in 0..data.len() {
         for x2 in 0..data.len() {
-            if data[y2][x2] == *value {
+            if data[y2][x2] == value {
                 return (x2, y2);
             }
         }
@@ -22,10 +22,10 @@ fn get_correct_point(data: &(Vec<Vec<usize>>), value: &usize) -> (usize, usize) 
     (x2, y2)
 }
 
-fn get_value_position(data: &Vec<Vec<usize>>, value: &usize) -> (usize, usize) {
+fn get_value_position(data: &[Vec<usize>], value: usize) -> (usize, usize) {
     for y in 0..data.len() {
         for x in 0..data.len() {
-            if data[y][x] == *value {
+            if data[y][x] == value {
                 return (x, y);
             }
         }
@@ -35,10 +35,10 @@ fn get_value_position(data: &Vec<Vec<usize>>, value: &usize) -> (usize, usize) {
 }
 
 fn get_possible_values_in_row(
-    data: &Vec<Vec<usize>>,
-    final_data: &Vec<Vec<usize>>,
-    value: &usize,
-    y: &usize,
+    data: &[Vec<usize>],
+    final_data: &[Vec<usize>],
+    value: usize,
+    y: usize,
 ) -> Vec<usize> {
     let mut values = vec![];
 
@@ -46,11 +46,11 @@ fn get_possible_values_in_row(
     let (current_x, _) = get_value_position(data, value);
     if final_x < current_x {
         for x in (final_x..current_x).rev() {
-            values.push(data[*y][x]);
+            values.push(data[y][x]);
         }
     } else {
         for x in (current_x + 1)..=final_x {
-            values.push(data[*y][x]);
+            values.push(data[y][x]);
         }
     }
 
@@ -58,10 +58,10 @@ fn get_possible_values_in_row(
 }
 
 fn get_possible_values_in_column(
-    data: &Vec<Vec<usize>>,
-    final_data: &Vec<Vec<usize>>,
-    value: &usize,
-    x: &usize,
+    data: &[Vec<usize>],
+    final_data: &[Vec<usize>],
+    value: usize,
+    x: usize,
 ) -> Vec<usize> {
     let mut values = vec![];
 
@@ -69,29 +69,29 @@ fn get_possible_values_in_column(
     let (_, current_y) = get_value_position(data, value);
     if final_y < current_y {
         for y in (final_y..current_y).rev() {
-            values.push(data[y][*x]);
+            values.push(data[y][x]);
         }
     } else {
         for y in (current_y + 1)..=final_y {
-            values.push(data[y][*x]);
+            values.push(data[y][x]);
         }
     }
 
     values
 }
 
-fn check_in_correct_column(final_data: &Vec<Vec<usize>>, value: &usize, x: &usize) -> bool {
+fn check_in_correct_column(final_data: &[Vec<usize>], value: usize, x: usize) -> bool {
     for y in 0..final_data.len() {
-        if final_data[y][*x] == *value {
+        if final_data[y][x] == value {
             return true;
         }
     }
     false
 }
 
-fn check_in_correct_row(final_data: &Vec<Vec<usize>>, value: &usize, y: &usize) -> bool {
+fn check_in_correct_row(final_data: &[Vec<usize>], value: usize, y: usize) -> bool {
     for x in 0..final_data.len() {
-        if final_data[*y][x] == *value {
+        if final_data[y][x] == value {
             return true;
         }
     }
@@ -99,15 +99,15 @@ fn check_in_correct_row(final_data: &Vec<Vec<usize>>, value: &usize, y: &usize) 
 }
 
 fn check_column_conflict(
-    current_data: &Vec<Vec<usize>>,
-    final_data: &Vec<Vec<usize>>,
-    value: &usize,
-    x: &usize,
-    number_list: &Vec<usize>,
+    current_data: &[Vec<usize>],
+    final_data: &[Vec<usize>],
+    value: usize,
+    x: usize,
+    number_list: &[usize],
 ) -> usize {
     let possible_values = get_possible_values_in_column(current_data, final_data, value, x);
     for possible_value in possible_values {
-        if check_in_correct_column(&final_data, &possible_value, x)
+        if check_in_correct_column(&final_data, possible_value, x)
             && number_list.contains(&possible_value)
             && possible_value != 0
         {
@@ -118,15 +118,15 @@ fn check_column_conflict(
 }
 
 fn check_row_conflict(
-    current_data: &Vec<Vec<usize>>,
-    final_data: &Vec<Vec<usize>>,
-    value: &usize,
-    y: &usize,
-    number_list: &Vec<usize>,
+    current_data: &[Vec<usize>],
+    final_data: &[Vec<usize>],
+    value: usize,
+    y: usize,
+    number_list: &[usize],
 ) -> usize {
     let possible_values = get_possible_values_in_row(current_data, final_data, value, y);
     for possible_value in possible_values {
-        if check_in_correct_row(&final_data, &possible_value, y)
+        if check_in_correct_row(&final_data, possible_value, y)
             && number_list.contains(&possible_value)
             && possible_value != 0
         {
@@ -163,8 +163,8 @@ pub fn manhattan_distance(puzzle: &Puzzle) -> usize {
         for x in 0..current_data.len() {
             if final_data[y][x] != current_data[y][x] && current_data[y][x] != 0 {
                 let value = current_data[y][x];
-                let (x2, y2) = get_correct_point(&final_data, &value);
-                heuristic += get_distance(&x, &y, &x2, &y2);
+                let (x2, y2) = get_correct_point(&final_data, value);
+                heuristic += get_distance(x, y, x2, y2);
             }
         }
     }
@@ -185,8 +185,8 @@ pub fn linear_conflict(puzzle: &Puzzle) -> usize {
             if final_data[y][x] != current_data[y][x] && current_data[y][x] != 0 {
                 let value = current_data[y][x];
                 let conflict_value =
-                    check_column_conflict(&current_data, &final_data, &value, &x, &number_list)
-                        + check_row_conflict(&current_data, &final_data, &value, &y, &number_list);
+                    check_column_conflict(&current_data, &final_data, value, x, &number_list)
+                        + check_row_conflict(&current_data, &final_data, value, y, &number_list);
                 if conflict_value != 0usize {
                     heuristic += conflict_value;
                     let index = number_list.iter().position(|x| *x == value).unwrap();
@@ -338,7 +338,7 @@ mod heuristic_tests {
             let x = 0;
             let value = 1;
             let in_correct_column =
-                check_in_correct_column(&Puzzle::get_final_state(puzzle.size), &value, &x);
+                check_in_correct_column(&Puzzle::get_final_state(puzzle.size), value, x);
 
             assert!(in_correct_column);
         }
@@ -351,7 +351,7 @@ mod heuristic_tests {
             let x = 1;
             let value = 1;
             let in_correct_column =
-                check_in_correct_column(&Puzzle::get_final_state(puzzle.size), &value, &x);
+                check_in_correct_column(&Puzzle::get_final_state(puzzle.size), value, x);
 
             assert!(!in_correct_column);
         }
@@ -368,7 +368,7 @@ mod heuristic_tests {
             let y = 0;
             let value = 1;
             let in_correct_column =
-                check_in_correct_row(&Puzzle::get_final_state(puzzle.size), &value, &y);
+                check_in_correct_row(&Puzzle::get_final_state(puzzle.size), value, y);
 
             assert!(in_correct_column);
         }
@@ -381,7 +381,7 @@ mod heuristic_tests {
             let y = 1;
             let value = 1;
             let in_correct_column =
-                check_in_correct_row(&Puzzle::get_final_state(puzzle.size), &value, &y);
+                check_in_correct_row(&Puzzle::get_final_state(puzzle.size), value, y);
 
             assert!(!in_correct_column);
         }
@@ -401,8 +401,8 @@ mod heuristic_tests {
             let heuristic = check_column_conflict(
                 &puzzle.data,
                 &Puzzle::get_final_state(puzzle.size),
-                &value,
-                &x,
+                value,
+                x,
                 &number_list,
             );
 
@@ -420,8 +420,8 @@ mod heuristic_tests {
             let heuristic = check_column_conflict(
                 &puzzle.data,
                 &Puzzle::get_final_state(puzzle.size),
-                &value,
-                &x,
+                value,
+                x,
                 &number_list,
             );
 
@@ -443,8 +443,8 @@ mod heuristic_tests {
             let heuristic = check_row_conflict(
                 &puzzle.data,
                 &Puzzle::get_final_state(puzzle.size),
-                &value,
-                &y,
+                value,
+                y,
                 &number_list,
             );
 
@@ -462,8 +462,8 @@ mod heuristic_tests {
             let heuristic = check_row_conflict(
                 &puzzle.data,
                 &Puzzle::get_final_state(puzzle.size),
-                &value,
-                &y,
+                value,
+                y,
                 &number_list,
             );
 
@@ -478,7 +478,7 @@ mod heuristic_tests {
         fn is_working() {
             let data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
             let value = 3;
-            let position = get_value_position(&data, &value);
+            let position = get_value_position(&data, value);
 
             assert_eq!(position, (2, 0));
         }
@@ -492,7 +492,7 @@ mod heuristic_tests {
             let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
             let data = vec![vec![2, 1, 3], vec![8, 0, 4], vec![7, 6, 5]];
             let value = 1;
-            let possible_values = get_possible_values_in_row(&data, &final_data, &value, &0);
+            let possible_values = get_possible_values_in_row(&data, &final_data, value, 0);
             let wanted_values = vec![2];
 
             assert_eq!(possible_values, wanted_values);
@@ -503,7 +503,7 @@ mod heuristic_tests {
             let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
             let data = vec![vec![1, 3, 2], vec![8, 0, 4], vec![7, 6, 5]];
             let value = 3;
-            let possible_values = get_possible_values_in_row(&data, &final_data, &value, &0);
+            let possible_values = get_possible_values_in_row(&data, &final_data, value, 0);
             let wanted_values = vec![2];
 
             assert_eq!(possible_values, wanted_values);
@@ -514,7 +514,7 @@ mod heuristic_tests {
             let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
             let data = vec![vec![2, 3, 1], vec![8, 0, 4], vec![7, 6, 5]];
             let value = 1;
-            let possible_values = get_possible_values_in_row(&data, &final_data, &value, &0);
+            let possible_values = get_possible_values_in_row(&data, &final_data, value, 0);
             let wanted_values = vec![3, 2];
 
             assert_eq!(possible_values, wanted_values);
@@ -525,7 +525,7 @@ mod heuristic_tests {
             let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
             let data = vec![vec![3, 1, 2], vec![8, 0, 4], vec![7, 6, 5]];
             let value = 3;
-            let possible_values = get_possible_values_in_row(&data, &final_data, &value, &0);
+            let possible_values = get_possible_values_in_row(&data, &final_data, value, 0);
             let wanted_values = vec![1, 2];
 
             assert_eq!(possible_values, wanted_values);
@@ -536,7 +536,7 @@ mod heuristic_tests {
             let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
             let data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
             let value = 1;
-            let possible_values = get_possible_values_in_row(&data, &final_data, &value, &0);
+            let possible_values = get_possible_values_in_row(&data, &final_data, value, 0);
             let wanted_values = vec![];
 
             assert_eq!(possible_values, wanted_values);
@@ -551,7 +551,7 @@ mod heuristic_tests {
             let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
             let data = vec![vec![8, 2, 3], vec![1, 0, 4], vec![7, 6, 5]];
             let value = 1;
-            let possible_values = get_possible_values_in_column(&data, &final_data, &value, &0);
+            let possible_values = get_possible_values_in_column(&data, &final_data, value, 0);
             let wanted_values = vec![8];
 
             assert_eq!(possible_values, wanted_values);
@@ -562,7 +562,7 @@ mod heuristic_tests {
             let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
             let data = vec![vec![1, 2, 3], vec![7, 0, 4], vec![8, 6, 5]];
             let value = 7;
-            let possible_values = get_possible_values_in_column(&data, &final_data, &value, &0);
+            let possible_values = get_possible_values_in_column(&data, &final_data, value, 0);
             let wanted_values = vec![8];
 
             assert_eq!(possible_values, wanted_values);
@@ -573,7 +573,7 @@ mod heuristic_tests {
             let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
             let data = vec![vec![8, 2, 3], vec![7, 0, 4], vec![1, 6, 5]];
             let value = 1;
-            let possible_values = get_possible_values_in_column(&data, &final_data, &value, &0);
+            let possible_values = get_possible_values_in_column(&data, &final_data, value, 0);
             let wanted_values = vec![7, 8];
 
             assert_eq!(possible_values, wanted_values);
@@ -584,7 +584,7 @@ mod heuristic_tests {
             let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
             let data = vec![vec![7, 2, 3], vec![1, 0, 4], vec![8, 6, 5]];
             let value = 7;
-            let possible_values = get_possible_values_in_column(&data, &final_data, &value, &0);
+            let possible_values = get_possible_values_in_column(&data, &final_data, value, 0);
             let wanted_values = vec![1, 8];
 
             assert_eq!(possible_values, wanted_values);
@@ -595,7 +595,7 @@ mod heuristic_tests {
             let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
             let data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
             let value = 1;
-            let possible_values = get_possible_values_in_column(&data, &final_data, &value, &0);
+            let possible_values = get_possible_values_in_column(&data, &final_data, value, 0);
             let wanted_values = vec![];
 
             assert_eq!(possible_values, wanted_values);

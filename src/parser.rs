@@ -15,7 +15,7 @@ pub fn remove_comments(mut lines: Vec<String>) -> Vec<String> {
     lines
 }
 
-pub fn check_empty_lines(lines: &Vec<String>) {
+pub fn check_empty_lines(lines: &[String]) {
     lines.iter().for_each(|line| {
         if line.is_empty() {
             panic!("There is an empty line in the file\n")
@@ -23,13 +23,13 @@ pub fn check_empty_lines(lines: &Vec<String>) {
     })
 }
 
-pub fn check_empty_vec(lines: &Vec<String>) {
+pub fn check_empty_vec(lines: &[String]) {
     if lines.is_empty() {
         panic!("No data.\n")
     }
 }
 
-pub fn check_only_numbers_and_spaces(lines: &Vec<String>) {
+pub fn check_only_numbers_and_spaces(lines: &[String]) {
     lines.iter()
 		 .for_each(|line| {
 		 	if !line.chars().all(|c| c.is_digit(10) || c.is_whitespace()) {
@@ -38,7 +38,7 @@ pub fn check_only_numbers_and_spaces(lines: &Vec<String>) {
 		 })
 }
 
-pub fn check_values_are_incremental(size: &usize, data: &Vec<Vec<usize>>) {
+pub fn check_values_are_incremental(size: usize, data: &[Vec<usize>]) {
     let mut all_the_values: Vec<usize> = (0..(size * size)).collect();
 
     data.iter().for_each(|one_line_data| {
@@ -57,16 +57,16 @@ pub fn check_values_are_incremental(size: &usize, data: &Vec<Vec<usize>>) {
     }
 }
 
-pub fn check_values_form_correct_square(size: &usize, data: &Vec<Vec<usize>>) {
-    if *size < 3 {
+pub fn check_values_form_correct_square(size: usize, data: &[Vec<usize>]) {
+    if size < 3 {
         panic!("Square too little, must be at least 3 of size !\n")
     }
-    if data.clone().iter().count() != *size {
+    if data.len() != size {
         panic!("Wrong number of lines !\n")
     }
 
     data.iter().for_each(|one_line_data| {
-        if one_line_data.clone().iter().count() != *size {
+        if one_line_data.clone().iter().count() != size {
             panic!("Too few columns in a line !\n")
         }
     });
@@ -78,9 +78,8 @@ pub fn get_data(lines: Vec<String>) -> (usize, Vec<Vec<usize>>) {
     if size_line.len() != 1 {
         panic!("first line should only contain one value\n");
     }
-    let size = size_line.get(0).unwrap();
 
-    (*size, raw_data)
+    (size_line[0], raw_data)
 }
 
 pub fn get_raw_data(lines: Vec<String>) -> Vec<Vec<usize>> {
@@ -89,7 +88,6 @@ pub fn get_raw_data(lines: Vec<String>) -> Vec<Vec<usize>> {
         .iter()
         .map(|line| -> Vec<usize> {
             line.split_whitespace()
-                .into_iter()
                 .map(|token| -> usize {
                     token
                         .parse::<usize>()
@@ -106,8 +104,8 @@ pub fn parse(mut lines: Vec<String>) -> Puzzle {
     check_empty_vec(&lines);
     check_only_numbers_and_spaces(&lines);
     let (size, data) = get_data(lines);
-    check_values_are_incremental(&size, &data);
-    check_values_form_correct_square(&size, &data);
+    check_values_are_incremental(size, &data);
+    check_values_form_correct_square(size, &data);
 
     Puzzle::new_from_file(data, size)
 }
@@ -182,7 +180,7 @@ mod parser_tests {
         fn panic_because_value_out_of_scope() {
             let size: usize = 2;
             let tab = vec![vec![0, 1], vec![2, 5]];
-            check_values_are_incremental(&size, &tab);
+            check_values_are_incremental(size, &tab);
         }
 
         #[test]
@@ -190,7 +188,7 @@ mod parser_tests {
         fn panic_because_two_time_same_value() {
             let size: usize = 2;
             let tab = vec![vec![0, 1], vec![2, 2]];
-            check_values_are_incremental(&size, &tab);
+            check_values_are_incremental(size, &tab);
         }
 
         #[test]
@@ -198,14 +196,14 @@ mod parser_tests {
         fn panic_because_too_few_values() {
             let size: usize = 2;
             let tab = vec![vec![0, 1], vec![2]];
-            check_values_are_incremental(&size, &tab);
+            check_values_are_incremental(size, &tab);
         }
 
         #[test]
         fn no_panic() {
             let size: usize = 2;
             let tab = vec![vec![0, 1], vec![2, 3]];
-            check_values_are_incremental(&size, &tab);
+            check_values_are_incremental(size, &tab);
         }
     }
 
@@ -217,7 +215,7 @@ mod parser_tests {
         fn panic_because_too_few_values_in_one_line() {
             let size: usize = 3;
             let tab = vec![vec![0, 1, 2], vec![3, 5], vec![6, 7, 8]];
-            check_values_form_correct_square(&size, &tab);
+            check_values_form_correct_square(size, &tab);
         }
 
         #[test]
@@ -225,7 +223,7 @@ mod parser_tests {
         fn panic_because_too_much_values_in_one_line() {
             let size: usize = 3;
             let tab = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 7, 8, 9]];
-            check_values_form_correct_square(&size, &tab);
+            check_values_form_correct_square(size, &tab);
         }
 
         #[test]
@@ -233,7 +231,7 @@ mod parser_tests {
         fn panic_because_wrong_number_of_lines() {
             let size: usize = 3;
             let tab = vec![vec![0, 1, 2], vec![3, 4, 5]];
-            check_values_form_correct_square(&size, &tab);
+            check_values_form_correct_square(size, &tab);
         }
 
         #[test]
@@ -241,14 +239,14 @@ mod parser_tests {
         fn panic_because_square_is_too_little() {
             let size: usize = 2;
             let tab = vec![vec![0, 1], vec![2, 3]];
-            check_values_form_correct_square(&size, &tab);
+            check_values_form_correct_square(size, &tab);
         }
 
         #[test]
         fn no_panic() {
             let size: usize = 3;
             let tab = vec![vec![0, 1, 4], vec![2, 3, 5], vec![8, 7, 6]];
-            check_values_form_correct_square(&size, &tab);
+            check_values_form_correct_square(size, &tab);
         }
     }
 
