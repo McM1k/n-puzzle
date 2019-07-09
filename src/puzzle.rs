@@ -39,9 +39,7 @@ impl Puzzle {
         data.iter_mut().for_each(|one_line_data| {
             one_line_data.iter_mut().for_each(|value| {
                 while {
-                    *value = *(all_the_values
-                        .get(rand::thread_rng().gen_range(0, all_the_values.clone().iter().count()))
-                        .unwrap());
+                    *value = all_the_values[rand::thread_rng().gen_range(0, all_the_values.clone().iter().count())];
                     !all_the_values.contains(value)
                 } {}
                 all_the_values.remove(
@@ -89,8 +87,8 @@ impl Puzzle {
                 }
             }
             min_y += 1;
-            for down in min_y..=max_y {
-                data.push(puzzle[down][max_x]);
+            for down in puzzle.iter().take(max_y + 1).skip(min_y) {
+                data.push(down[max_x]);
                 current_index += 1;
                 if current_index >= size * size {
                     return data;
@@ -154,8 +152,8 @@ impl Puzzle {
                 current_number += 1;
             }
             min_y += 1;
-            for down in min_y..=max_y {
-                data[down][max_x] = current_number;
+            for down in data.iter_mut().take(max_y + 1).skip(min_y) {
+                down[max_x] = current_number;
                 current_number += 1;
             }
             max_x -= 1;
