@@ -66,7 +66,7 @@ impl Graph {
         let mut graph = Graph {
             open_list: vec![],
             closed_list: vec![],
-            start_node: Node::new_starting_node(state),
+            start_node: Node::new_starting_node(state, heuristic),
             heuristic,
             max_states: 1,
         };
@@ -86,7 +86,7 @@ impl Graph {
             return true;
         }
         //println!("{}, score : {}",curr_node.clone(), curr_node.clone().distance + (self.clone().heuristic)(&(curr_node.clone().state)));
-        let mut next_nodes = Node::next_nodes_to_vec(curr_node);
+        let mut next_nodes = Node::next_nodes_to_vec(curr_node, self.heuristic);
         next_nodes.sort_by(|a, b| {
             (b.distance + (self.heuristic)(&(b.state)))
                 .partial_cmp(&(a.distance + (self.heuristic)(&(a.state))))
@@ -115,7 +115,7 @@ impl Graph {
         let mut graph = Graph {
             open_list: vec![],
             closed_list: vec![],
-            start_node: Node::new_starting_node(state),
+            start_node: Node::new_starting_node(state, heuristic),
             heuristic,
             max_states: 1,
         };
@@ -137,7 +137,7 @@ impl Graph {
                 return;
             }
             graph.add_to_closed_list(curr_node.clone());
-            curr_node = Node::calculate_next_nodes(curr_node);
+            curr_node = Node::calculate_next_nodes(curr_node, heuristic);
             graph.add_in_sorted_open_list(curr_node.left_state.clone());
             graph.add_in_sorted_open_list(curr_node.upper_state.clone());
             graph.add_in_sorted_open_list(curr_node.lower_state.clone());
