@@ -122,7 +122,7 @@ impl Graph {
         graph.add_to_open_list(graph.start_node.clone());
 
         let mut curr_node;
-        while !graph.clone().open_list.is_empty() {
+        while !graph.open_list.is_empty() {
             curr_node = graph.open_list.pop().unwrap();
             println!(
                 "{}, score : {}",
@@ -162,30 +162,24 @@ mod graph_tests {
 
         }
     }
-
+*/
     mod add_in_sorted_open_list {
         use crate::graph::*;
         use crate::node::*;
         use crate::puzzle::*;
-        use std::ptr::null;
+        use crate::heuristic;
 
         #[test]
         fn dont_add_if_unnecessary() {
             let mut graph = Graph {
                 open_list: vec![],
                 closed_list: vec![],
-                start_node: Node {
-                    state: Puzzle {
-                        data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
-                        size: 3,
-                    },
-                    distance: 1,
-                    upper_state: None,
-                    lower_state: None,
-                    left_state: None,
-                    right_state: None,
-                },
-                heuristic: null(),
+                start_node: Node::new_starting_node(Puzzle {
+                    data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
+                    size: 3,
+                },),
+                heuristic: heuristic::manhattan_linear_conflict_heuristic,
+                max_states: 1,
             };
 
             let node1 = Node {
@@ -223,26 +217,20 @@ mod graph_tests {
             let mut graph = Graph {
                 open_list: vec![],
                 closed_list: vec![],
-                start_node: Node {
-                    state: Puzzle {
-                        data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
-                        size: 3,
-                    },
-                    distance: 1,
-                    upper_state: None,
-                    lower_state: None,
-                    left_state: None,
-                    right_state: None,
-                },
-                heuristic: null(),
+                start_node: Node::new_starting_node(Puzzle {
+                    data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
+                    size: 3,
+                },),
+                heuristic: heuristic::manhattan_distance,
+                max_states: 1,
             };
 
             let node1 = Node {
                 state: Puzzle {
-                    data: vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]],
+                    data: vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]],
                     size: 3,
                 },
-                distance: 2,
+                distance: 1,
                 upper_state: None,
                 lower_state: None,
                 left_state: None,
@@ -251,7 +239,7 @@ mod graph_tests {
 
             let node2 = Node {
                 state: Puzzle {
-                    data: vec![vec![0, 2, 1], vec![3, 4, 5], vec![6, 8, 7]],
+                    data: vec![vec![1, 2, 3], vec![8, 4, 5], vec![7, 6, 0]],
                     size: 3,
                 },
                 distance: 3,
@@ -263,21 +251,24 @@ mod graph_tests {
 
             let node3 = Node {
                 state: Puzzle {
-                    data: vec![vec![0, 2, 5], vec![3, 4, 1], vec![6, 8, 7]],
+                    data: vec![vec![1, 2, 3], vec![8, 4, 0], vec![7, 6, 5]],
                     size: 3,
                 },
-                distance: 1,
+                distance: 2,
                 upper_state: None,
                 lower_state: None,
                 left_state: None,
                 right_state: None,
             };
 
-            graph.add_in_sorted_open_list(Some(Box::new(node1)));
-            graph.add_in_sorted_open_list(Some(Box::new(node2)));
-            graph.add_in_sorted_open_list(Some(Box::new(node3)));
+            graph.add_in_sorted_open_list(Some(Box::new(node1.clone())));
+            graph.add_in_sorted_open_list(Some(Box::new(node2.clone())));
+            graph.add_in_sorted_open_list(Some(Box::new(node3.clone())));
 
-            assert!(graph.open_list.is_sorted());
+            assert_eq!(graph.open_list.len(), 3);
+            assert_eq!(graph.open_list[0], node2);
+            assert_eq!(graph.open_list[1], node3);
+            assert_eq!(graph.open_list[2], node1);
         }
-    }*/
+    }
 }
