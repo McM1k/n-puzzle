@@ -150,24 +150,24 @@ impl Graph {
 #[cfg(test)]
 mod graph_tests {
     /*
-    mod is_lower_cost {
+        mod is_lower_cost {
 
-        #[test]
-        fn lower_cost() {
+            #[test]
+            fn lower_cost() {
 
+            }
+
+            #[test]
+            fn not_lower_cost() {
+
+            }
         }
-
-        #[test]
-        fn not_lower_cost() {
-
-        }
-    }
-*/
+    */
     mod add_in_sorted_open_list {
         use crate::graph::*;
+        use crate::heuristic;
         use crate::node::*;
         use crate::puzzle::*;
-        use crate::heuristic;
 
         #[test]
         fn dont_add_if_unnecessary() {
@@ -177,7 +177,7 @@ mod graph_tests {
                 start_node: Node::new_starting_node(Puzzle {
                     data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
                     size: 3,
-                },),
+                }),
                 heuristic: heuristic::manhattan_linear_conflict_heuristic,
                 max_states: 1,
             };
@@ -220,7 +220,7 @@ mod graph_tests {
                 start_node: Node::new_starting_node(Puzzle {
                     data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
                     size: 3,
-                },),
+                }),
                 heuristic: heuristic::manhattan_distance,
                 max_states: 1,
             };
