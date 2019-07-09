@@ -39,7 +39,8 @@ impl Puzzle {
         data.iter_mut().for_each(|one_line_data| {
             one_line_data.iter_mut().for_each(|value| {
                 while {
-                    *value = all_the_values[rand::thread_rng().gen_range(0, all_the_values.clone().iter().count())];
+                    *value = all_the_values
+                        [rand::thread_rng().gen_range(0, all_the_values.clone().iter().count())];
                     !all_the_values.contains(value)
                 } {}
                 all_the_values.remove(

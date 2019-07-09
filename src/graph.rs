@@ -27,7 +27,8 @@ impl Graph {
         if self
             .open_list
             .iter()
-            .any(|n| n == node && n.distance < node.distance) {
+            .any(|n| n == node && n.distance < node.distance)
+        {
             return false;
         }
         true
