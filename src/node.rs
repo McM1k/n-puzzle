@@ -42,14 +42,14 @@ impl Clone for Node {
 
 impl fmt::Debug for Node {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{0:?}, {1}\n", self.state, self.distance)
+        writeln!(f, "{0:?}, {1}", self.state, self.distance)
     }
 }
 
 impl fmt::Display for Node {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}\n", self.state)?;
-        write!(f, "{} nodes away from the start position\n", self.distance)?;
+        writeln!(f, "{}", self.state)?;
+        writeln!(f, "{} nodes away from the start position", self.distance)?;
         Ok(())
     }
 }
@@ -246,7 +246,7 @@ impl Node {
         Node {
             state: Puzzle {
                 data: Puzzle::get_final_state(size),
-                size: size,
+                size,
             },
             distance: 0,
             upper_state: None,

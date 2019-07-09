@@ -27,11 +27,10 @@ impl Graph {
         if self
             .open_list
             .iter()
-            .any(|n| n == node && n.distance < node.distance)
-        {
+            .any(|n| n == node && n.distance < node.distance) {
             return false;
         }
-        return true;
+        true
     }
 
     fn add_in_sorted_open_list(&mut self, opt: Option<Box<Node>>) {

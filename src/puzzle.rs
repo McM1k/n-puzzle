@@ -15,7 +15,7 @@ impl fmt::Display for Puzzle {
             for value in line_data.iter() {
                 write!(f, "{:<4}", value)?;
             }
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
         Ok(())
     }
@@ -53,8 +53,7 @@ impl Puzzle {
         });
 
         if Puzzle::is_solvable(&data) {
-            let puzzle = Puzzle { data, size };
-            puzzle
+            Puzzle { data, size }
         } else {
             Puzzle::new(size)
         }
@@ -134,7 +133,7 @@ impl Puzzle {
          *	7  6  5
          */
 
-        return sort_count % 2 == 0;
+        sort_count % 2 == 0
     }
 
     pub fn get_final_state(size: usize) -> Vec<Vec<usize>> {

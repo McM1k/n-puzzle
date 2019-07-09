@@ -19,9 +19,7 @@ use options::Opt;
 use puzzle::Puzzle;
 
 fn open_file(filename: PathBuf) -> File {
-    let file = File::open(filename).expect("Could not open file");
-
-    file
+    File::open(filename).expect("Could not open file")
 }
 
 fn file_to_vec(filename: PathBuf) -> Vec<String> {
