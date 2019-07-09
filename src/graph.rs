@@ -177,7 +177,7 @@ mod graph_tests {
                 start_node: Node::new_starting_node(Puzzle {
                     data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
                     size: 3,
-                }),
+                }, heuristic::manhattan_distance),
                 heuristic: heuristic::manhattan_linear_conflict_heuristic,
                 max_states: 1,
             };
@@ -187,6 +187,7 @@ mod graph_tests {
                     data: vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]],
                     size: 3,
                 },
+                f_score: 1,
                 distance: 2,
                 upper_state: None,
                 lower_state: None,
@@ -199,6 +200,7 @@ mod graph_tests {
                     data: vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]],
                     size: 3,
                 },
+                f_score: 1,
                 distance: 3,
                 upper_state: None,
                 lower_state: None,
@@ -220,7 +222,7 @@ mod graph_tests {
                 start_node: Node::new_starting_node(Puzzle {
                     data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
                     size: 3,
-                }),
+                }, heuristic::manhattan_distance),
                 heuristic: heuristic::manhattan_distance,
                 max_states: 1,
             };
@@ -230,6 +232,7 @@ mod graph_tests {
                     data: vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]],
                     size: 3,
                 },
+                f_score: 1,
                 distance: 1,
                 upper_state: None,
                 lower_state: None,
@@ -242,6 +245,7 @@ mod graph_tests {
                     data: vec![vec![1, 2, 3], vec![8, 4, 5], vec![7, 6, 0]],
                     size: 3,
                 },
+                f_score: 5,
                 distance: 3,
                 upper_state: None,
                 lower_state: None,
@@ -254,6 +258,7 @@ mod graph_tests {
                     data: vec![vec![1, 2, 3], vec![8, 4, 0], vec![7, 6, 5]],
                     size: 3,
                 },
+                f_score: 3,
                 distance: 2,
                 upper_state: None,
                 lower_state: None,
