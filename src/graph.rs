@@ -177,7 +177,7 @@ mod graph_tests {
                 start_node: Node::new_starting_node(Puzzle {
                     data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
                     size: 3,
-                }),
+                }, heuristic::manhattan_linear_conflict_heuristic),
                 heuristic: heuristic::manhattan_linear_conflict_heuristic,
                 max_states: 1,
             };
@@ -188,6 +188,7 @@ mod graph_tests {
                     size: 3,
                 },
                 distance: 2,
+                f_score: 2,
                 upper_state: None,
                 lower_state: None,
                 left_state: None,
@@ -200,6 +201,7 @@ mod graph_tests {
                     size: 3,
                 },
                 distance: 3,
+                f_score: 3,
                 upper_state: None,
                 lower_state: None,
                 left_state: None,
@@ -220,7 +222,7 @@ mod graph_tests {
                 start_node: Node::new_starting_node(Puzzle {
                     data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
                     size: 3,
-                }),
+                }, heuristic::manhattan_linear_conflict_heuristic),
                 heuristic: heuristic::manhattan_distance,
                 max_states: 1,
             };
@@ -231,6 +233,7 @@ mod graph_tests {
                     size: 3,
                 },
                 distance: 1,
+                f_score: 1,
                 upper_state: None,
                 lower_state: None,
                 left_state: None,
@@ -243,6 +246,7 @@ mod graph_tests {
                     size: 3,
                 },
                 distance: 3,
+                f_score: 3,
                 upper_state: None,
                 lower_state: None,
                 left_state: None,
@@ -255,6 +259,7 @@ mod graph_tests {
                     size: 3,
                 },
                 distance: 2,
+                f_score: 2,
                 upper_state: None,
                 lower_state: None,
                 left_state: None,

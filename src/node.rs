@@ -374,7 +374,7 @@ mod node_tests {
             let node = Node {
                 state: puzzle,
                 distance: len,
-                f_score: len + heuristic(&puzzle),
+                f_score: len,
                 upper_state: None,
                 lower_state: None,
                 left_state: None,
@@ -388,7 +388,7 @@ mod node_tests {
             let node2 = Node {
                 state: puzzle2,
                 distance: len2,
-                f_score: len2 + heuristic(&puzzle2),
+                f_score: len2,
                 upper_state: None,
                 lower_state: next,
                 left_state: None,
@@ -407,7 +407,7 @@ mod node_tests {
             let node = Node {
                 state: puzzle,
                 distance: len,
-                f_score: len + heuristic(&puzzle),
+                f_score: len,
                 upper_state: None,
                 lower_state: None,
                 left_state: None,
@@ -419,7 +419,7 @@ mod node_tests {
             let node2 = Node {
                 state: puzzle2,
                 distance: len,
-                f_score: len + heuristic(&puzzle2),
+                f_score: len,
                 upper_state: None,
                 lower_state: None,
                 left_state: None,
