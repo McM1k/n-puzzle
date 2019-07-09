@@ -1,5 +1,4 @@
 use crate::puzzle::Puzzle;
-use std::cmp;
 use std::cmp::Ordering;
 use std::fmt;
 extern crate strum;
@@ -15,7 +14,7 @@ pub enum Direction {
     Right,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Eq)]
 pub struct Node {
     pub state: Puzzle,
     pub distance: usize,
@@ -24,6 +23,24 @@ pub struct Node {
     pub lower_state: Option<Box<Node>>,
     pub left_state: Option<Box<Node>>,
     pub right_state: Option<Box<Node>>,
+}
+
+impl Ord for Node {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.f_score.cmp(&other.f_score)
+    }
+}
+
+impl PartialOrd for Node {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl PartialEq for Node {
+    fn eq(&self, other: &Self) -> bool {
+        self.f_score == other.f_score
+    }
 }
 
 /*
@@ -43,7 +60,7 @@ impl Clone for Node {
 
 impl fmt::Debug for Node {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeln!(f, "{0:?}, {1}", self.state, self.distance)
+        writeln!(f, "{0:?}, {1}, {2}", self.state, self.distance, self.f_score)
     }
 }
 
@@ -52,18 +69,6 @@ impl fmt::Display for Node {
         writeln!(f, "{}", self.state)?;
         writeln!(f, "{} nodes away from the start position", self.distance)?;
         Ok(())
-    }
-}
-
-impl cmp::PartialEq for Node {
-    fn eq(&self, other: &Self) -> bool {
-        self.state == other.state
-    }
-}
-
-impl cmp::PartialOrd for Node {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        self.distance.partial_cmp(&other.distance)
     }
 }
 

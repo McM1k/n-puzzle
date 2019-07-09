@@ -3,7 +3,7 @@ use self::rand::Rng;
 use std::cmp;
 use std::fmt;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq)]
 pub struct Puzzle {
     pub data: Vec<Vec<usize>>,
     pub size: usize,

@@ -27,7 +27,7 @@ impl Graph {
         if self
             .open_list
             .iter()
-            .any(|n| n == node && n.distance < node.distance)
+            .any(|n| n == node && n.f_score < node.f_score)
         {
             return false;
         }
@@ -40,6 +40,11 @@ impl Graph {
         }
         let node = *opt.unwrap();
 
+        /*match self.open_list.binary_search(&node) {
+            Ok(pos) => {}
+            Err(pos) => self.open_list.insert(pos, node),
+        }*/
+
         if self.closed_list.contains(&node) {
             return;
         }
@@ -49,13 +54,14 @@ impl Graph {
                 self.open_list
                     .iter()
                     .position(|n| {
-                        (self.heuristic)(&(node.state)) + node.distance
-                            <= (self.heuristic)(&(n.state)) + n.distance
+                        node.f_score > n.f_score
                     })
                     .unwrap_or(0),
                 node,
             );
         }
+
+        println!("{:?}", self.open_list);
 
         if self.max_states < self.open_list.len() {
             self.max_states += 1;
@@ -124,11 +130,11 @@ impl Graph {
         let mut curr_node;
         while !graph.open_list.is_empty() {
             curr_node = graph.open_list.pop().unwrap();
-            println!(
+            /*println!(
                 "{}, score : {}",
                 curr_node.clone(),
-                curr_node.clone().distance + (graph.clone().heuristic)(&(curr_node.clone().state))
-            );
+                curr_node.f_score
+            );*/
             //println!("{:?}", &graph.open_list);
             //println!("{:?}", &graph.closed_list);
             if curr_node == Node::get_final_node(curr_node.state.size) {
@@ -269,6 +275,7 @@ mod graph_tests {
             graph.add_in_sorted_open_list(Some(Box::new(node1.clone())));
             graph.add_in_sorted_open_list(Some(Box::new(node2.clone())));
             graph.add_in_sorted_open_list(Some(Box::new(node3.clone())));
+
 
             assert_eq!(graph.open_list.len(), 3);
             assert_eq!(graph.open_list[0], node2);
