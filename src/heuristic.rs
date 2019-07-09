@@ -7,7 +7,7 @@ fn get_distance(x1: usize, y1: usize, x2: usize, y2: usize) -> usize {
     x as usize + y as usize
 }
 
-fn get_correct_point(data: &(Vec<Vec<usize>>), value: usize) -> (usize, usize) {
+fn get_correct_point(data: &[Vec<usize>], value: usize) -> (usize, usize) {
     let x2 = 0;
     let y2 = 0;
 
@@ -72,8 +72,8 @@ fn get_possible_values_in_column(
             values.push(data[y][x]);
         }
     } else {
-        for y in (current_y + 1)..=final_y {
-            values.push(data[y][x]);
+        for data_line in data.iter().take(final_y + 1).skip(current_y + 1) {
+            values.push(data_line[x]);
         }
     }
 
@@ -81,8 +81,8 @@ fn get_possible_values_in_column(
 }
 
 fn check_in_correct_column(final_data: &[Vec<usize>], value: usize, x: usize) -> bool {
-    for y in 0..final_data.len() {
-        if final_data[y][x] == value {
+    for final_data_line in final_data {
+        if final_data_line[x] == value {
             return true;
         }
     }
