@@ -23,7 +23,7 @@ impl fmt::Display for Puzzle {
 
 impl cmp::PartialEq for Puzzle {
     fn eq(&self, other: &Self) -> bool {
-        self.data == other.data && self.size == other.size
+        self.data == other.data /*&& self.size == other.size*/
     }
 }
 

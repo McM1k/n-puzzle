@@ -20,32 +20,35 @@ pub fn print_solution_with_retrieving(final_node: Node) {
 
 fn recursive_path(curr_node: &Node) -> String {
     let str = if curr_node.distance > 0 {
-        let prev_node = select_previous_node(curr_node.clone());
-        recursive_path(&prev_node)
+        let prev_node = match select_previous_node(curr_node.clone()) {
+            Ok(prev_node) => recursive_path(&prev_node),
+            Err(str) => {str}
+        };
+        prev_node
     } else {
         String::from("")
     };
     str + &curr_node.state.to_string() + "\n"
 }
 
-fn select_previous_node(node: Node) -> Node {
+fn select_previous_node(node: Node) -> Result<Node, String> {
     if node.left_state != None && (*node.clone().left_state.unwrap()).distance == node.distance - 1
     {
-        *node.left_state.unwrap()
+        Ok(*node.left_state.unwrap())
     } else if node.right_state != None
         && (*node.clone().right_state.unwrap()).distance == node.distance - 1
     {
-        *node.right_state.unwrap()
+        Ok(*node.right_state.unwrap())
     } else if node.upper_state != None
         && (*node.clone().upper_state.unwrap()).distance == node.distance - 1
     {
-        *node.upper_state.unwrap()
+        Ok(*node.upper_state.unwrap())
     } else if node.lower_state != None
         && (*node.clone().lower_state.unwrap()).distance == node.distance - 1
     {
-        *node.lower_state.unwrap()
+        Ok(*node.lower_state.unwrap())
     } else {
-        panic!("dead end while going through the solving path\n");
+        Err(String::from(""))
     }
 }
 

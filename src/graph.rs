@@ -40,28 +40,22 @@ impl Graph {
         }
         let node = *opt.unwrap();
 
-        /*match self.open_list.binary_search(&node) {
-            Ok(pos) => {}
-            Err(pos) => self.open_list.insert(pos, node),
-        }*/
-
-        if self.closed_list.contains(&node) {
+        if self.closed_list.contains(&node) && !self.is_lower_cost(&node) {
             return;
         }
 
-        if self.is_lower_cost(&node) {
-            self.open_list.insert(
-                self.open_list
-                    .iter()
-                    .position(|n| {
-                        node.f_score > n.f_score
-                    })
-                    .unwrap_or(0),
-                node,
-            );
-        }
+        self.open_list.insert(
+            self.open_list
+                .iter()
+                .position(|n| {
+                    node.f_score > n.f_score
+                })
+                .unwrap_or(self.open_list.len()),
+            node,
+        );
 
-        println!("{:?}", self.open_list);
+
+        //println!("{:?}", self.open_list);
 
         if self.max_states < self.open_list.len() {
             self.max_states += 1;
@@ -130,24 +124,27 @@ impl Graph {
         let mut curr_node;
         while !graph.open_list.is_empty() {
             curr_node = graph.open_list.pop().unwrap();
-            /*println!(
-                "{}, score : {}",
-                curr_node.clone(),
-                curr_node.f_score
-            );*/
+
             //println!("{:?}", &graph.open_list);
             //println!("{:?}", &graph.closed_list);
-            if curr_node == Node::get_final_node(curr_node.state.size) {
+            if curr_node.state.data == Node::get_final_node(curr_node.state.size).state.data {
                 crate::print_result::print_data(graph.clone(), curr_node.clone());
                 crate::print_result::print_solution_with_retrieving(curr_node.clone());
                 return;
             }
+            /*println!(
+                "score : {}, {}",
+                curr_node.f_score,
+                curr_node.clone()
+            );*/
             graph.add_to_closed_list(curr_node.clone());
             curr_node = Node::calculate_next_nodes(curr_node, heuristic);
             graph.add_in_sorted_open_list(curr_node.left_state.clone());
             graph.add_in_sorted_open_list(curr_node.upper_state.clone());
             graph.add_in_sorted_open_list(curr_node.lower_state.clone());
             graph.add_in_sorted_open_list(curr_node.right_state.clone());
+            //println!("open : {:?}\n", graph.open_list);
+            println!("closed : {:?}\n", graph.closed_list);
         }
         panic!("The graph has been completely explored, yet the goal state hasn't been reached");
     }
@@ -278,9 +275,9 @@ mod graph_tests {
 
 
             assert_eq!(graph.open_list.len(), 3);
-            assert_eq!(graph.open_list[0], node2);
+            assert_eq!(graph.open_list[0], node1);
             assert_eq!(graph.open_list[1], node3);
-            assert_eq!(graph.open_list[2], node1);
+            assert_eq!(graph.open_list[2], node2);
         }
     }
 }

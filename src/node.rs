@@ -39,7 +39,7 @@ impl PartialOrd for Node {
 
 impl PartialEq for Node {
     fn eq(&self, other: &Self) -> bool {
-        self.f_score == other.f_score
+        self.f_score == other.f_score && self.state == other.state
     }
 }
 
@@ -66,8 +66,8 @@ impl fmt::Debug for Node {
 
 impl fmt::Display for Node {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeln!(f, "{}", self.state)?;
         writeln!(f, "{} nodes away from the start position", self.distance)?;
+        writeln!(f, "{}", self.state)?;
         Ok(())
     }
 }
@@ -386,7 +386,7 @@ mod node_tests {
                 right_state: None,
             };
 
-            let len2 = 1;
+            let len2 = 0;
             let data2 = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
             let puzzle2 = Puzzle { data: data2, size };
             let next = Some(Box::new(node.clone()));
@@ -424,7 +424,7 @@ mod node_tests {
             let node2 = Node {
                 state: puzzle2,
                 distance: len,
-                f_score: len,
+                f_score: len + 1,
                 upper_state: None,
                 lower_state: None,
                 left_state: None,
