@@ -114,27 +114,62 @@ impl Puzzle {
         }
     }
 
-    pub fn is_solvable(puzzle: &[Vec<usize>]) -> bool {
-        let mut data = Puzzle::get_current_data_sequence(puzzle);
+    pub fn inversion(puzzle: &[Vec<usize>], size: usize) -> usize {
+        let mut data = vec![0; size * size];//Puzzle::get_current_data_sequence(puzzle);
         let mut sort_count = 0;
 
-        for _ in 0..data.len() {
-            for i in 0..data.len() - 1 {
-                if data[i] > data[i + 1] && data[i] != 0 && data[i + 1] != 0 {
+        for i in 0..size {
+            for j in 0..size {
+                data[i * size + j] = puzzle[i][j];
+            }
+        }
+
+        for i in 0..data.len() {
+            let value = data[i];
+            for j in i..data.len() {
+                if value > data[j] && data[j] != 0 {
                     sort_count += 1;
-                    data.swap(i, i + 1);
                 }
             }
         }
 
-        /*
-         *	The solvable pattern is a snail one
-         *	1  2  3
-         *	8  0  4
-         *	7  6  5
-         */
+        sort_count
+    }
 
-        sort_count % 2 == 0
+    /*
+             *	The solvable pattern is a snail one
+             *	1  2  3
+             *	8  0  4
+             *	7  6  5
+    */
+
+    pub fn is_solvable(puzzle: &[Vec<usize>]) -> bool {
+        let size = puzzle.len();
+        let goal_state = Puzzle::get_final_state(size);
+        let mut start_inversion = Puzzle::inversion(puzzle, size);
+        let mut goal_inversion = Puzzle::inversion(&goal_state, size);
+
+
+        if size % 2 == 0 {
+            let (mut x1, mut y1) = (0, 0);
+            let (mut x2, mut y2) = (0, 0);
+
+            for i in 0..size {
+                for j in 0..size {
+                    if puzzle[i][j] == 0 {
+                        x1 = i;
+                        y1 = j;
+                    }
+                    if goal_state[i][j] == 0 {
+                        x2 = i;
+                        y2 = j;
+                    }
+                }
+            }
+            start_inversion += (y1 * size + x1) / size;
+            goal_inversion += (y2 * size + x2) / size;
+        }
+        start_inversion % 2 == goal_inversion % 2
     }
 
     pub fn get_final_state(size: usize) -> Vec<Vec<usize>> {
@@ -354,6 +389,12 @@ mod puzzle_tests {
         #[test]
         fn solvable_puzzle_with_one_move() {
             let puzzle: Vec<Vec<usize>> = vec![vec![1, 2, 3], vec![0, 8, 4], vec![7, 6, 5]];
+            assert_eq!(Puzzle::is_solvable(&puzzle), true);
+        }
+
+        #[test]
+        fn solvable_puzzle_with_fifteen_moves() {
+            let puzzle: Vec<Vec<usize>> = vec![vec![1, 8, 4], vec![0, 3, 5], vec![2, 7, 6]];
             assert_eq!(Puzzle::is_solvable(&puzzle), true);
         }
 

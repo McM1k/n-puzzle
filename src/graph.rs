@@ -27,7 +27,7 @@ impl Graph {
         if self
             .open_list
             .iter()
-            .any(|n| n == node && n.f_score < node.f_score)
+            .any(|n| n.state == node.state && n.f_score < node.f_score)
         {
             return false;
         }
@@ -41,6 +41,7 @@ impl Graph {
         let node = *opt.unwrap();
 
         if self.closed_list.contains(&node) && !self.is_lower_cost(&node) {
+            println!("mdr");
             return;
         }
 
@@ -204,7 +205,7 @@ mod graph_tests {
                     size: 3,
                 },
                 f_score: 1,
-                distance: 3,
+                distance: 2,
                 upper_state: None,
                 lower_state: None,
                 left_state: None,
@@ -214,7 +215,7 @@ mod graph_tests {
             graph.add_in_sorted_open_list(Some(Box::new(node1)));
             graph.add_in_sorted_open_list(Some(Box::new(node2)));
 
-            assert!(graph.open_list.iter().len() == 1);
+            assert_eq!(graph.open_list.iter().len(), 1);
         }
 
         #[test]
@@ -275,9 +276,9 @@ mod graph_tests {
 
 
             assert_eq!(graph.open_list.len(), 3);
-            assert_eq!(graph.open_list[0], node1);
+            assert_eq!(graph.open_list[0], node2);
             assert_eq!(graph.open_list[1], node3);
-            assert_eq!(graph.open_list[2], node2);
+            assert_eq!(graph.open_list[2], node1);
         }
     }
 }

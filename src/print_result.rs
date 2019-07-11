@@ -101,7 +101,7 @@ mod print_result {
                 right_state: None,
             };
 
-            assert_eq!(select_previous_node(node2), node1);
+            assert_eq!(select_previous_node(node2), Ok(node1));
         }
 
         #[test]
