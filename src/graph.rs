@@ -34,12 +34,7 @@ impl Graph {
         true
     }
 
-    fn add_in_sorted_open_list(&mut self, opt: Option<Box<Node>>) {
-        if opt == None {
-            return;
-        }
-        let node = *opt.unwrap();
-
+    fn add_in_sorted_open_list(&mut self, node: Node) {
         if self.closed_list.contains(&node) && !self.is_lower_cost(&node) {
             println!("mdr");
             return;
@@ -60,6 +55,17 @@ impl Graph {
 
         if self.max_states < self.open_list.len() {
             self.max_states += 1;
+        }
+    }
+
+    fn add_child_nodes_to_open_list(&mut self, parent: Node) {
+        let mut childs = Node::calculate_next_nodes(parent, self.heuristic);
+
+        while !childs.is_empty() {
+            let child = childs.pop();
+            if child != None {
+                self.add_in_sorted_open_list(child.unwrap());
+            }
         }
     }
 
@@ -112,7 +118,7 @@ impl Graph {
         false
     }
 
-    pub fn a_star_gluttony(state: Puzzle, heuristic: fn(&Puzzle) -> usize) {
+    pub fn a_star(state: Puzzle, heuristic: fn(&Puzzle) -> usize) {
         let mut graph = Graph {
             open_list: vec![],
             closed_list: vec![],
@@ -126,26 +132,14 @@ impl Graph {
         while !graph.open_list.is_empty() {
             curr_node = graph.open_list.pop().unwrap();
 
-            //println!("{:?}", &graph.open_list);
-            //println!("{:?}", &graph.closed_list);
             if curr_node.state.data == Node::get_final_node(curr_node.state.size).state.data {
                 crate::print_result::print_data(graph.clone(), curr_node.clone());
-                crate::print_result::print_solution_with_retrieving(curr_node.clone());
+                crate::print_result::print_solution_with_retrieving(curr_node.clone(), graph);
                 return;
             }
-            /*println!(
-                "score : {}, {}",
-                curr_node.f_score,
-                curr_node.clone()
-            );*/
+
             graph.add_to_closed_list(curr_node.clone());
-            curr_node = Node::calculate_next_nodes(curr_node, heuristic);
-            graph.add_in_sorted_open_list(curr_node.left_state.clone());
-            graph.add_in_sorted_open_list(curr_node.upper_state.clone());
-            graph.add_in_sorted_open_list(curr_node.lower_state.clone());
-            graph.add_in_sorted_open_list(curr_node.right_state.clone());
-            //println!("open : {:?}\n", graph.open_list);
-            println!("closed : {:?}\n", graph.closed_list);
+            graph.add_child_nodes_to_open_list(curr_node);
         }
         panic!("The graph has been completely explored, yet the goal state hasn't been reached");
     }
@@ -193,10 +187,6 @@ mod graph_tests {
                 },
                 f_score: 1,
                 distance: 2,
-                upper_state: None,
-                lower_state: None,
-                left_state: None,
-                right_state: None,
             };
 
             let node2 = Node {
@@ -206,14 +196,10 @@ mod graph_tests {
                 },
                 f_score: 1,
                 distance: 2,
-                upper_state: None,
-                lower_state: None,
-                left_state: None,
-                right_state: None,
             };
 
-            graph.add_in_sorted_open_list(Some(Box::new(node1)));
-            graph.add_in_sorted_open_list(Some(Box::new(node2)));
+            graph.add_in_sorted_open_list(node1);
+            graph.add_in_sorted_open_list(node2);
 
             assert_eq!(graph.open_list.iter().len(), 1);
         }
@@ -238,10 +224,6 @@ mod graph_tests {
                 },
                 f_score: 1,
                 distance: 1,
-                upper_state: None,
-                lower_state: None,
-                left_state: None,
-                right_state: None,
             };
 
             let node2 = Node {
@@ -251,10 +233,6 @@ mod graph_tests {
                 },
                 f_score: 5,
                 distance: 3,
-                upper_state: None,
-                lower_state: None,
-                left_state: None,
-                right_state: None,
             };
 
             let node3 = Node {
@@ -264,15 +242,11 @@ mod graph_tests {
                 },
                 f_score: 3,
                 distance: 2,
-                upper_state: None,
-                lower_state: None,
-                left_state: None,
-                right_state: None,
             };
 
-            graph.add_in_sorted_open_list(Some(Box::new(node1.clone())));
-            graph.add_in_sorted_open_list(Some(Box::new(node2.clone())));
-            graph.add_in_sorted_open_list(Some(Box::new(node3.clone())));
+            graph.add_in_sorted_open_list(node1.clone());
+            graph.add_in_sorted_open_list(node2.clone());
+            graph.add_in_sorted_open_list(node3.clone());
 
 
             assert_eq!(graph.open_list.len(), 3);

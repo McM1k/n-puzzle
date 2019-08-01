@@ -19,10 +19,6 @@ pub struct Node {
     pub state: Puzzle,
     pub distance: usize,
     pub f_score: usize,
-    pub upper_state: Option<Box<Node>>,
-    pub lower_state: Option<Box<Node>>,
-    pub left_state: Option<Box<Node>>,
-    pub right_state: Option<Box<Node>>,
 }
 
 impl Ord for Node {
@@ -78,10 +74,6 @@ impl Node {
             state: self.state.clone(),
             distance: self.distance,
             f_score: self.f_score,
-            upper_state: None,
-            lower_state: None,
-            left_state: None,
-            right_state: None,
         }
     }
 
@@ -90,10 +82,6 @@ impl Node {
             state: state.clone(),
             distance: 0,
             f_score: heuristic(&state),
-            upper_state: None,
-            lower_state: None,
-            left_state: None,
-            right_state: None,
         }
     }
 
@@ -145,10 +133,6 @@ impl Node {
                     state: curr_puzzle.clone().unwrap(),
                     distance: node.distance + 1,
                     f_score: node.distance + 1 + heuristic(&curr_puzzle.unwrap()),
-                    upper_state: None,
-                    lower_state: None,
-                    left_state: None,
-                    right_state: None,
                 });
             }
         }
@@ -194,65 +178,21 @@ impl Node {
         Some(new_puzzle)
     }
 
-    pub fn calculate_next_nodes(mut node: Node, heuristic: fn(&Puzzle) -> usize) -> Node {
-        match Node::calculate_next_state(&node.state, Direction::Left) {
-            Some(new_puzzle) => {
-                node.left_state = Some(Box::new(Node {
-                    state: new_puzzle.clone(),
-                    distance: node.distance + 1,
-                    f_score: node.distance + 1 + heuristic(&new_puzzle),
-                    left_state: None,
-                    upper_state: None,
-                    lower_state: None,
-                    right_state: None,
-                }))
+    pub fn calculate_next_nodes(mut parent: Node, heuristic: fn(&Puzzle) -> usize) -> Vec<Node> {
+        let mut childs= Vec::new();
+
+        for dir in Direction::iter() {
+            let dir_opt = Node::calculate_next_state(&parent.state, dir);
+            if dir_opt != None {
+                childs.push(Node {
+                    state: dir_opt.unwrap(),
+                    distance: parent.distance + 1,
+                    f_score: parent.distance + 1 + heuristic(&dir_opt.unwrap())
+                });
             }
-            None => node.left_state = None,
-        }
-        match Node::calculate_next_state(&node.state, Direction::Right) {
-            Some(new_puzzle) => {
-                node.right_state = Some(Box::new(Node {
-                    state: new_puzzle.clone(),
-                    distance: node.distance + 1,
-                    f_score: node.distance + 1 + heuristic(&new_puzzle),
-                    left_state: None,
-                    upper_state: None,
-                    lower_state: None,
-                    right_state: None,
-                }))
-            }
-            None => node.right_state = None,
-        }
-        match Node::calculate_next_state(&node.state, Direction::Down) {
-            Some(new_puzzle) => {
-                node.lower_state = Some(Box::new(Node {
-                    state: new_puzzle.clone(),
-                    distance: node.distance + 1,
-                    f_score: node.distance + 1 + heuristic(&new_puzzle),
-                    left_state: None,
-                    upper_state: None,
-                    lower_state: None,
-                    right_state: None,
-                }))
-            }
-            None => node.lower_state = None,
-        }
-        match Node::calculate_next_state(&node.state, Direction::Up) {
-            Some(new_puzzle) => {
-                node.upper_state = Some(Box::new(Node {
-                    state: new_puzzle.clone(),
-                    distance: node.distance + 1,
-                    f_score: node.distance + 1 + heuristic(&new_puzzle),
-                    left_state: None,
-                    upper_state: None,
-                    lower_state: None,
-                    right_state: None,
-                }))
-            }
-            None => node.upper_state = None,
         }
 
-        node
+        childs
     }
 
     pub fn get_final_node(size: usize) -> Node {
@@ -263,10 +203,6 @@ impl Node {
             },
             distance: 0,
             f_score: 0,
-            upper_state: None,
-            lower_state: None,
-            left_state: None,
-            right_state: None,
         }
     }
 }
@@ -380,10 +316,6 @@ mod node_tests {
                 state: puzzle,
                 distance: len,
                 f_score: len,
-                upper_state: None,
-                lower_state: None,
-                left_state: None,
-                right_state: None,
             };
 
             let len2 = 0;
@@ -394,10 +326,6 @@ mod node_tests {
                 state: puzzle2,
                 distance: len2,
                 f_score: len2,
-                upper_state: None,
-                lower_state: next,
-                left_state: None,
-                right_state: None,
             };
 
             assert_eq!(node, node2);
@@ -413,10 +341,6 @@ mod node_tests {
                 state: puzzle,
                 distance: len,
                 f_score: len,
-                upper_state: None,
-                lower_state: None,
-                left_state: None,
-                right_state: None,
             };
 
             let data2 = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 7, 8]];
@@ -425,10 +349,6 @@ mod node_tests {
                 state: puzzle2,
                 distance: len,
                 f_score: len + 1,
-                upper_state: None,
-                lower_state: None,
-                left_state: None,
-                right_state: None,
             };
 
             assert_ne!(node, node2);

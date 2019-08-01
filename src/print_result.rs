@@ -14,14 +14,14 @@ pub fn print_data(graph: Graph, final_node: Node) {
     println!("solution sequence : \n");
 }
 
-pub fn print_solution_with_retrieving(final_node: Node) {
-    println!("{}", recursive_path(&final_node));
+pub fn print_solution_with_retrieving(final_node: Node, graph: Graph) {
+    println!("{}", recursive_path(&final_node, graph));
 }
 
-fn recursive_path(curr_node: &Node) -> String {
+fn recursive_path(curr_node: &Node, graph: Graph) -> String {
     let str = if curr_node.distance > 0 {
-        let prev_node = match select_previous_node(curr_node.clone()) {
-            Ok(prev_node) => recursive_path(&prev_node),
+        let prev_node = match select_previous_node(curr_node.clone(), graph) {
+            Ok(prev_node) => recursive_path(&prev_node, graph),
             Err(str) => {str}
         };
         prev_node
@@ -31,25 +31,23 @@ fn recursive_path(curr_node: &Node) -> String {
     str + &curr_node.state.to_string() + "\n"
 }
 
-fn select_previous_node(node: Node) -> Result<Node, String> {
-    if node.left_state != None && (*node.clone().left_state.unwrap()).distance == node.distance - 1
-    {
-        Ok(*node.left_state.unwrap())
-    } else if node.right_state != None
-        && (*node.clone().right_state.unwrap()).distance == node.distance - 1
-    {
-        Ok(*node.right_state.unwrap())
-    } else if node.upper_state != None
-        && (*node.clone().upper_state.unwrap()).distance == node.distance - 1
-    {
-        Ok(*node.upper_state.unwrap())
-    } else if node.lower_state != None
-        && (*node.clone().lower_state.unwrap()).distance == node.distance - 1
-    {
-        Ok(*node.lower_state.unwrap())
-    } else {
-        Err(String::from(""))
+fn select_previous_node(curr_node: Node, graph: Graph) -> Result<Node, String> {
+    let childs = Node::calculate_next_nodes(curr_node, |x| 0);
+    while !childs.is_empty() {
+        for open in graph.open_list {
+            if open.distance == curr_node.distance - 1 && open.state == curr_node.state {
+                return Ok(open);
+            }
+        }
+
+        for closed in graph.closed_list {
+            if closed.distance == curr_node.distance - 1 && closed.state == curr_node.state {
+                return Ok(closed);
+            }
+        }
     }
+
+    Err("".to_string())
 }
 
 #[cfg(test)]
@@ -69,10 +67,6 @@ mod print_result {
                 },
                 f_score: 1,
                 distance: 1,
-                upper_state: None,
-                lower_state: None,
-                left_state: None,
-                right_state: None,
             };
             let data3 = vec![vec![1, 2, 3], vec![8, 4, 5], vec![7, 6, 0]];
             let node3 = Node {
@@ -82,10 +76,6 @@ mod print_result {
                 },
                 f_score: 1,
                 distance: 3,
-                upper_state: None,
-                lower_state: None,
-                left_state: None,
-                right_state: None,
             };
             let data2 = vec![vec![1, 2, 3], vec![8, 4, 0], vec![7, 6, 5]];
             let node2 = Node {
@@ -95,10 +85,6 @@ mod print_result {
                 },
                 f_score: 1,
                 distance: 2,
-                upper_state: None,
-                lower_state: Some(Box::new(node3)),
-                left_state: Some(Box::new(node1.clone())),
-                right_state: None,
             };
 
             assert_eq!(select_previous_node(node2), Ok(node1));
@@ -115,10 +101,6 @@ mod print_result {
                 },
                 f_score: 1,
                 distance: 2,
-                upper_state: None,
-                lower_state: None,
-                left_state: None,
-                right_state: None,
             };
             select_previous_node(node1);
         }
@@ -139,10 +121,6 @@ mod print_result {
                 },
                 f_score: 1,
                 distance: 0,
-                upper_state: None,
-                lower_state: None,
-                left_state: None,
-                right_state: None,
             };
             let data2 = vec![vec![1, 2, 3], vec![8, 4, 0], vec![7, 6, 5]];
             let node2 = Node {
@@ -152,10 +130,6 @@ mod print_result {
                 },
                 f_score: 1,
                 distance: 1,
-                upper_state: None,
-                lower_state: None,
-                left_state: Some(Box::new(node1)),
-                right_state: None,
             };
             let data3 = vec![vec![1, 2, 3], vec![8, 4, 5], vec![7, 6, 0]];
             let node3 = Node {
@@ -165,10 +139,6 @@ mod print_result {
                 },
                 f_score: 1,
                 distance: 2,
-                upper_state: Some(Box::new(node2)),
-                lower_state: None,
-                left_state: None,
-                right_state: None,
             };
 
             assert_eq!(
