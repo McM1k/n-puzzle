@@ -185,7 +185,7 @@ impl Node {
             let dir_opt = Node::calculate_next_state(&parent.state, dir);
             if dir_opt != None {
                 childs.push(Node {
-                    state: dir_opt.unwrap(),
+                    state: dir_opt.clone().unwrap(),
                     distance: parent.distance + 1,
                     f_score: parent.distance + 1 + heuristic(&dir_opt.unwrap())
                 });

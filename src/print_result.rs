@@ -20,7 +20,7 @@ pub fn print_solution_with_retrieving(final_node: Node, graph: Graph) {
 
 fn recursive_path(curr_node: &Node, graph: Graph) -> String {
     let str = if curr_node.distance > 0 {
-        let prev_node = match select_previous_node(curr_node.clone(), graph) {
+        let prev_node = match select_previous_node(curr_node.clone(), graph.clone()) {
             Ok(prev_node) => recursive_path(&prev_node, graph),
             Err(str) => {str}
         };
@@ -32,17 +32,20 @@ fn recursive_path(curr_node: &Node, graph: Graph) -> String {
 }
 
 fn select_previous_node(curr_node: Node, graph: Graph) -> Result<Node, String> {
-    let childs = Node::calculate_next_nodes(curr_node, |x| 0);
+    //println!("{}", curr_node.clone().distance);
+    let mut childs = Node::calculate_next_nodes(curr_node.clone(), |_x| 0);
     while !childs.is_empty() {
-        for open in graph.open_list {
-            if open.distance == curr_node.distance - 1 && open.state == curr_node.state {
-                return Ok(open);
+        let child = childs.pop().unwrap();
+        //println!("{}", child.clone());
+        for open in graph.open_list.clone() {
+            if open.distance == curr_node.distance - 1 && open.state == child.clone().state {
+                return Ok(open.clone());
             }
         }
 
-        for closed in graph.closed_list {
-            if closed.distance == curr_node.distance - 1 && closed.state == curr_node.state {
-                return Ok(closed);
+        for closed in graph.closed_list.clone() {
+            if closed.distance == curr_node.distance - 1 && closed.state == child.state {
+                return Ok(closed.clone());
             }
         }
     }

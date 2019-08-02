@@ -36,7 +36,6 @@ impl Graph {
 
     fn add_in_sorted_open_list(&mut self, node: Node) {
         if self.closed_list.contains(&node) && !self.is_lower_cost(&node) {
-            println!("mdr");
             return;
         }
 
