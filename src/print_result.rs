@@ -3,17 +3,17 @@ use crate::node::Node;
 use std::time::Instant;
 
 pub fn print_data(graph: Graph, final_node: Node, start_time: Instant) {
-    println!("Time elapsed in ms : {}\n", start_time.elapsed().as_millis());
+    println!("Time elapsed in ms : {}", start_time.elapsed().as_millis());
     println!(
-        "Total number of states ever selected in the opened set : {}\n",
+        "Total number of states ever selected in the opened set : {}",
         graph.closed_list.len() + graph.open_list.len()
     );
     println!(
-        "Maximum number of states ever represented in  memory at the same time : {}\n",
+        "Maximum number of states ever represented in  memory at the same time : {}",
         graph.max_states
     );
-    println!("Number of moves : {}\n", final_node.distance);
-    println!("solution sequence : \n");
+    println!("Number of moves : {}", final_node.distance);
+    println!("solution sequence :");
 }
 
 pub fn print_solution_with_retrieving(final_node: Node, graph: Graph) {
@@ -35,7 +35,7 @@ fn recursive_path(curr_node: &Node, graph: Graph) -> String {
 
 fn select_previous_node(curr_node: Node, graph: Graph) -> Result<Node, String> {
     //println!("{}", curr_node.clone().distance);
-    let mut childs = Node::calculate_next_nodes(curr_node.clone(), |_x| 0);
+    let mut childs = Node::calculate_next_nodes(curr_node.clone(), graph.final_node, |_x, _y| 0);
     while !childs.is_empty() {
         let child = childs.pop().unwrap();
         //println!("{}", child.clone());

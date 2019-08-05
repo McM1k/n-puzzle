@@ -7,7 +7,8 @@ pub struct Graph {
     pub open_list: Vec<Node>,
     pub closed_list: Vec<Node>,
     pub start_node: Node,
-    pub heuristic: fn(&Puzzle) -> usize,
+    pub final_node: Node,
+    pub heuristic: fn(&Puzzle, &Puzzle) -> usize,
     pub max_states: usize,
 }
 
@@ -59,7 +60,7 @@ impl Graph {
     }
 
     fn add_child_nodes_to_open_list(&mut self, parent: Node) {
-        let mut childs = Node::calculate_next_nodes(parent, self.heuristic);
+        let mut childs = Node::calculate_next_nodes(parent, self.clone().final_node ,self.heuristic);
 
         while !childs.is_empty() {
             let child = childs.pop();
@@ -69,12 +70,13 @@ impl Graph {
         }
     }
 
-    pub fn a_star_greedy(state: Puzzle, heuristic: fn(&Puzzle) -> usize) {
+    pub fn a_star_greedy(state: Puzzle, heuristic: fn(&Puzzle, &Puzzle) -> usize) {
         let start_time = Instant::now();
         let mut graph = Graph {
             open_list: vec![],
             closed_list: vec![],
-            start_node: Node::new_starting_node(state, heuristic),
+            start_node: Node::new_starting_node(state.clone()),
+            final_node: Node::get_final_node(state.size),
             heuristic,
             max_states: 1,
         };
@@ -88,16 +90,16 @@ impl Graph {
     }
 
     fn recursive_search(&mut self, curr_node: &Node, start_time: Instant) -> bool {
-        if curr_node == &Node::get_final_node(curr_node.state.size) {
+        if curr_node == &self.final_node {
             crate::print_result::print_data(self.clone(), curr_node.partial_copy(), start_time);
             println!("{}", curr_node);
             return true;
         }
         //println!("{}, score : {}",curr_node.clone(), curr_node.clone().distance + (self.clone().heuristic)(&(curr_node.clone().state)));
-        let mut next_nodes = Node::next_nodes_to_vec(curr_node, self.heuristic);
+        let mut next_nodes = Node::next_nodes_to_vec(curr_node, &self.clone().final_node, self.heuristic);
         next_nodes.sort_by(|a, b| {
-            (b.distance + (self.heuristic)(&(b.state)))
-                .partial_cmp(&(a.distance + (self.heuristic)(&(a.state))))
+            (b.distance + (self.heuristic)(&(b.state), &self.final_node.state))
+                .partial_cmp(&(a.distance + (self.heuristic)(&(a.state), &self.final_node.state)))
                 .unwrap()
         });
 
@@ -119,13 +121,14 @@ impl Graph {
         false
     }
 
-    pub fn a_star(state: Puzzle, heuristic: fn(&Puzzle) -> usize) {
+    pub fn a_star(state: Puzzle, heuristic: fn(&Puzzle, &Puzzle) -> usize) {
         let start_time = Instant::now();
 
         let mut graph = Graph {
             open_list: vec![],
             closed_list: vec![],
-            start_node: Node::new_starting_node(state, heuristic),
+            start_node: Node::new_starting_node(state.clone()),
+            final_node: Node::get_final_node(state.size),
             heuristic,
             max_states: 1,
         };
@@ -135,7 +138,7 @@ impl Graph {
         while !graph.open_list.is_empty() {
             curr_node = graph.open_list.pop().unwrap();
 
-            if curr_node.state.data == Node::get_final_node(curr_node.state.size).state.data {
+            if curr_node.state.data == graph.final_node.state.data {
                 crate::print_result::print_data(graph.clone(), curr_node.clone(), start_time);
                 crate::print_result::print_solution_with_retrieving(curr_node.clone(), graph);
                 return;

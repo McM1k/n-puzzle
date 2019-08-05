@@ -77,11 +77,11 @@ impl Node {
         }
     }
 
-    pub fn new_starting_node(state: Puzzle, heuristic: fn(&Puzzle) -> usize) -> Node {
+    pub fn new_starting_node(state: Puzzle, ) -> Node {
         Node {
             state: state.clone(),
             distance: 0,
-            f_score: heuristic(&state),
+            f_score: 0,
         }
     }
 
@@ -122,7 +122,7 @@ impl Node {
         (x, y)
     }
 
-    pub fn next_nodes_to_vec(node: &Node, heuristic: fn(&Puzzle) -> usize) -> Vec<Node> {
+    pub fn next_nodes_to_vec(node: &Node, final_node: &Node, heuristic: fn(&Puzzle, &Puzzle) -> usize) -> Vec<Node> {
         let mut next_nodes = vec![];
         let mut curr_puzzle;
 
@@ -132,7 +132,7 @@ impl Node {
                 next_nodes.push(Node {
                     state: curr_puzzle.clone().unwrap(),
                     distance: node.distance + 1,
-                    f_score: node.distance + 1 + heuristic(&curr_puzzle.unwrap()),
+                    f_score: node.distance + 1 + heuristic(&curr_puzzle.unwrap(), &final_node.state),
                 });
             }
         }
@@ -178,7 +178,7 @@ impl Node {
         Some(new_puzzle)
     }
 
-    pub fn calculate_next_nodes(parent: Node, heuristic: fn(&Puzzle) -> usize) -> Vec<Node> {
+    pub fn calculate_next_nodes(parent: Node, final_node: Node, heuristic: fn(&Puzzle, &Puzzle) -> usize) -> Vec<Node> {
         let mut childs= Vec::new();
 
         for dir in Direction::iter() {
@@ -187,7 +187,7 @@ impl Node {
                 childs.push(Node {
                     state: dir_opt.clone().unwrap(),
                     distance: parent.distance + 1,
-                    f_score: parent.distance + 1 + heuristic(&dir_opt.unwrap())
+                    f_score: parent.distance + 1 + heuristic(&dir_opt.unwrap(), &final_node.state)
                 });
             }
         }

@@ -136,9 +136,9 @@ fn check_row_conflict(
     0
 }
 
-pub fn hamming_distance(puzzle: &Puzzle) -> usize {
+pub fn hamming_distance(puzzle: &Puzzle, final_puzzle: &Puzzle) -> usize {
     // +1 per misplaced tiles (except empty one)
-    let final_data = Puzzle::get_final_state(puzzle.size);
+    let final_data = final_puzzle.clone().data;
     let current_data = &puzzle.data;
     let mut heuristic = 0;
 
@@ -153,9 +153,9 @@ pub fn hamming_distance(puzzle: &Puzzle) -> usize {
     heuristic
 }
 
-pub fn manhattan_distance(puzzle: &Puzzle) -> usize {
+pub fn manhattan_distance(puzzle: &Puzzle, final_puzzle: &Puzzle) -> usize {
     // +1 per move a misplaced tile as to do (except empty one)
-    let final_data = Puzzle::get_final_state(puzzle.size);
+    let final_data = final_puzzle.clone().data;
     let current_data = &puzzle.data;
     let mut heuristic = 0;
 
@@ -172,9 +172,9 @@ pub fn manhattan_distance(puzzle: &Puzzle) -> usize {
     heuristic
 }
 
-pub fn linear_conflict(puzzle: &Puzzle) -> usize {
+pub fn linear_conflict(puzzle: &Puzzle, final_puzzle: &Puzzle) -> usize {
     // +2 when two tiles are in their goal row or column, but are reversed relative to their goal positions.  (except empty one)
-    let final_data = Puzzle::get_final_state(puzzle.size);
+    let final_data = final_puzzle.clone().data;
     let current_data = &puzzle.data;
     let mut heuristic = 0;
     let size = puzzle.size;
@@ -199,8 +199,8 @@ pub fn linear_conflict(puzzle: &Puzzle) -> usize {
     heuristic
 }
 
-pub fn manhattan_linear_conflict_heuristic(puzzle: &Puzzle) -> usize {
-    manhattan_distance(puzzle) + 2 * linear_conflict(&puzzle)
+pub fn manhattan_linear_conflict_heuristic(puzzle: &Puzzle, final_puzzle : &Puzzle) -> usize {
+    manhattan_distance(puzzle, final_puzzle) + 2 * linear_conflict(&puzzle, final_puzzle)
 }
 
 #[cfg(test)]
