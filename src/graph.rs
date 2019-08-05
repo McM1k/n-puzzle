@@ -1,5 +1,6 @@
 use crate::node::Node;
 use crate::puzzle::Puzzle;
+use std::time::Instant;
 
 #[derive(Clone)]
 pub struct Graph {
@@ -69,6 +70,7 @@ impl Graph {
     }
 
     pub fn a_star_greedy(state: Puzzle, heuristic: fn(&Puzzle) -> usize) {
+        let start_time = Instant::now();
         let mut graph = Graph {
             open_list: vec![],
             closed_list: vec![],
@@ -78,16 +80,16 @@ impl Graph {
         };
         graph.add_to_open_list(graph.start_node.partial_copy());
 
-        if graph.recursive_search(&graph.clone().start_node) {
+        if graph.recursive_search(&graph.clone().start_node, start_time) {
             return;
         } else {
             panic!("Solution not found");
         }
     }
 
-    fn recursive_search(&mut self, curr_node: &Node) -> bool {
+    fn recursive_search(&mut self, curr_node: &Node, start_time: Instant) -> bool {
         if curr_node == &Node::get_final_node(curr_node.state.size) {
-            crate::print_result::print_data(self.clone(), curr_node.partial_copy());
+            crate::print_result::print_data(self.clone(), curr_node.partial_copy(), start_time);
             println!("{}", curr_node);
             return true;
         }
@@ -105,7 +107,7 @@ impl Graph {
 
             if !self.closed_list.contains(&child_node) && self.is_lower_cost(&child_node) {
                 self.add_to_open_list(child_node.partial_copy());
-                if self.recursive_search(&child_node) {
+                if self.recursive_search(&child_node, start_time) {
                     println!("{}", curr_node);
                     return true;
                 }
@@ -118,6 +120,8 @@ impl Graph {
     }
 
     pub fn a_star(state: Puzzle, heuristic: fn(&Puzzle) -> usize) {
+        let start_time = Instant::now();
+
         let mut graph = Graph {
             open_list: vec![],
             closed_list: vec![],
@@ -132,7 +136,7 @@ impl Graph {
             curr_node = graph.open_list.pop().unwrap();
 
             if curr_node.state.data == Node::get_final_node(curr_node.state.size).state.data {
-                crate::print_result::print_data(graph.clone(), curr_node.clone());
+                crate::print_result::print_data(graph.clone(), curr_node.clone(), start_time);
                 crate::print_result::print_solution_with_retrieving(curr_node.clone(), graph);
                 return;
             }

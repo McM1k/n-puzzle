@@ -1,7 +1,9 @@
 use crate::graph::Graph;
 use crate::node::Node;
+use std::time::Instant;
 
-pub fn print_data(graph: Graph, final_node: Node) {
+pub fn print_data(graph: Graph, final_node: Node, start_time: Instant) {
+    println!("Time elapsed in ms : {}\n", start_time.elapsed().as_millis());
     println!(
         "Total number of states ever selected in the opened set : {}\n",
         graph.closed_list.len() + graph.open_list.len()
