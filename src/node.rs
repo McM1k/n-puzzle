@@ -178,7 +178,7 @@ impl Node {
         Some(new_puzzle)
     }
 
-    pub fn calculate_next_nodes(mut parent: Node, heuristic: fn(&Puzzle) -> usize) -> Vec<Node> {
+    pub fn calculate_next_nodes(parent: Node, heuristic: fn(&Puzzle) -> usize) -> Vec<Node> {
         let mut childs= Vec::new();
 
         for dir in Direction::iter() {
