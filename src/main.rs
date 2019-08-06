@@ -40,7 +40,9 @@ pub fn get_heuristic(heuristic_value: &HeuristicValues) -> fn(&Puzzle, &Puzzle) 
     }
 }
 
-pub fn get_algorithm(algorithm_value: &AlgorithmValues) -> fn(Puzzle, fn(&Puzzle, &Puzzle) -> usize) {
+pub fn get_algorithm(
+    algorithm_value: &AlgorithmValues,
+) -> fn(Puzzle, fn(&Puzzle, &Puzzle) -> usize) {
     match algorithm_value {
         AlgorithmValues::Greedy => Graph::a_star_greedy,
         AlgorithmValues::Gluttony => Graph::a_star,

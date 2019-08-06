@@ -199,7 +199,7 @@ pub fn linear_conflict(puzzle: &Puzzle, final_puzzle: &Puzzle) -> usize {
     heuristic
 }
 
-pub fn manhattan_linear_conflict_heuristic(puzzle: &Puzzle, final_puzzle : &Puzzle) -> usize {
+pub fn manhattan_linear_conflict_heuristic(puzzle: &Puzzle, final_puzzle: &Puzzle) -> usize {
     manhattan_distance(puzzle, final_puzzle) + 2 * linear_conflict(&puzzle, final_puzzle)
 }
 

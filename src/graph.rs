@@ -37,7 +37,11 @@ impl Graph {
     }
 
     fn update_cost(&mut self, new_node: Node) {
-        let pos = self.open_list.iter().position(|n| n.state == new_node.state).unwrap();
+        let pos = self
+            .open_list
+            .iter()
+            .position(|n| n.state == new_node.state)
+            .unwrap();
         let old_node = self.open_list[pos].clone();
         if old_node.f_score > new_node.f_score {
             self.open_list[pos] = new_node;
@@ -49,7 +53,7 @@ impl Graph {
             return;
         }
 
-        if self.open_list.contains(&node){
+        if self.open_list.contains(&node) {
             self.update_cost(node);
             return;
         }
@@ -57,13 +61,10 @@ impl Graph {
         self.open_list.insert(
             self.open_list
                 .iter()
-                .position(|n| {
-                    node.f_score > n.f_score
-                })
-                .unwrap_or(self.open_list.len()),
+                .position(|n| node.f_score > n.f_score)
+                .unwrap_or_else(|| self.open_list.len()),
             node,
         );
-
 
         //println!("{:?}", self.open_list);
 
@@ -73,7 +74,8 @@ impl Graph {
     }
 
     fn add_child_nodes_to_open_list(&mut self, parent: Node) {
-        let mut childs = Node::calculate_next_nodes(parent, self.clone().final_node ,self.heuristic);
+        let mut childs =
+            Node::calculate_next_nodes(parent, self.clone().final_node, self.heuristic);
 
         while !childs.is_empty() {
             let child = childs.pop();
@@ -109,7 +111,8 @@ impl Graph {
             return true;
         }
         //println!("{}, score : {}",curr_node.clone(), curr_node.clone().distance + (self.clone().heuristic)(&(curr_node.clone().state)));
-        let mut next_nodes = Node::next_nodes_to_vec(curr_node, &self.clone().final_node, self.heuristic);
+        let mut next_nodes =
+            Node::next_nodes_to_vec(curr_node, &self.clone().final_node, self.heuristic);
         next_nodes.sort_by(|a, b| {
             (b.distance + (self.heuristic)(&(b.state), &self.final_node.state))
                 .partial_cmp(&(a.distance + (self.heuristic)(&(a.state), &self.final_node.state)))
@@ -191,10 +194,13 @@ mod graph_tests {
             let mut graph = Graph {
                 open_list: vec![],
                 closed_list: vec![],
-                start_node: Node::new_starting_node(Puzzle {
-                    data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
-                    size: 3,
-                }, heuristic::manhattan_distance),
+                start_node: Node::new_starting_node(
+                    Puzzle {
+                        data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
+                        size: 3,
+                    },
+                    heuristic::manhattan_distance,
+                ),
                 heuristic: heuristic::manhattan_linear_conflict_heuristic,
                 max_states: 1,
             };
@@ -228,10 +234,13 @@ mod graph_tests {
             let mut graph = Graph {
                 open_list: vec![],
                 closed_list: vec![],
-                start_node: Node::new_starting_node(Puzzle {
-                    data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
-                    size: 3,
-                }, heuristic::manhattan_distance),
+                start_node: Node::new_starting_node(
+                    Puzzle {
+                        data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
+                        size: 3,
+                    },
+                    heuristic::manhattan_distance,
+                ),
                 heuristic: heuristic::manhattan_distance,
                 max_states: 1,
             };
@@ -266,7 +275,6 @@ mod graph_tests {
             graph.add_in_sorted_open_list(node1.clone());
             graph.add_in_sorted_open_list(node2.clone());
             graph.add_in_sorted_open_list(node3.clone());
-
 
             assert_eq!(graph.open_list.len(), 3);
             assert_eq!(graph.open_list[0], node2);

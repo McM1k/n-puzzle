@@ -115,7 +115,7 @@ impl Puzzle {
     }
 
     pub fn inversion(puzzle: &[Vec<usize>], size: usize) -> usize {
-        let mut data = vec![0; size * size];//Puzzle::get_current_data_sequence(puzzle);
+        let mut data = vec![0; size * size]; //Puzzle::get_current_data_sequence(puzzle);
         let mut sort_count = 0;
 
         for i in 0..size {
@@ -137,18 +137,17 @@ impl Puzzle {
     }
 
     /*
-             *	The solvable pattern is a snail one
-             *	1  2  3
-             *	8  0  4
-             *	7  6  5
-    */
+     *	The solvable pattern is a snail one
+     *	1  2  3
+     *	8  0  4
+     *	7  6  5
+     */
 
     pub fn is_solvable(puzzle: &[Vec<usize>]) -> bool {
         let size = puzzle.len();
         let goal_state = Puzzle::get_final_state(size);
         let mut start_inversion = Puzzle::inversion(puzzle, size);
         let mut goal_inversion = Puzzle::inversion(&goal_state, size);
-
 
         if size % 2 == 0 {
             let (mut x1, mut y1) = (0, 0);

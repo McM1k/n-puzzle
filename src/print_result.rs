@@ -22,11 +22,10 @@ pub fn print_solution_with_retrieving(final_node: Node, graph: Graph) {
 
 fn recursive_path(curr_node: &Node, graph: Graph) -> String {
     let str = if curr_node.distance > 0 {
-        let prev_node = match select_previous_node(curr_node.clone(), graph.clone()) {
+        match select_previous_node(curr_node.clone(), graph.clone()) {
             Ok(prev_node) => recursive_path(&prev_node, graph),
-            Err(str) => {str}
-        };
-        prev_node
+            Err(str) => str,
+        }
     } else {
         String::from("")
     };

@@ -56,7 +56,11 @@ impl Clone for Node {
 
 impl fmt::Debug for Node {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeln!(f, "{0:?}, {1}, {2}", self.state, self.distance, self.f_score)
+        writeln!(
+            f,
+            "{0:?}, {1}, {2}",
+            self.state, self.distance, self.f_score
+        )
     }
 }
 
@@ -77,7 +81,7 @@ impl Node {
         }
     }
 
-    pub fn new_starting_node(state: Puzzle, ) -> Node {
+    pub fn new_starting_node(state: Puzzle) -> Node {
         Node {
             state: state.clone(),
             distance: 0,
@@ -122,7 +126,11 @@ impl Node {
         (x, y)
     }
 
-    pub fn next_nodes_to_vec(node: &Node, final_node: &Node, heuristic: fn(&Puzzle, &Puzzle) -> usize) -> Vec<Node> {
+    pub fn next_nodes_to_vec(
+        node: &Node,
+        final_node: &Node,
+        heuristic: fn(&Puzzle, &Puzzle) -> usize,
+    ) -> Vec<Node> {
         let mut next_nodes = vec![];
         let mut curr_puzzle;
 
@@ -132,7 +140,9 @@ impl Node {
                 next_nodes.push(Node {
                     state: curr_puzzle.clone().unwrap(),
                     distance: node.distance + 1,
-                    f_score: node.distance + 1 + heuristic(&curr_puzzle.unwrap(), &final_node.state),
+                    f_score: node.distance
+                        + 1
+                        + heuristic(&curr_puzzle.unwrap(), &final_node.state),
                 });
             }
         }
@@ -178,8 +188,12 @@ impl Node {
         Some(new_puzzle)
     }
 
-    pub fn calculate_next_nodes(parent: Node, final_node: Node, heuristic: fn(&Puzzle, &Puzzle) -> usize) -> Vec<Node> {
-        let mut childs= Vec::new();
+    pub fn calculate_next_nodes(
+        parent: Node,
+        final_node: Node,
+        heuristic: fn(&Puzzle, &Puzzle) -> usize,
+    ) -> Vec<Node> {
+        let mut childs = Vec::new();
 
         for dir in Direction::iter() {
             let dir_opt = Node::calculate_next_state(&parent.state, dir);
@@ -187,7 +201,7 @@ impl Node {
                 childs.push(Node {
                     state: dir_opt.clone().unwrap(),
                     distance: parent.distance + 1,
-                    f_score: parent.distance + 1 + heuristic(&dir_opt.unwrap(), &final_node.state)
+                    f_score: parent.distance + 1 + heuristic(&dir_opt.unwrap(), &final_node.state),
                 });
             }
         }
