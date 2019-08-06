@@ -29,15 +29,28 @@ impl Graph {
         if self
             .open_list
             .iter()
-            .any(|n| n.state == node.state && n.f_score < node.f_score)
+            .any(|n| n.state == node.state && n.f_score > node.f_score)
         {
             return false;
         }
         true
     }
 
+    fn update_cost(&mut self, new_node: Node) {
+        let pos = self.open_list.iter().position(|n| n.state == new_node.state).unwrap();
+        let old_node = self.open_list[pos].clone();
+        if old_node.f_score > new_node.f_score {
+            self.open_list[pos] = new_node;
+        }
+    }
+
     fn add_in_sorted_open_list(&mut self, node: Node) {
-        if self.closed_list.contains(&node) && !self.is_lower_cost(&node) {
+        if self.closed_list.contains(&node) {
+            return;:
+        }
+
+        if self.open_list.contains(&node){
+            self.update_cost(node);
             return;
         }
 
