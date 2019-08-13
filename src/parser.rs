@@ -59,7 +59,7 @@ pub fn check_values_are_incremental(size: usize, data: &[Vec<usize>]) {
 
 pub fn check_values_form_correct_square(size: usize, data: &[Vec<usize>]) {
     if size < 3 {
-        panic!("Square too little, must be at least 3 of size !\n")
+        panic!("Square too small, must be at least 3 of size !\n")
     }
     if data.len() != size {
         panic!("Wrong number of lines !\n")

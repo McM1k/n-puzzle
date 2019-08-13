@@ -20,7 +20,7 @@ pub struct Opt {
     #[structopt(
         short = "a",
         long = "algorithm",
-        default_value = "greedy",
+        default_value = "gluttony",
         raw(possible_values = "&AlgorithmValues::variants()"),
         case_insensitive = true
     )]
