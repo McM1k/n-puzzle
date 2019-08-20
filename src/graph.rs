@@ -1,6 +1,6 @@
 use crate::node::Node;
 use crate::puzzle::Puzzle;
-use std::time::Instant;
+use std::time::SystemTime;
 
 #[derive(Clone)]
 pub struct Graph {
@@ -85,7 +85,7 @@ impl Graph {
     }
 
     pub fn a_star_greedy(state: Puzzle, heuristic: fn(&Puzzle, &Puzzle) -> usize) {
-        let start_time = Instant::now();
+        let start_time = SystemTime::now();
         let mut graph = Graph {
             open_list: vec![],
             closed_list: vec![],
@@ -103,7 +103,7 @@ impl Graph {
         }
     }
 
-    fn recursive_search(&mut self, curr_node: &Node, start_time: Instant) -> bool {
+    fn recursive_search(&mut self, curr_node: &Node, start_time: SystemTime) -> bool {
         if curr_node == &self.final_node {
             crate::print_result::print_data(self.clone(), curr_node.partial_copy(), start_time);
             println!("{}", curr_node);
@@ -136,7 +136,7 @@ impl Graph {
     }
 
     pub fn a_star(state: Puzzle, heuristic: fn(&Puzzle, &Puzzle) -> usize) {
-        let start_time = Instant::now();
+        let start_time = SystemTime::now();
 
         let mut graph = Graph {
             open_list: vec![],

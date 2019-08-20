@@ -1,10 +1,10 @@
 use crate::graph::Graph;
 use crate::node::Node;
-use std::time::Instant;
+use std::time::SystemTime;
 
-pub fn print_data(graph: Graph, final_node: Node, start_time: Instant) {
+pub fn print_data(graph: Graph, final_node: Node, start_time: SystemTime) {
     println!("Number of moves : {}", final_node.distance);
-    println!("Time elapsed in ms : {}", start_time.elapsed().as_millis());
+    println!("Time elapsed : {:?}", start_time.elapsed().unwrap());
     println!("Open list size : {}", graph.open_list.len());
     println!("Closed list size : {}", graph.closed_list.len());
     println!(
@@ -12,7 +12,7 @@ pub fn print_data(graph: Graph, final_node: Node, start_time: Instant) {
         graph.closed_list.len() + graph.open_list.len()
     );
     println!(
-        "Maximum number of states ever represented in  memory at the same time : {}",
+        "Maximum number of states represented in open list : {}",
         graph.max_states
     );
 }
