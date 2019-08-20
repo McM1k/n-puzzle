@@ -171,6 +171,7 @@ impl Puzzle {
             }
             start_inversion += (y1 * size + x1) / size;
             goal_inversion += (y2 * size + x2) / size;
+            return start_inversion % 2 != goal_inversion % 2;
         }
         start_inversion % 2 == goal_inversion % 2
     }
