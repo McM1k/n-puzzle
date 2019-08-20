@@ -67,7 +67,6 @@ impl Graph {
         );
 
         //println!("{:?}", self.open_list);
-
         if self.max_states < self.open_list.len() {
             self.max_states += 1;
         }
@@ -133,7 +132,6 @@ impl Graph {
         }
 
         self.add_to_closed_list(curr_node.partial_copy());
-        println!("down");
         false
     }
 
@@ -155,8 +153,9 @@ impl Graph {
             curr_node = graph.open_list.pop().unwrap();
 
             if curr_node.state.data == graph.final_node.state.data {
+                crate::print_result::print_solution_with_retrieving(curr_node.clone(), graph.clone());
                 crate::print_result::print_data(graph.clone(), curr_node.clone(), start_time);
-                crate::print_result::print_solution_with_retrieving(curr_node.clone(), graph);
+
                 return;
             }
 

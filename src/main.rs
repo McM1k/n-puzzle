@@ -45,13 +45,13 @@ pub fn get_algorithm(
 ) -> fn(Puzzle, fn(&Puzzle, &Puzzle) -> usize) {
     match algorithm_value {
         AlgorithmValues::Greedy => Graph::a_star_greedy,
-        AlgorithmValues::Gluttony => Graph::a_star,
+        AlgorithmValues::Astar => Graph::a_star,
     }
 }
 
 fn main() {
     let opt = Opt::from_args();
-    println!("{:?}", opt);
+    println!("{}", opt);
     let heuristic = get_heuristic(&opt.heuristic);
     let algorithm = get_algorithm(&opt.algorithm);
     if opt.size != None {

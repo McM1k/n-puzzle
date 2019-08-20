@@ -3,21 +3,23 @@ use crate::node::Node;
 use std::time::Instant;
 
 pub fn print_data(graph: Graph, final_node: Node, start_time: Instant) {
+    println!("Number of moves : {}", final_node.distance);
     println!("Time elapsed in ms : {}", start_time.elapsed().as_millis());
+    println!("Open list size : {}", graph.open_list.len());
+    println!("Closed list size : {}", graph.closed_list.len());
     println!(
-        "Total number of states ever selected in the opened set : {}",
+        "Total number of states ever represented (closed + open) : {}",
         graph.closed_list.len() + graph.open_list.len()
     );
     println!(
         "Maximum number of states ever represented in  memory at the same time : {}",
         graph.max_states
     );
-    println!("Number of moves : {}", final_node.distance);
-    println!("solution sequence :");
 }
 
 pub fn print_solution_with_retrieving(final_node: Node, graph: Graph) {
-    println!("{}", recursive_path(&final_node, graph));
+    println!("Solution sequence :");
+    print!("{}", recursive_path(&final_node, graph));
 }
 
 fn recursive_path(curr_node: &Node, graph: Graph) -> String {

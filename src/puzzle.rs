@@ -13,7 +13,12 @@ impl fmt::Display for Puzzle {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         for line_data in self.data.iter() {
             for value in line_data.iter() {
-                write!(f, "{:<4}", value)?;
+                if self.size < 11 {
+                    write!(f, "{:<3}", value)?;
+                }
+                else {
+                    write!(f, "{:<4}", value)?;
+                }
             }
             writeln!(f)?;
         }
@@ -29,8 +34,8 @@ impl cmp::PartialEq for Puzzle {
 
 impl Puzzle {
     pub fn new(size: usize) -> Puzzle {
-        if size < 3 {
-            panic!("Size should be higher than 3")
+        if size < 2 {
+            panic!("Size should be higher than 1")
         }
 
         let mut all_the_values: Vec<usize> = (0..(size * size)).collect();

@@ -4,6 +4,7 @@ extern crate structopt;
 use clap::arg_enum;
 use std::path::PathBuf;
 use structopt::StructOpt;
+use std::fmt;
 
 #[derive(StructOpt, Debug)]
 #[structopt(about = "A* driven n puzzle solver.")]
@@ -11,7 +12,7 @@ pub struct Opt {
     #[structopt(
         short = "h",
         long = "heuristic",
-        default_value = "hamming",
+        default_value = "manhattan",
         raw(possible_values = "&HeuristicValues::variants()"),
         case_insensitive = true
     )]
@@ -20,7 +21,7 @@ pub struct Opt {
     #[structopt(
         short = "a",
         long = "algorithm",
-        default_value = "gluttony",
+        default_value = "astar",
         raw(possible_values = "&AlgorithmValues::variants()"),
         case_insensitive = true
     )]
@@ -47,6 +48,20 @@ arg_enum! {
     #[derive(Debug)]
     pub enum AlgorithmValues {
         Greedy,
-        Gluttony,
+        Astar,
+    }
+}
+
+impl fmt::Display for Opt {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "Heuristic : {}", self.heuristic)?;
+        writeln!(f, "Algorithm : {}", self.algorithm)?;
+        if self.size != None {
+            writeln!(f, "Size : {}", self.size.unwrap())?;
+        }
+        if self.file != None {
+            writeln!(f, "File : {:?}", self.file.clone().unwrap())?;
+        }
+        Ok(())
     }
 }
