@@ -15,8 +15,7 @@ impl fmt::Display for Puzzle {
             for value in line_data.iter() {
                 if self.size < 11 {
                     write!(f, "{:<3}", value)?;
-                }
-                else {
+                } else {
                     write!(f, "{:<4}", value)?;
                 }
             }

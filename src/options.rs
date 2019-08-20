@@ -2,9 +2,9 @@ extern crate clap;
 extern crate structopt;
 
 use clap::arg_enum;
+use std::fmt;
 use std::path::PathBuf;
 use structopt::StructOpt;
-use std::fmt;
 
 #[derive(StructOpt, Debug)]
 #[structopt(about = "A* driven n puzzle solver.")]

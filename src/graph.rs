@@ -153,7 +153,10 @@ impl Graph {
             curr_node = graph.open_list.pop().unwrap();
 
             if curr_node.state.data == graph.final_node.state.data {
-                crate::print_result::print_solution_with_retrieving(curr_node.clone(), graph.clone());
+                crate::print_result::print_solution_with_retrieving(
+                    curr_node.clone(),
+                    graph.clone(),
+                );
                 crate::print_result::print_data(graph.clone(), curr_node.clone(), start_time);
 
                 return;
