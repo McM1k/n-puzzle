@@ -42,9 +42,15 @@ impl Graph {
             .iter()
             .position(|n| n.state == new_node.state)
             .unwrap();
-        let old_node = self.open_list[pos].clone();
         if old_node.f_score > new_node.f_score {
-            self.open_list[pos] = new_node;
+            let old_node = self.open_list.iter().remove(pos);
+            self.open_list.insert(
+                self.open_list
+                    .iter()
+                    .position(|n| new_node.f_score > n.f_score)
+                    .unwrap_or_else(|| self.open_list.len()),
+                new_node,
+            );
         }
     }
 

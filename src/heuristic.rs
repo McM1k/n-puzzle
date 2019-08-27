@@ -7,7 +7,8 @@ fn get_distance(x1: usize, y1: usize, x2: usize, y2: usize) -> usize {
     x as usize + y as usize
 }
 
-fn get_correct_point(data: &[Vec<usize>], value: usize) -> (usize, usize) {
+/*
+fn get_correct_point(puzzle: Puzzle, value: usize) -> (usize, usize) {
     let x2 = 0;
     let y2 = 0;
 
@@ -21,8 +22,10 @@ fn get_correct_point(data: &[Vec<usize>], value: usize) -> (usize, usize) {
 
     (x2, y2)
 }
+*/
 
-fn get_value_position(data: &[Vec<usize>], value: usize) -> (usize, usize) {
+/*
+fn get_value_position(puzzle: Puzzle, value: usize) -> (usize, usize) {
     for y in 0..data.len() {
         for x in 0..data.len() {
             if data[y][x] == value {
@@ -33,24 +36,25 @@ fn get_value_position(data: &[Vec<usize>], value: usize) -> (usize, usize) {
 
     (0, 0)
 }
+*/
 
 fn get_possible_values_in_row(
-    data: &[Vec<usize>],
-    final_data: &[Vec<usize>],
+    puzzle: Puzzle,
+    final_puzzle: Puzzle,
     value: usize,
     y: usize,
 ) -> Vec<usize> {
     let mut values = vec![];
 
-    let (final_x, _) = get_value_position(final_data, value);
-    let (current_x, _) = get_value_position(data, value);
+    let (final_x, _) = final_puzzle.get_position(value);
+    let (current_x, _) = puzzle.get_position(value);
     if final_x < current_x {
         for x in (final_x..current_x).rev() {
-            values.push(data[y][x]);
+            values.push(puzzle.get_value(x ,y));
         }
     } else {
         for x in (current_x + 1)..=final_x {
-            values.push(data[y][x]);
+            values.push(puzzle.get_value(x ,y));
         }
     }
 
@@ -58,56 +62,58 @@ fn get_possible_values_in_row(
 }
 
 fn get_possible_values_in_column(
-    data: &[Vec<usize>],
-    final_data: &[Vec<usize>],
+    puzzle: Puzzle,
+    final_puzzle: Puzzle,
     value: usize,
     x: usize,
 ) -> Vec<usize> {
     let mut values = vec![];
 
-    let (_, final_y) = get_value_position(final_data, value);
-    let (_, current_y) = get_value_position(data, value);
+    let (_, final_y) = final_puzzle.get_position(value);
+    let (_, current_y) = puzzle.get_position(value);
     if final_y < current_y {
         for y in (final_y..current_y).rev() {
-            values.push(data[y][x]);
+            values.push(puzzle.get_value(x ,y));
         }
     } else {
-        for data_line in data.iter().take(final_y + 1).skip(current_y + 1) {
-            values.push(data_line[x]);
+        for y in (current_y + 1)..=final_y {
+            values.push(puzzle.get_value(x ,y));
         }
     }
 
     values
 }
 
-fn check_in_correct_column(final_data: &[Vec<usize>], value: usize, x: usize) -> bool {
-    for final_data_line in final_data {
-        if final_data_line[x] == value {
+fn check_in_correct_column(puzzle: Puzzle, value: usize, x: usize) -> bool {
+    for y in 0..puzzle.size {
+        if puzzle.get_value(x ,y) == value {
             return true;
         }
     }
+
     false
 }
 
-fn check_in_correct_row(final_data: &[Vec<usize>], value: usize, y: usize) -> bool {
-    for x in 0..final_data.len() {
-        if final_data[y][x] == value {
+fn check_in_correct_row(puzzle: Puzzle, value: usize, y: usize) -> bool {
+    for x in 0..puzzle.size {
+        if puzzle.get_value(x ,y) == value {
             return true;
         }
     }
+
     false
 }
 
 fn check_column_conflict(
-    current_data: &[Vec<usize>],
-    final_data: &[Vec<usize>],
+    current_puzzle: Puzzle,
+    final_puzzle: Puzzle,
     value: usize,
     x: usize,
     number_list: &[usize],
 ) -> usize {
-    let possible_values = get_possible_values_in_column(current_data, final_data, value, x);
+    let possible_values = get_possible_values_in_column(current_puzzle, final_puzzle, value, x);
     for possible_value in possible_values {
-        if check_in_correct_column(&final_data, possible_value, x)
+        if check_in_correct_column(final_puzzle, possible_value, x)
             && number_list.contains(&possible_value)
             && possible_value != 0
         {
@@ -118,15 +124,15 @@ fn check_column_conflict(
 }
 
 fn check_row_conflict(
-    current_data: &[Vec<usize>],
-    final_data: &[Vec<usize>],
+    current_puzzle: Puzzle,
+    final_puzzle: Puzzle,
     value: usize,
     y: usize,
     number_list: &[usize],
 ) -> usize {
-    let possible_values = get_possible_values_in_row(current_data, final_data, value, y);
+    let possible_values = get_possible_values_in_row(current_puzzle, final_puzzle, value, y);
     for possible_value in possible_values {
-        if check_in_correct_row(&final_data, possible_value, y)
+        if check_in_correct_row(final_puzzle, possible_value, y)
             && number_list.contains(&possible_value)
             && possible_value != 0
         {
@@ -136,15 +142,13 @@ fn check_row_conflict(
     0
 }
 
-pub fn hamming_distance(puzzle: &Puzzle, final_puzzle: &Puzzle) -> usize {
+pub fn hamming_distance(puzzle: Puzzle, final_puzzle: Puzzle) -> usize {
     // +1 per misplaced tiles (except empty one)
-    let final_data = final_puzzle.clone().data;
-    let current_data = &puzzle.data;
     let mut heuristic = 0;
 
-    for y in 0..final_data.len() {
-        for x in 0..final_data.len() {
-            if final_data[y][x] != current_data[y][x] && current_data[y][x] != 0 {
+    for y in 0..puzzle.size {
+        for x in 0..puzzle.size {
+            if final_puzzle.get_value(x, y) != puzzle.get_value(x, y) && puzzle.get_value(x, y) != 0 {
                 heuristic += 1;
             }
         }
@@ -153,17 +157,15 @@ pub fn hamming_distance(puzzle: &Puzzle, final_puzzle: &Puzzle) -> usize {
     heuristic
 }
 
-pub fn manhattan_distance(puzzle: &Puzzle, final_puzzle: &Puzzle) -> usize {
+pub fn manhattan_distance(puzzle: Puzzle, final_puzzle: Puzzle) -> usize {
     // +1 per move a misplaced tile as to do (except empty one)
-    let final_data = final_puzzle.clone().data;
-    let current_data = &puzzle.data;
     let mut heuristic = 0;
 
-    for y in 0..current_data.len() {
-        for x in 0..current_data.len() {
-            if final_data[y][x] != current_data[y][x] && current_data[y][x] != 0 {
-                let value = current_data[y][x];
-                let (x2, y2) = get_correct_point(&final_data, value);
+    for y in 0..puzzle.size {
+        for x in 0..puzzle.size {
+            if final_puzzle.get_value(x, y) != puzzle.get_value(x, y) && puzzle.get_value(x, y) != 0 {
+                let value = puzzle.get_value(x, y);
+                let (x2, y2) = final_puzzle.get_position(value);
                 heuristic += get_distance(x, y, x2, y2);
             }
         }
@@ -172,21 +174,19 @@ pub fn manhattan_distance(puzzle: &Puzzle, final_puzzle: &Puzzle) -> usize {
     heuristic
 }
 
-pub fn linear_conflict(puzzle: &Puzzle, final_puzzle: &Puzzle) -> usize {
+pub fn linear_conflict(puzzle: Puzzle, final_puzzle: Puzzle) -> usize {
     // +2 when two tiles are in their goal row or column, but are reversed relative to their goal positions.  (except empty one)
-    let final_data = final_puzzle.clone().data;
-    let current_data = &puzzle.data;
     let mut heuristic = 0;
     let size = puzzle.size;
     let mut number_list: Vec<usize> = (0..(size * size)).collect();
 
-    for y in 0..current_data.len() {
-        for x in 0..current_data.len() {
-            if final_data[y][x] != current_data[y][x] && current_data[y][x] != 0 {
-                let value = current_data[y][x];
+    for y in 0..size {
+        for x in 0..size {
+            if final_puzzle.get_value(x, y) != puzzle.get_value(x, y) && puzzle.get_value(x, y) != 0 {
+                let value = puzzle.get_value(x, y);
                 let conflict_value =
-                    check_column_conflict(&current_data, &final_data, value, x, &number_list)
-                        + check_row_conflict(&current_data, &final_data, value, y, &number_list);
+                    check_column_conflict(puzzle, final_puzzle, value, x, &number_list)
+                        + check_row_conflict(puzzle, final_puzzle, value, y, &number_list);
                 if conflict_value != 0usize {
                     heuristic += conflict_value;
                     let index = number_list.iter().position(|x| *x == value).unwrap();
@@ -199,8 +199,8 @@ pub fn linear_conflict(puzzle: &Puzzle, final_puzzle: &Puzzle) -> usize {
     heuristic
 }
 
-pub fn manhattan_linear_conflict_heuristic(puzzle: &Puzzle, final_puzzle: &Puzzle) -> usize {
-    manhattan_distance(puzzle, final_puzzle) + 2 * linear_conflict(&puzzle, final_puzzle)
+pub fn manhattan_linear_conflict_heuristic(puzzle: Puzzle, final_puzzle: Puzzle) -> usize {
+    manhattan_distance(puzzle.clone(), final_puzzle.clone()) + 2 * linear_conflict(puzzle, final_puzzle)
 }
 
 #[cfg(test)]
