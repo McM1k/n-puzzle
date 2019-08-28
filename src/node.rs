@@ -1,20 +1,6 @@
 use crate::puzzle::Puzzle;
 use std::cmp::Ordering;
 use std::fmt;
-extern crate strum;
-extern crate strum_macros;
-use strum::IntoEnumIterator;
-use strum_macros::EnumIter;
-
-/*
-#[derive(EnumIter)]
-pub enum Direction {
-    Up,
-    Left,
-    Down,
-    Right,
-}
-*/
 
 #[derive(Clone, Eq)]
 pub struct Node {
@@ -40,21 +26,6 @@ impl PartialEq for Node {
         self.f_score == other.f_score && self.state == other.state
     }
 }
-
-/*
-impl Clone for Node {
-    fn clone(&self) -> Self {
-
-        Node {
-            state: self.state.clone(),
-            distance: self.distance,
-            upper_state: None,
-            lower_state: None,
-            left_state: None,
-            right_state: None,
-        }
-    }
-}*/
 
 impl fmt::Debug for Node {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -91,10 +62,6 @@ impl Node {
         }
     }
 
-    //	pub fn add_node(curr_node: &Node, dir: Direction) -> Option<Node> {
-
-    //	}
-
     pub fn swap_two_positions(
         puzzle: &Puzzle,
         x: usize,
@@ -108,38 +75,6 @@ impl Node {
 
         new_puzzle
     }
-
-    /*
-    pub fn get_void_position(puzzle: &Puzzle) -> (usize, usize) {
-        puzzle.get_position(0)
-    }
-    */
-
-    /*
-    pub fn next_nodes_to_vec(
-        node: &Node,
-        final_node: &Node,
-        heuristic: fn(&Puzzle, &Puzzle) -> usize,
-    ) -> Vec<Node> {
-        let mut next_nodes = vec![];
-        let mut curr_puzzle;
-
-        for dir in Direction::iter() {
-            curr_puzzle = Node::calculate_next_state(&node.state, dir);
-            if curr_puzzle != None {
-                next_nodes.push(Node {
-                    state: curr_puzzle.clone().unwrap(),
-                    distance: node.distance + 1,
-                    f_score: node.distance
-                        + 1
-                        + heuristic(&curr_puzzle.unwrap(), &final_node.state),
-                });
-            }
-        }
-
-        next_nodes
-    }
-    */
 
     pub fn calculate_next_states(puzzle: &Puzzle) -> Vec<Puzzle> {
         let (x, y) = puzzle.get_position(0);
@@ -164,15 +99,15 @@ impl Node {
     pub fn calculate_next_nodes(
         parent: Node,
         final_node: Node,
-        heuristic: fn(&Puzzle, &Puzzle) -> usize,
+        heuristic: fn(Puzzle, Puzzle) -> usize,
     ) -> Vec<Node> {
         let mut childs = Vec::new();
         let next_states= Node::calculate_next_states(&parent.state);
         for state in next_states {
             childs.push(Node {
-                state: state,
+                state: state.clone(),
                 distance: parent.distance + 1,
-                f_score: parent.distance + 1 + heuristic(&state, &final_node.state),
+                f_score: parent.distance + 1 + heuristic(state, final_node.clone().state),
                 });
         }
 

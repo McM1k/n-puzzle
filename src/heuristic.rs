@@ -7,37 +7,6 @@ fn get_distance(x1: usize, y1: usize, x2: usize, y2: usize) -> usize {
     x as usize + y as usize
 }
 
-/*
-fn get_correct_point(puzzle: Puzzle, value: usize) -> (usize, usize) {
-    let x2 = 0;
-    let y2 = 0;
-
-    for y2 in 0..data.len() {
-        for x2 in 0..data.len() {
-            if data[y2][x2] == value {
-                return (x2, y2);
-            }
-        }
-    }
-
-    (x2, y2)
-}
-*/
-
-/*
-fn get_value_position(puzzle: Puzzle, value: usize) -> (usize, usize) {
-    for y in 0..data.len() {
-        for x in 0..data.len() {
-            if data[y][x] == value {
-                return (x, y);
-            }
-        }
-    }
-
-    (0, 0)
-}
-*/
-
 fn get_possible_values_in_row(
     puzzle: Puzzle,
     final_puzzle: Puzzle,
@@ -111,9 +80,9 @@ fn check_column_conflict(
     x: usize,
     number_list: &[usize],
 ) -> usize {
-    let possible_values = get_possible_values_in_column(current_puzzle, final_puzzle, value, x);
+    let possible_values = get_possible_values_in_column(current_puzzle, final_puzzle.clone(), value, x);
     for possible_value in possible_values {
-        if check_in_correct_column(final_puzzle, possible_value, x)
+        if check_in_correct_column(final_puzzle.clone(), possible_value, x)
             && number_list.contains(&possible_value)
             && possible_value != 0
         {
@@ -130,9 +99,9 @@ fn check_row_conflict(
     y: usize,
     number_list: &[usize],
 ) -> usize {
-    let possible_values = get_possible_values_in_row(current_puzzle, final_puzzle, value, y);
+    let possible_values = get_possible_values_in_row(current_puzzle, final_puzzle.clone(), value, y);
     for possible_value in possible_values {
-        if check_in_correct_row(final_puzzle, possible_value, y)
+        if check_in_correct_row(final_puzzle.clone(), possible_value, y)
             && number_list.contains(&possible_value)
             && possible_value != 0
         {
@@ -182,14 +151,15 @@ pub fn linear_conflict(puzzle: Puzzle, final_puzzle: Puzzle) -> usize {
 
     for y in 0..size {
         for x in 0..size {
-            if final_puzzle.get_value(x, y) != puzzle.get_value(x, y) && puzzle.get_value(x, y) != 0 {
-                let value = puzzle.get_value(x, y);
+            let final_value = &final_puzzle.get_value(x, y);
+            let value = &puzzle.get_value(x, y);
+            if final_value != value && *value != 0 {
                 let conflict_value =
-                    check_column_conflict(puzzle, final_puzzle, value, x, &number_list)
-                        + check_row_conflict(puzzle, final_puzzle, value, y, &number_list);
+                    check_column_conflict(puzzle.clone(), final_puzzle.clone(), *value, x, &number_list)
+                        + check_row_conflict(puzzle.clone(), final_puzzle.clone(), *value, y, &number_list);
                 if conflict_value != 0usize {
                     heuristic += conflict_value;
-                    let index = number_list.iter().position(|x| *x == value).unwrap();
+                    let index = number_list.iter().position(|x| *x == *value).unwrap();
                     number_list.remove(index);
                 }
             }

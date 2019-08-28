@@ -31,7 +31,7 @@ fn file_to_vec(filename: PathBuf) -> Vec<String> {
     lines
 }
 
-pub fn get_heuristic(heuristic_value: &HeuristicValues) -> fn(&Puzzle, &Puzzle) -> usize {
+pub fn get_heuristic(heuristic_value: &HeuristicValues) -> fn(Puzzle, Puzzle) -> usize {
     match heuristic_value {
         HeuristicValues::Hamming => heuristic::hamming_distance,
         HeuristicValues::Manhattan => heuristic::manhattan_distance,
@@ -42,7 +42,7 @@ pub fn get_heuristic(heuristic_value: &HeuristicValues) -> fn(&Puzzle, &Puzzle) 
 
 pub fn get_algorithm(
     algorithm_value: &AlgorithmValues,
-) -> fn(Puzzle, fn(&Puzzle, &Puzzle) -> usize) {
+) -> fn(Puzzle, fn(Puzzle, Puzzle) -> usize) {
     match algorithm_value {
         AlgorithmValues::Greedy => Graph::a_star_greedy,
         AlgorithmValues::Astar => Graph::a_star,

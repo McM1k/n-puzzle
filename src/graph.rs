@@ -8,7 +8,7 @@ pub struct Graph {
     pub closed_list: Vec<Node>,
     pub start_node: Node,
     pub final_node: Node,
-    pub heuristic: fn(&Puzzle, &Puzzle) -> usize,
+    pub heuristic: fn(Puzzle, Puzzle) -> usize,
     pub max_states: usize,
 }
 
@@ -18,10 +18,6 @@ impl Graph {
     }
 
     fn add_to_closed_list(&mut self, new_node: Node) {
-        //        let mut found;
-        //        while found = self.open_list.iter().position(|n| n == node) != None {
-        //            self.open_list.remove(found.unwrap());
-        //        }
         self.closed_list.push(new_node);
     }
 
@@ -42,8 +38,9 @@ impl Graph {
             .iter()
             .position(|n| n.state == new_node.state)
             .unwrap();
+        let old_node = self.open_list[pos].clone();
         if old_node.f_score > new_node.f_score {
-            let old_node = self.open_list.iter().remove(pos);
+            self.open_list.remove(pos);
             self.open_list.insert(
                 self.open_list
                     .iter()
@@ -90,7 +87,7 @@ impl Graph {
         }
     }
 
-    pub fn a_star_greedy(state: Puzzle, heuristic: fn(&Puzzle, &Puzzle) -> usize) {
+    pub fn a_star_greedy(state: Puzzle, heuristic: fn(Puzzle, Puzzle) -> usize) {
         let start_time = SystemTime::now();
         let mut graph = Graph {
             open_list: vec![],
@@ -102,25 +99,25 @@ impl Graph {
         };
         graph.add_to_open_list(graph.start_node.partial_copy());
 
-        if graph.recursive_search(&graph.clone().start_node, start_time) {
+        if graph.recursive_search(graph.clone().start_node, start_time) {
             return;
         } else {
             panic!("Solution not found");
         }
     }
 
-    fn recursive_search(&mut self, curr_node: &Node, start_time: SystemTime) -> bool {
-        if curr_node == &self.final_node {
+    fn recursive_search(&mut self, curr_node: Node, start_time: SystemTime) -> bool {
+        if curr_node == self.final_node {
             crate::print_result::print_data(self.clone(), curr_node.partial_copy(), start_time);
             println!("{}", curr_node);
             return true;
         }
         //println!("{}, score : {}",curr_node.clone(), curr_node.clone().distance + (self.clone().heuristic)(&(curr_node.clone().state)));
         let mut next_nodes =
-            Node::next_nodes_to_vec(curr_node, &self.clone().final_node, self.heuristic);
+            Node::calculate_next_nodes(curr_node.clone(), self.clone().final_node, self.heuristic);
         next_nodes.sort_by(|a, b| {
-            (b.distance + (self.heuristic)(&(b.state), &self.final_node.state))
-                .partial_cmp(&(a.distance + (self.heuristic)(&(a.state), &self.final_node.state)))
+            (b.clone().distance + (self.heuristic)(b.clone().state, self.clone().final_node.state))
+                .partial_cmp(&(a.clone().distance + (self.heuristic)(a.clone().state, self.clone().final_node.state)))
                 .unwrap()
         });
 
@@ -130,7 +127,7 @@ impl Graph {
 
             if !self.closed_list.contains(&child_node) && self.is_lower_cost(&child_node) {
                 self.add_to_open_list(child_node.partial_copy());
-                if self.recursive_search(&child_node, start_time) {
+                if self.recursive_search(child_node, start_time) {
                     println!("{}", curr_node);
                     return true;
                 }
@@ -141,7 +138,7 @@ impl Graph {
         false
     }
 
-    pub fn a_star(state: Puzzle, heuristic: fn(&Puzzle, &Puzzle) -> usize) {
+    pub fn a_star(state: Puzzle, heuristic: fn(Puzzle, Puzzle) -> usize) {
         let start_time = SystemTime::now();
 
         let mut graph = Graph {

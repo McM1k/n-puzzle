@@ -11,18 +11,14 @@ pub struct Puzzle {
 
 impl fmt::Display for Puzzle {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if self.size < 11 {
-            let padding = 3;
-        }
-        else {
-            let padding = 4;
-        }
+        let padding= if self.size < 11 { 3 } else { 4 };
         for i in 0..self.data.len() {
-            write!(f, "{0:<padding$}", value, padding)?;
             if i % self.size == 0 && i != 0 {
                 writeln!(f)?;
             }
+            write!(f, "{0:<1$}", self.data[i], padding)?;
         }
+        writeln!(f)?;
         Ok(())
     }
 }
@@ -39,9 +35,13 @@ impl Puzzle {
     }
 
     pub fn get_position(&self, value: usize) -> (usize, usize) {
-        let pos = self.data.iter().position().unwrap_or_else("Value not found inside the puzzle");
-
-        (pos % self.size, pos / self.size)
+        let size = self.size;
+        for pos in 0..(size * size) {
+            if self.data[pos] == value {
+                return (pos % size, pos / size);
+            }
+        }
+        panic!("value not found inside the puzzle");
     }
 
     pub fn set_value(&mut self, x: usize, y: usize, value: usize){
@@ -54,8 +54,7 @@ impl Puzzle {
         }
 
         let mut all_the_values: Vec<usize> = (0..(size * size)).collect();
-        let mut data = vec![0usize; size];
-
+        let mut data = vec![0usize; size * size];
         data.iter_mut().for_each(|value| {
                 while {
                     *value = all_the_values
@@ -87,62 +86,14 @@ impl Puzzle {
         }
     }
 
-    /*
-    fn get_current_data_sequence(puzzle: Vec<usize>) -> Vec<usize> {
-        let mut data: Vec<usize> = Vec::new();
-        let size = puzzle.len();
-
-        let mut current_index = 1;
-        let mut min_x = 0;
-        let mut min_y = 0;
-        let mut max_x = size - 1;
-        let mut max_y = size - 1;
-
-        loop {
-            for right in min_x..=max_x {
-                data.push(puzzle[min_x][right]);
-                current_index += 1;
-                if current_index >= size * size {
-                    return data;
-                }
-            }
-            min_y += 1;
-            for down in puzzle.iter().take(max_y + 1).skip(min_y) {
-                data.push(down[max_x]);
-                current_index += 1;
-                if current_index >= size * size {
-                    return data;
-                }
-            }
-            max_x -= 1;
-            for left in (min_x..=max_x).rev() {
-                data.push(puzzle[max_y][left]);
-                current_index += 1;
-                if current_index >= size * size {
-                    return data;
-                }
-            }
-            max_y -= 1;
-            for up in (min_y..=max_y).rev() {
-                data.push(puzzle[up][min_x]);
-                current_index += 1;
-                if current_index >= size * size {
-                    return data;
-                }
-            }
-            min_x += 1;
-        }
-    }
-    */
-
     pub fn inversion(puzzle: Puzzle) -> usize {
-        let mut data = vec![0; puzzle.size * puzzle.size]; //Puzzle::get_current_data_sequence(puzzle);
+        let data = vec![0; puzzle.size * puzzle.size]; //Puzzle::get_current_data_sequence(puzzle);
         let mut sort_count = 0;
 
         for i in 0..data.len() {
             let value = data[i];
-            for j in i..data.len() {
-                if value > data[j] && data[j] != 0 {
+            for other in data.iter().skip(i) {
+                if value > *other && *other != 0 {
                     sort_count += 1;
                 }
             }
@@ -153,10 +104,10 @@ impl Puzzle {
 
 
     pub fn is_solvable(puzzle: Puzzle) -> bool {
-        let goal_puzzle = Puzzle::get_final_state(puzzle.size);
-        let mut start_inversion = Puzzle::inversion(puzzle);
-        let mut goal_inversion = Puzzle::inversion(goal_puzzle);
-
+        let size = puzzle.size;
+        let goal_puzzle = Puzzle::get_final_state(size);
+        let mut start_inversion = Puzzle::inversion(puzzle.clone());
+        let mut goal_inversion = Puzzle::inversion(goal_puzzle.clone());
         if size % 2 == 0 {
             let (mut x1, mut y1) = (0, 0);
             let (mut x2, mut y2) = (0, 0);
@@ -181,7 +132,7 @@ impl Puzzle {
     }
 
     pub fn get_final_state(size: usize) -> Puzzle {
-        let mut data = vec![0usize; size];
+        let data = vec![0usize; size * size];
         let mut puzzle = Puzzle {data, size};
 
         let mut current_number = 1;
@@ -196,8 +147,8 @@ impl Puzzle {
                 current_number += 1;
             }
             min_y += 1;
-            for down in data.iter_mut().take(max_y + 1).skip(min_y) {
-                down[max_x] = current_number;
+            for down in min_y..=max_y {
+                puzzle.set_value(max_x, down, current_number);
                 current_number += 1;
             }
             max_x -= 1;
@@ -205,6 +156,7 @@ impl Puzzle {
                 puzzle.set_value(max_x, max_y, 0);
                 break;
             }
+
             for left in (min_x..=max_x).rev() {
                 puzzle.set_value(left, max_y, current_number);
                 current_number += 1;
