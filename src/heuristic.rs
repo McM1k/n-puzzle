@@ -191,14 +191,15 @@ pub fn manhattan_linear_conflict_heuristic(puzzle: Puzzle, final_puzzle: Puzzle)
 #[cfg(test)]
 mod heuristic_tests {
     mod hamming_distance {
+        use super::super::Puzzle;
         use crate::heuristic::*;
 
         #[test]
         fn five_moved_tiles() {
             let size = 3;
-            let data = vec![vec![1, 2, 8], vec![0, 3, 4], vec![7, 5, 6]];
-            let puzzle = super::super::Puzzle { data, size };
-            let heuristic = hamming_distance(&puzzle);
+            let data = vec![1, 2, 8, 0, 3, 4, 7, 5, 6];
+            let puzzle = Puzzle { data, size };
+            let heuristic = hamming_distance(puzzle, Puzzle::get_final_state(size));
 
             assert_eq!(heuristic, 4);
         }
@@ -206,9 +207,9 @@ mod heuristic_tests {
         #[test]
         fn no_moved_tile() {
             let size = 3;
-            let data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let puzzle = super::super::Puzzle { data, size };
-            let heuristic = hamming_distance(&puzzle);
+            let data = vec![1, 2, 3, 8, 0, 4, 7, 6, 5];
+            let puzzle = Puzzle { data, size };
+            let heuristic = hamming_distance(puzzle, Puzzle::get_final_state(size));
 
             assert_eq!(heuristic, 0);
         }
@@ -216,23 +217,24 @@ mod heuristic_tests {
         #[test]
         fn every_tiles_moved() {
             let size = 3;
-            let data = vec![vec![7, 5, 6], vec![1, 2, 3], vec![8, 0, 4]];
-            let puzzle = super::super::Puzzle { data, size };
-            let heuristic = hamming_distance(&puzzle);
+            let data = vec![7, 5, 6, 1, 2, 3, 8, 0, 4];
+            let puzzle = Puzzle { data, size };
+            let heuristic = hamming_distance(puzzle, Puzzle::get_final_state(size));
 
             assert_eq!(heuristic, 8);
         }
     }
 
     mod manhattan_distance {
+        use super::super::Puzzle;
         use crate::heuristic::*;
 
         #[test]
         fn five_moved_tiles() {
             let size = 3;
-            let data = vec![vec![1, 2, 8], vec![0, 3, 4], vec![7, 5, 6]];
-            let puzzle = super::super::Puzzle { data, size };
-            let heuristic = manhattan_distance(&puzzle);
+            let data = vec![1, 2, 8, 0, 3, 4, 7, 5, 6];
+            let puzzle = Puzzle { data, size };
+            let heuristic = manhattan_distance(puzzle, Puzzle::get_final_state(size));
 
             assert_eq!(heuristic, 7);
         }
@@ -240,9 +242,9 @@ mod heuristic_tests {
         #[test]
         fn no_moved_tile() {
             let size = 3;
-            let data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let puzzle = super::super::Puzzle { data, size };
-            let heuristic = manhattan_distance(&puzzle);
+            let data = vec![1, 2, 3, 8, 0, 4, 7, 6, 5];
+            let puzzle = Puzzle { data, size };
+            let heuristic = manhattan_distance(puzzle, Puzzle::get_final_state(size));
 
             assert_eq!(heuristic, 0);
         }
@@ -250,23 +252,24 @@ mod heuristic_tests {
         #[test]
         fn every_tiles_moved() {
             let size = 3;
-            let data = vec![vec![7, 5, 6], vec![1, 2, 3], vec![8, 0, 4]];
-            let puzzle = super::super::Puzzle { data, size };
-            let heuristic = manhattan_distance(&puzzle);
+            let data = vec![7, 5, 6, 1, 2, 3, 8, 0, 4];
+            let puzzle = Puzzle { data, size };
+            let heuristic = manhattan_distance(puzzle, Puzzle::get_final_state(size));
 
             assert_eq!(heuristic, 13);
         }
     }
 
     mod linear_conflict {
+        use super::super::Puzzle;
         use crate::heuristic::*;
 
         #[test]
         fn one_conflict_in_one_row() {
             let size = 3;
-            let data = vec![vec![2, 1, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let puzzle = super::super::Puzzle { data, size };
-            let heuristic = linear_conflict(&puzzle);
+            let data = vec![2, 1, 3, 8, 0, 4, 7, 6, 5];
+            let puzzle = Puzzle { data, size };
+            let heuristic = linear_conflict(puzzle, Puzzle::get_final_state(size));
 
             assert_eq!(heuristic, 1);
         }
@@ -274,9 +277,9 @@ mod heuristic_tests {
         #[test]
         fn two_conflicts_in_one_row() {
             let size = 3;
-            let data = vec![vec![3, 2, 1], vec![8, 0, 4], vec![7, 6, 5]];
-            let puzzle = super::super::Puzzle { data, size };
-            let heuristic = linear_conflict(&puzzle);
+            let data = vec![3, 2, 1, 8, 0, 4, 7, 6, 5];
+            let puzzle = Puzzle { data, size };
+            let heuristic = linear_conflict(puzzle, Puzzle::get_final_state(size));
 
             assert_eq!(heuristic, 2);
         }
@@ -284,9 +287,9 @@ mod heuristic_tests {
         #[test]
         fn one_conflict_in_one_column() {
             let size = 3;
-            let data = vec![vec![8, 2, 3], vec![1, 0, 4], vec![7, 6, 5]];
-            let puzzle = super::super::Puzzle { data, size };
-            let heuristic = linear_conflict(&puzzle);
+            let data = vec![8, 2, 3, 1, 0, 4, 7, 6, 5];
+            let puzzle = Puzzle { data, size };
+            let heuristic = linear_conflict(puzzle, Puzzle::get_final_state(size));
 
             assert_eq!(heuristic, 1);
         }
@@ -294,9 +297,9 @@ mod heuristic_tests {
         #[test]
         fn two_conflicts_in_one_column() {
             let size = 3;
-            let data = vec![vec![7, 2, 3], vec![8, 0, 4], vec![1, 6, 5]];
-            let puzzle = super::super::Puzzle { data, size };
-            let heuristic = linear_conflict(&puzzle);
+            let data = vec![7, 2, 3, 8, 0, 4, 1, 6, 5];
+            let puzzle = Puzzle { data, size };
+            let heuristic = linear_conflict(puzzle, Puzzle::get_final_state(size));
 
             assert_eq!(heuristic, 2);
         }
@@ -304,26 +307,27 @@ mod heuristic_tests {
         #[test]
         fn no_conflict() {
             let size = 3;
-            let data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let puzzle = super::super::Puzzle { data, size };
-            let heuristic = linear_conflict(&puzzle);
+            let data = vec![1, 2, 3, 8, 0, 4, 7, 6, 5];
+            let puzzle = Puzzle { data, size };
+            let heuristic = linear_conflict(puzzle, Puzzle::get_final_state(size));
 
             assert_eq!(heuristic, 0);
         }
     }
 
     mod check_in_correct_column {
-        use super::super::*;
+        use super::super::Puzzle;
+        use crate::heuristic::*;
 
         #[test]
         fn return_true() {
             let size = 3;
-            let data = vec![vec![8, 2, 3], vec![1, 0, 4], vec![7, 6, 5]];
+            let data = vec![8, 2, 3, 1, 0, 4, 7, 6, 5];
             let puzzle = Puzzle { data, size };
             let x = 0;
             let value = 1;
             let in_correct_column =
-                check_in_correct_column(&Puzzle::get_final_state(puzzle.size), value, x);
+                check_in_correct_column(Puzzle::get_final_state(puzzle.size), value, x);
 
             assert!(in_correct_column);
         }
@@ -331,29 +335,30 @@ mod heuristic_tests {
         #[test]
         fn return_false() {
             let size = 3;
-            let data = vec![vec![2, 1, 3], vec![8, 0, 4], vec![7, 6, 5]];
+            let data = vec![2, 1, 3, 8, 0, 4, 7, 6, 5];
             let puzzle = Puzzle { data, size };
             let x = 1;
             let value = 1;
             let in_correct_column =
-                check_in_correct_column(&Puzzle::get_final_state(puzzle.size), value, x);
+                check_in_correct_column(Puzzle::get_final_state(puzzle.size), value, x);
 
             assert!(!in_correct_column);
         }
     }
 
     mod check_in_correct_row {
-        use super::super::*;
+        use super::super::Puzzle;
+        use crate::heuristic::*;
 
         #[test]
         fn return_true() {
             let size = 3;
-            let data = vec![vec![3, 2, 1], vec![8, 0, 4], vec![7, 6, 5]];
+            let data = vec![3, 2, 1, 8, 0, 4, 7, 6, 5];
             let puzzle = Puzzle { data, size };
             let y = 0;
             let value = 1;
             let in_correct_column =
-                check_in_correct_row(&Puzzle::get_final_state(puzzle.size), value, y);
+                check_in_correct_row(Puzzle::get_final_state(puzzle.size), value, y);
 
             assert!(in_correct_column);
         }
@@ -361,12 +366,12 @@ mod heuristic_tests {
         #[test]
         fn return_false() {
             let size = 3;
-            let data = vec![vec![8, 2, 3], vec![1, 0, 4], vec![7, 6, 5]];
+            let data = vec![8, 2, 3, 1, 0, 4, 7, 6, 5];
             let puzzle = Puzzle { data, size };
             let y = 1;
             let value = 1;
             let in_correct_column =
-                check_in_correct_row(&Puzzle::get_final_state(puzzle.size), value, y);
+                check_in_correct_row(Puzzle::get_final_state(puzzle.size), value, y);
 
             assert!(!in_correct_column);
         }
@@ -378,14 +383,14 @@ mod heuristic_tests {
         #[test]
         fn with_conflict() {
             let size = 3;
-            let data = vec![vec![8, 2, 3], vec![1, 0, 4], vec![7, 6, 5]];
+            let data = vec![8, 2, 3, 1, 0, 4, 7, 6, 5];
             let puzzle = Puzzle { data, size };
-            let number_list: Vec<usize> = (0..(puzzle.size * puzzle.size)).collect();
+            let number_list: Vec<usize> = (0..(size * size)).collect();
             let value = 1;
             let x = 0;
             let heuristic = check_column_conflict(
-                &puzzle.data,
-                &Puzzle::get_final_state(puzzle.size),
+                puzzle,
+                Puzzle::get_final_state(size),
                 value,
                 x,
                 &number_list,
@@ -397,14 +402,14 @@ mod heuristic_tests {
         #[test]
         fn with_no_conflict() {
             let size = 3;
-            let data = vec![vec![2, 8, 3], vec![1, 0, 4], vec![7, 6, 5]];
+            let data = vec![2, 8, 3, 1, 0, 4, 7, 6, 5];
             let puzzle = Puzzle { data, size };
-            let number_list: Vec<usize> = (0..(puzzle.size * puzzle.size)).collect();
+            let number_list: Vec<usize> = (0..(size * size)).collect();
             let value = 1;
             let x = 0;
             let heuristic = check_column_conflict(
-                &puzzle.data,
-                &Puzzle::get_final_state(puzzle.size),
+                puzzle,
+                Puzzle::get_final_state(size),
                 value,
                 x,
                 &number_list,
@@ -420,14 +425,14 @@ mod heuristic_tests {
         #[test]
         fn with_conflict() {
             let size = 3;
-            let data = vec![vec![3, 2, 1], vec![8, 0, 4], vec![7, 6, 5]];
+            let data = vec![3, 2, 1, 8, 0, 4, 7, 6, 5];
             let puzzle = Puzzle { data, size };
-            let number_list: Vec<usize> = (0..(puzzle.size * puzzle.size)).collect();
+            let number_list: Vec<usize> = (0..(size * size)).collect();
             let value = 1;
             let y = 0;
             let heuristic = check_row_conflict(
-                &puzzle.data,
-                &Puzzle::get_final_state(puzzle.size),
+                puzzle,
+                Puzzle::get_final_state(size),
                 value,
                 y,
                 &number_list,
@@ -439,14 +444,14 @@ mod heuristic_tests {
         #[test]
         fn with_no_conflict() {
             let size = 3;
-            let data = vec![vec![8, 1, 3], vec![2, 0, 4], vec![7, 6, 5]];
+            let data = vec![8, 1, 3, 2, 0, 4, 7, 6, 5];
             let puzzle = Puzzle { data, size };
-            let number_list: Vec<usize> = (0..(puzzle.size * puzzle.size)).collect();
+            let number_list: Vec<usize> = (0..(size * size)).collect();
             let value = 1;
             let y = 0;
             let heuristic = check_row_conflict(
-                &puzzle.data,
-                &Puzzle::get_final_state(puzzle.size),
+                puzzle,
+                Puzzle::get_final_state(size),
                 value,
                 y,
                 &number_list,
@@ -456,28 +461,22 @@ mod heuristic_tests {
         }
     }
 
-    mod get_value_position {
-        use super::super::*;
-
-        #[test]
-        fn is_working() {
-            let data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let value = 3;
-            let position = get_value_position(&data, value);
-
-            assert_eq!(position, (2, 0));
-        }
-    }
-
     mod get_possible_values_in_row {
         use super::super::*;
 
         #[test]
         fn row_distance_of_one_with_incremental_range() {
-            let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let data = vec![vec![2, 1, 3], vec![8, 0, 4], vec![7, 6, 5]];
+            let final_puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+            let puzzle = Puzzle {
+                data: vec![2, 1, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+
             let value = 1;
-            let possible_values = get_possible_values_in_row(&data, &final_data, value, 0);
+            let possible_values = get_possible_values_in_row(puzzle, final_puzzle, value, 0);
             let wanted_values = vec![2];
 
             assert_eq!(possible_values, wanted_values);
@@ -485,10 +484,16 @@ mod heuristic_tests {
 
         #[test]
         fn row_distance_of_one_with_decremental_range() {
-            let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let data = vec![vec![1, 3, 2], vec![8, 0, 4], vec![7, 6, 5]];
+            let final_puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+            let puzzle = Puzzle {
+                data: vec![1, 3, 2, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
             let value = 3;
-            let possible_values = get_possible_values_in_row(&data, &final_data, value, 0);
+            let possible_values = get_possible_values_in_row(puzzle, final_puzzle, value, 0);
             let wanted_values = vec![2];
 
             assert_eq!(possible_values, wanted_values);
@@ -496,10 +501,17 @@ mod heuristic_tests {
 
         #[test]
         fn row_distance_of_two_with_incremental_range() {
-            let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let data = vec![vec![2, 3, 1], vec![8, 0, 4], vec![7, 6, 5]];
+            let final_puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+            let puzzle = Puzzle {
+                data: vec![2, 3, 1, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+
             let value = 1;
-            let possible_values = get_possible_values_in_row(&data, &final_data, value, 0);
+            let possible_values = get_possible_values_in_row(puzzle, final_puzzle, value, 0);
             let wanted_values = vec![3, 2];
 
             assert_eq!(possible_values, wanted_values);
@@ -507,10 +519,16 @@ mod heuristic_tests {
 
         #[test]
         fn row_distance_of_two_with_decremental_range() {
-            let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let data = vec![vec![3, 1, 2], vec![8, 0, 4], vec![7, 6, 5]];
+            let final_puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+            let puzzle = Puzzle {
+                data: vec![3, 1, 2, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
             let value = 3;
-            let possible_values = get_possible_values_in_row(&data, &final_data, value, 0);
+            let possible_values = get_possible_values_in_row(puzzle, final_puzzle, value, 0);
             let wanted_values = vec![1, 2];
 
             assert_eq!(possible_values, wanted_values);
@@ -518,10 +536,17 @@ mod heuristic_tests {
 
         #[test]
         fn row_distance_of_zero() {
-            let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
+            let final_puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+            let puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+
             let value = 1;
-            let possible_values = get_possible_values_in_row(&data, &final_data, value, 0);
+            let possible_values = get_possible_values_in_row(puzzle, final_puzzle, value, 0);
             let wanted_values = vec![];
 
             assert_eq!(possible_values, wanted_values);
@@ -533,10 +558,16 @@ mod heuristic_tests {
 
         #[test]
         fn column_distance_of_one_with_incremental_range() {
-            let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let data = vec![vec![8, 2, 3], vec![1, 0, 4], vec![7, 6, 5]];
+            let final_puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+            let puzzle = Puzzle {
+                data: vec![8, 2, 3, 1, 0, 4, 7, 6, 5],
+                size: 3,
+            };
             let value = 1;
-            let possible_values = get_possible_values_in_column(&data, &final_data, value, 0);
+            let possible_values = get_possible_values_in_column(puzzle, final_puzzle, value, 0);
             let wanted_values = vec![8];
 
             assert_eq!(possible_values, wanted_values);
@@ -544,10 +575,16 @@ mod heuristic_tests {
 
         #[test]
         fn column_distance_of_one_with_decremental_range() {
-            let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let data = vec![vec![1, 2, 3], vec![7, 0, 4], vec![8, 6, 5]];
+            let final_puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+            let puzzle = Puzzle {
+                data: vec![1, 2, 3, 7, 0, 4, 8, 6, 5],
+                size: 3,
+            };
             let value = 7;
-            let possible_values = get_possible_values_in_column(&data, &final_data, value, 0);
+            let possible_values = get_possible_values_in_column(puzzle, final_puzzle, value, 0);
             let wanted_values = vec![8];
 
             assert_eq!(possible_values, wanted_values);
@@ -555,10 +592,16 @@ mod heuristic_tests {
 
         #[test]
         fn column_distance_of_two_with_incremental_range() {
-            let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let data = vec![vec![8, 2, 3], vec![7, 0, 4], vec![1, 6, 5]];
+            let final_puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+            let puzzle = Puzzle {
+                data: vec![8, 2, 3, 7, 0, 4, 1, 6, 5],
+                size: 3,
+            };
             let value = 1;
-            let possible_values = get_possible_values_in_column(&data, &final_data, value, 0);
+            let possible_values = get_possible_values_in_column(puzzle, final_puzzle, value, 0);
             let wanted_values = vec![7, 8];
 
             assert_eq!(possible_values, wanted_values);
@@ -566,10 +609,16 @@ mod heuristic_tests {
 
         #[test]
         fn column_distance_of_two_with_decremental_range() {
-            let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let data = vec![vec![7, 2, 3], vec![1, 0, 4], vec![8, 6, 5]];
+            let final_puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+            let puzzle = Puzzle {
+                data: vec![7, 2, 3, 1, 0, 4, 8, 6, 5],
+                size: 3,
+            };
             let value = 7;
-            let possible_values = get_possible_values_in_column(&data, &final_data, value, 0);
+            let possible_values = get_possible_values_in_column(puzzle, final_puzzle, value, 0);
             let wanted_values = vec![1, 8];
 
             assert_eq!(possible_values, wanted_values);
@@ -577,10 +626,16 @@ mod heuristic_tests {
 
         #[test]
         fn column_distance_of_zero() {
-            let final_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            let data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
+            let final_puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+            let puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
             let value = 1;
-            let possible_values = get_possible_values_in_column(&data, &final_data, value, 0);
+            let possible_values = get_possible_values_in_column(puzzle, final_puzzle, value, 0);
             let wanted_values = vec![];
 
             assert_eq!(possible_values, wanted_values);
@@ -593,9 +648,10 @@ mod heuristic_tests {
         #[test]
         fn example_case() {
             let size = 3;
-            let data = vec![vec![1, 2, 3], vec![7, 4, 0], vec![8, 5, 6]];
+            let data = vec![1, 2, 3, 7, 4, 0, 8, 5, 6];
             let puzzle = Puzzle { data, size };
-            let heuristic = manhattan_linear_conflict_heuristic(&puzzle);
+            let heuristic =
+                manhattan_linear_conflict_heuristic(puzzle, Puzzle::get_final_state(size));
 
             assert_eq!(heuristic, 9);
         }

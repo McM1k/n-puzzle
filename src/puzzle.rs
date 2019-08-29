@@ -180,16 +180,154 @@ impl Puzzle {
 
 #[cfg(test)]
 mod puzzle_tests {
+    mod get_value {
+        use crate::puzzle::Puzzle;
+
+        #[test]
+        fn get_0() {
+            let puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+
+            assert_eq!(puzzle.get_value(1, 1), 0);
+        }
+
+        #[test]
+        fn get_7() {
+            let puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+
+            assert_eq!(puzzle.get_value(0, 2), 7);
+        }
+
+        #[test]
+        fn get_15() {
+            let puzzle = Puzzle {
+                data: vec![1, 2, 3, 9, 8, 0, 4, 10, 7, 6, 5, 11, 12, 13, 14, 15],
+                size: 4,
+            };
+
+            assert_eq!(puzzle.get_value(3, 3), 15);
+        }
+
+        #[test]
+        #[should_panic]
+        fn get_out_of_bounds() {
+            let puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+
+            puzzle.get_value(42, 42);
+        }
+    }
+
+    mod get_position {
+        use crate::puzzle::Puzzle;
+
+        #[test]
+        fn get_0() {
+            let puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+
+            assert_eq!(puzzle.get_position(0), (1, 1));
+        }
+
+        #[test]
+        fn get_7() {
+            let puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+
+            assert_eq!(puzzle.get_position(7), (0, 2));
+        }
+
+        #[test]
+        fn get_15() {
+            let puzzle = Puzzle {
+                data: vec![1, 2, 3, 9, 8, 0, 4, 10, 7, 6, 5, 11, 12, 13, 14, 15],
+                size: 4,
+            };
+
+            assert_eq!(puzzle.get_position(15), (3, 3));
+        }
+
+        #[test]
+        #[should_panic]
+        fn get_impossible() {
+            let puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+
+            puzzle.get_position(9);
+        }
+    }
+
+    mod set_value {
+        use crate::puzzle::Puzzle;
+
+        #[test]
+        fn change_0_to_9() {
+            let mut puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+            let changed = Puzzle {
+                data: vec![1, 2, 3, 8, 9, 4, 7, 6, 5],
+                size: 3,
+            };
+
+            puzzle.set_value(1, 1, 9);
+            assert_eq!(puzzle, changed);
+        }
+
+        #[test]
+        fn change_15_to_16() {
+            let mut puzzle = Puzzle {
+                data: vec![1, 2, 3, 9, 8, 0, 4, 10, 7, 6, 5, 11, 12, 13, 14, 15],
+                size: 4,
+            };
+            let changed = Puzzle {
+                data: vec![1, 2, 3, 9, 8, 0, 4, 10, 7, 6, 5, 11, 12, 13, 14, 16],
+                size: 4,
+            };
+
+            puzzle.set_value(3, 3, 16);
+            assert_eq!(puzzle, changed);
+        }
+
+        #[test]
+        #[should_panic]
+        fn change_out_of_bounds() {
+            let mut puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+
+            puzzle.set_value(42, 42, 9);
+        }
+    }
+
     mod get_final_position {
-        use crate::puzzle::*;
+        use crate::puzzle::Puzzle;
 
         #[test]
         fn size_three() {
             let size = 3;
-            let expected_final_state_data = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
+            let expected_final_state = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size,
+            };
             let result_data = Puzzle::get_final_state(size);
 
-            assert_eq!(result_data, expected_final_state_data);
+            assert_eq!(result_data, expected_final_state);
         }
         /*
         1 2 3
@@ -200,16 +338,16 @@ mod puzzle_tests {
         #[test]
         fn size_five() {
             let size = 5;
-            let expected_final_state_data = vec![
-                vec![1, 2, 3, 4, 5],
-                vec![16, 17, 18, 19, 6],
-                vec![15, 24, 0, 20, 7],
-                vec![14, 23, 22, 21, 8],
-                vec![13, 12, 11, 10, 9],
-            ];
+            let expected_final_state = Puzzle {
+                data: vec![
+                    1, 2, 3, 4, 5, 16, 17, 18, 19, 6, 15, 24, 0, 20, 7, 14, 23, 22, 21, 8, 13, 12,
+                    11, 10, 9,
+                ],
+                size,
+            };
             let result_data = Puzzle::get_final_state(size);
 
-            assert_eq!(result_data, expected_final_state_data);
+            assert_eq!(result_data, expected_final_state);
         }
         /*
         1  2  3  4  5
@@ -222,21 +360,19 @@ mod puzzle_tests {
         #[test]
         fn size_ten() {
             let size = 10;
-            let expected_final_state_data = vec![
-                vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                vec![36, 37, 38, 39, 40, 41, 42, 43, 44, 11],
-                vec![35, 64, 65, 66, 67, 68, 69, 70, 45, 12],
-                vec![34, 63, 84, 85, 86, 87, 88, 71, 46, 13],
-                vec![33, 62, 83, 96, 97, 98, 89, 72, 47, 14],
-                vec![32, 61, 82, 95, 0, 99, 90, 73, 48, 15],
-                vec![31, 60, 81, 94, 93, 92, 91, 74, 49, 16],
-                vec![30, 59, 80, 79, 78, 77, 76, 75, 50, 17],
-                vec![29, 58, 57, 56, 55, 54, 53, 52, 51, 18],
-                vec![28, 27, 26, 25, 24, 23, 22, 21, 20, 19],
-            ];
+            let expected_final_state = Puzzle {
+                data: vec![
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 36, 37, 38, 39, 40, 41, 42, 43, 44, 11, 35, 64,
+                    65, 66, 67, 68, 69, 70, 45, 12, 34, 63, 84, 85, 86, 87, 88, 71, 46, 13, 33, 62,
+                    83, 96, 97, 98, 89, 72, 47, 14, 32, 61, 82, 95, 0, 99, 90, 73, 48, 15, 31, 60,
+                    81, 94, 93, 92, 91, 74, 49, 16, 30, 59, 80, 79, 78, 77, 76, 75, 50, 17, 29, 58,
+                    57, 56, 55, 54, 53, 52, 51, 18, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19,
+                ],
+                size,
+            };
             let result_data = Puzzle::get_final_state(size);
 
-            assert_eq!(result_data, expected_final_state_data);
+            assert_eq!(result_data, expected_final_state);
         }
         /*
         1  2  3  4  5  6  7  8  9  10
@@ -259,25 +395,25 @@ mod puzzle_tests {
         fn equals() {
             let size = 3;
 
-            let data = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
+            let data = vec![0, 1, 2, 3, 4, 5, 6, 8, 7];
             let puzzle = Puzzle { data, size };
 
-            let data2 = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
+            let data2 = vec![0, 1, 2, 3, 4, 5, 6, 8, 7];
             let puzzle2 = Puzzle { data: data2, size };
 
-            assert!(puzzle == puzzle2);
+            assert_eq!(puzzle, puzzle2);
         }
 
         #[test]
         fn not_equals() {
             let size = 3;
 
-            let data = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
+            let data = vec![0, 1, 2, 3, 4, 5, 6, 8, 7];
             let puzzle = Puzzle { data, size };
 
-            let data2 = vec![vec![0, 2, 1], vec![3, 4, 5], vec![6, 8, 7]];
+            let data2 = vec![0, 2, 1, 3, 4, 5, 6, 8, 7];
             let puzzle2 = Puzzle { data: data2, size };
-            assert!(puzzle != puzzle2);
+            assert_ne!(puzzle, puzzle2);
         }
     }
 
@@ -286,50 +422,18 @@ mod puzzle_tests {
 
         #[test]
         #[should_panic]
-        fn panic_because_size_less_than_three() {
-            Puzzle::new(2);
+        fn panic_because_size_less_than_two() {
+            Puzzle::new(1);
         }
 
         #[test]
         fn correct_puzzle_of_size_three() {
-            let size: usize = 3;
-            let mut all_the_values: Vec<usize> = (0..(size * size)).collect();
-
-            let puzzle = Puzzle::new(size);
-
-            puzzle.data.iter().for_each(|one_line_data| {
-                one_line_data.iter().for_each(|value| {
-                    all_the_values.remove(
-                        all_the_values
-                            .clone()
-                            .iter()
-                            .position(|&x| x == *value)
-                            .unwrap(),
-                    );
-                })
-            });
-            assert!(all_the_values.is_empty());
+            assert_eq!(Puzzle::new(3).size, 3);
         }
 
         #[test]
         fn correct_puzzle_of_size_ten() {
-            let size: usize = 10;
-            let mut all_the_values: Vec<usize> = (0..(size * size)).collect();
-
-            let puzzle = Puzzle::new(size);
-
-            puzzle.data.iter().for_each(|one_line_data| {
-                one_line_data.iter().for_each(|value| {
-                    all_the_values.remove(
-                        all_the_values
-                            .clone()
-                            .iter()
-                            .position(|&x| x == *value)
-                            .unwrap(),
-                    );
-                })
-            });
-            assert!(all_the_values.is_empty());
+            assert_eq!(Puzzle::new(10).size, 10);
         }
     }
 
@@ -338,32 +442,47 @@ mod puzzle_tests {
 
         #[test]
         fn solvable_puzzle() {
-            let puzzle: Vec<Vec<usize>> = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
-            assert_eq!(Puzzle::is_solvable(&puzzle), true);
+            let puzzle = Puzzle {
+                data: vec![0, 1, 2, 3, 4, 5, 6, 8, 7],
+                size: 3,
+            };
+            assert!(Puzzle::is_solvable(puzzle));
         }
 
         #[test]
         fn solvable_puzzle_already_solved() {
-            let puzzle: Vec<Vec<usize>> = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
-            assert_eq!(Puzzle::is_solvable(&puzzle), true);
+            let puzzle = Puzzle {
+                data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
+                size: 3,
+            };
+            assert!(Puzzle::is_solvable(puzzle));
         }
 
         #[test]
         fn solvable_puzzle_with_one_move() {
-            let puzzle: Vec<Vec<usize>> = vec![vec![1, 2, 3], vec![0, 8, 4], vec![7, 6, 5]];
-            assert_eq!(Puzzle::is_solvable(&puzzle), true);
+            let puzzle = Puzzle {
+                data: vec![1, 2, 3, 0, 8, 4, 7, 6, 5],
+                size: 3,
+            };
+            assert!(Puzzle::is_solvable(puzzle));
         }
 
         #[test]
         fn solvable_puzzle_with_fifteen_moves() {
-            let puzzle: Vec<Vec<usize>> = vec![vec![1, 8, 4], vec![0, 3, 5], vec![2, 7, 6]];
-            assert_eq!(Puzzle::is_solvable(&puzzle), true);
+            let puzzle = Puzzle {
+                data: vec![1, 8, 4, 0, 3, 5, 2, 7, 6],
+                size: 3,
+            };
+            assert!(Puzzle::is_solvable(puzzle));
         }
 
         #[test]
         fn unsolvable_puzzle() {
-            let puzzle: Vec<Vec<usize>> = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 7, 8]];
-            assert_eq!(Puzzle::is_solvable(&puzzle), false);
+            let puzzle = Puzzle {
+                data: vec![0, 1, 2, 3, 4, 5, 6, 7, 8],
+                size: 3,
+            };
+            assert_eq!(Puzzle::is_solvable(puzzle), false);
         }
     }
 }

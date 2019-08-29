@@ -170,31 +170,31 @@ mod parser_tests {
         #[should_panic]
         fn panic_because_value_out_of_scope() {
             let size: usize = 2;
-            let tab = vec![vec![0, 1], vec![2, 5]];
-            check_values_are_incremental(size, &tab);
+            let tab = vec![0, 1, 2, 5];
+            check_values_are_incremental(size, tab);
         }
 
         #[test]
         #[should_panic]
         fn panic_because_two_time_same_value() {
             let size: usize = 2;
-            let tab = vec![vec![0, 1], vec![2, 2]];
-            check_values_are_incremental(size, &tab);
+            let tab = vec![0, 1, 2, 2];
+            check_values_are_incremental(size, tab);
         }
 
         #[test]
         #[should_panic]
         fn panic_because_too_few_values() {
             let size: usize = 2;
-            let tab = vec![vec![0, 1], vec![2]];
-            check_values_are_incremental(size, &tab);
+            let tab = vec![0, 1, 2];
+            check_values_are_incremental(size, tab);
         }
 
         #[test]
         fn no_panic() {
             let size: usize = 2;
-            let tab = vec![vec![0, 1], vec![2, 3]];
-            check_values_are_incremental(size, &tab);
+            let tab = vec![0, 1, 2, 3];
+            check_values_are_incremental(size, tab);
         }
     }
 
@@ -205,39 +205,39 @@ mod parser_tests {
         #[should_panic]
         fn panic_because_too_few_values_in_one_line() {
             let size: usize = 3;
-            let tab = vec![vec![0, 1, 2], vec![3, 5], vec![6, 7, 8]];
-            check_values_form_correct_square(size, &tab);
+            let tab = vec![0, 1, 2, 3, 5, 6, 7, 8];
+            check_values_form_correct_square(size, tab);
         }
 
         #[test]
         #[should_panic]
         fn panic_because_too_much_values_in_one_line() {
             let size: usize = 3;
-            let tab = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 7, 8, 9]];
-            check_values_form_correct_square(size, &tab);
+            let tab = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+            check_values_form_correct_square(size, tab);
         }
 
         #[test]
         #[should_panic]
         fn panic_because_wrong_number_of_lines() {
             let size: usize = 3;
-            let tab = vec![vec![0, 1, 2], vec![3, 4, 5]];
-            check_values_form_correct_square(size, &tab);
+            let tab = vec![0, 1, 2, 3, 4, 5];
+            check_values_form_correct_square(size, tab);
         }
 
         #[test]
         #[should_panic]
-        fn panic_because_square_is_too_little() {
+        fn panic_because_square_is_too_small() {
             let size: usize = 2;
-            let tab = vec![vec![0, 1], vec![2, 3]];
-            check_values_form_correct_square(size, &tab);
+            let tab = vec![0, 1, 2, 3];
+            check_values_form_correct_square(size, tab);
         }
 
         #[test]
         fn no_panic() {
             let size: usize = 3;
-            let tab = vec![vec![0, 1, 4], vec![2, 3, 5], vec![8, 7, 6]];
-            check_values_form_correct_square(size, &tab);
+            let tab = vec![0, 1, 2, 2, 3, 5, 8, 7, 6];
+            check_values_form_correct_square(size, tab);
         }
     }
 
@@ -252,8 +252,7 @@ mod parser_tests {
                 "1 5     6".to_string(),
                 "   2 7 8   ".to_string(),
             ];
-            let data_number: (usize, Vec<Vec<usize>>) =
-                (3, vec![vec![0, 3, 4], vec![1, 5, 6], vec![2, 7, 8]]);
+            let data_number: (usize, Vec<usize>) = (3, vec![0, 3, 4, 1, 5, 6, 2, 7, 8]);
 
             assert_eq!(get_data(data_string), data_number);
         }
@@ -262,27 +261,9 @@ mod parser_tests {
         #[should_panic]
         fn panic_if_cannot_get_size() {
             let data_string: Vec<String> = vec![];
-            let data_number: (usize, Vec<Vec<usize>>) =
-                (3, vec![vec![0, 3, 4], vec![1, 5, 6], vec![2, 7, 8]]);
+            let data_number: (usize, Vec<usize>) = (3, vec![0, 3, 4, 1, 5, 6, 2, 7, 8]);
 
             assert_eq!(get_data(data_string), data_number);
         }
     }
-
-    mod get_raw_data {
-        use crate::parser::*;
-
-        #[test]
-        fn use_case_test() {
-            let data_string: Vec<String> = vec![
-                "0  3  4".to_string(),
-                "1 5     6".to_string(),
-                "   2 7 8   ".to_string(),
-            ];
-            let data_number: Vec<Vec<usize>> = vec![vec![0, 3, 4], vec![1, 5, 6], vec![2, 7, 8]];
-
-            assert_eq!(get_raw_data(data_string), data_number);
-        }
-    }
-
 }

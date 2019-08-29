@@ -202,20 +202,18 @@ mod graph_tests {
             let mut graph = Graph {
                 open_list: vec![],
                 closed_list: vec![],
-                start_node: Node::new_starting_node(
-                    Puzzle {
-                        data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
-                        size: 3,
-                    },
-                    heuristic::manhattan_distance,
-                ),
+                start_node: Node::new_starting_node(Puzzle {
+                    data: vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    size: 3,
+                }),
+                final_node: Node::get_final_node(3),
                 heuristic: heuristic::manhattan_linear_conflict_heuristic,
                 max_states: 1,
             };
 
             let node1 = Node {
                 state: Puzzle {
-                    data: vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]],
+                    data: vec![0, 1, 2, 3, 4, 5, 6, 8, 7],
                     size: 3,
                 },
                 f_score: 1,
@@ -224,7 +222,7 @@ mod graph_tests {
 
             let node2 = Node {
                 state: Puzzle {
-                    data: vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]],
+                    data: vec![0, 1, 2, 3, 4, 5, 6, 8, 7],
                     size: 3,
                 },
                 f_score: 1,
@@ -242,20 +240,18 @@ mod graph_tests {
             let mut graph = Graph {
                 open_list: vec![],
                 closed_list: vec![],
-                start_node: Node::new_starting_node(
-                    Puzzle {
-                        data: vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
-                        size: 3,
-                    },
-                    heuristic::manhattan_distance,
-                ),
+                start_node: Node::new_starting_node(Puzzle {
+                    data: vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    size: 3,
+                }),
+                final_node: Node::get_final_node(3),
                 heuristic: heuristic::manhattan_distance,
                 max_states: 1,
             };
 
             let node1 = Node {
                 state: Puzzle {
-                    data: vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]],
+                    data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
                     size: 3,
                 },
                 f_score: 1,
@@ -264,7 +260,7 @@ mod graph_tests {
 
             let node2 = Node {
                 state: Puzzle {
-                    data: vec![vec![1, 2, 3], vec![8, 4, 5], vec![7, 6, 0]],
+                    data: vec![1, 2, 3, 8, 4, 5, 7, 6, 0],
                     size: 3,
                 },
                 f_score: 5,
@@ -273,7 +269,7 @@ mod graph_tests {
 
             let node3 = Node {
                 state: Puzzle {
-                    data: vec![vec![1, 2, 3], vec![8, 4, 0], vec![7, 6, 5]],
+                    data: vec![1, 2, 3, 8, 4, 0, 7, 6, 5],
                     size: 3,
                 },
                 f_score: 3,
