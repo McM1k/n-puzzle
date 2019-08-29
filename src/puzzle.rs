@@ -86,8 +86,11 @@ impl Puzzle {
         }
     }
 
+    /*
+    ** an inversion is a pair of tiles (a,b) such that a appears before b, but a>b.
+    */
     pub fn inversion(puzzle: Puzzle) -> usize {
-        let data = vec![0; puzzle.size * puzzle.size]; //Puzzle::get_current_data_sequence(puzzle);
+        let data = puzzle.data; //Puzzle::get_current_data_sequence(puzzle);
         let mut sort_count = 0;
 
         for i in 0..data.len() {
