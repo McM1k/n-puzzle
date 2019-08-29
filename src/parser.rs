@@ -68,20 +68,28 @@ pub fn check_values_form_correct_square(size: usize, data: Vec<usize>) {
 pub fn get_data(mut lines: Vec<String>) -> (usize, Vec<usize>) {
     let size = match lines.remove(0).parse::<usize>() {
         Err(_e) => panic!("first line should only contain one value\n"),
-        Ok(x)=> x,
+        Ok(x) => x,
     };
 
     let mut data = vec![];
     for line in lines {
-        data.append(&mut line.split_whitespace().map(|token| -> usize {
-            token.parse::<usize>().expect("Unable to parse data into u32\n")
-        }).collect())
+        data.append(
+            &mut line
+                .split_whitespace()
+                .map(|token| -> usize {
+                    token
+                        .parse::<usize>()
+                        .expect("Unable to parse data into u32\n")
+                })
+                .collect(),
+        )
     }
 
     (size, data)
 }
 
-pub fn parse(mut lines: Vec<String>) -> Puzzle { //bad naming, possible confusion with str::parse
+pub fn parse(mut lines: Vec<String>) -> Puzzle {
+    //bad naming, possible confusion with str::parse
     check_empty_lines(&lines);
     lines = remove_comments(lines);
     check_empty_vec(&lines);

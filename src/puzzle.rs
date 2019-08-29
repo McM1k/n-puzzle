@@ -11,7 +11,7 @@ pub struct Puzzle {
 
 impl fmt::Display for Puzzle {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let padding= if self.size < 11 { 3 } else { 4 };
+        let padding = if self.size < 11 { 3 } else { 4 };
         for i in 0..self.data.len() {
             if i % self.size == 0 && i != 0 {
                 writeln!(f)?;
@@ -30,7 +30,7 @@ impl cmp::PartialEq for Puzzle {
 }
 
 impl Puzzle {
-    pub fn get_value(&self, x: usize, y: usize) -> usize{
+    pub fn get_value(&self, x: usize, y: usize) -> usize {
         self.data[y * self.size + x]
     }
 
@@ -44,7 +44,7 @@ impl Puzzle {
         panic!("value not found inside the puzzle");
     }
 
-    pub fn set_value(&mut self, x: usize, y: usize, value: usize){
+    pub fn set_value(&mut self, x: usize, y: usize, value: usize) {
         self.data[y * self.size + x] = value;
     }
 
@@ -56,18 +56,18 @@ impl Puzzle {
         let mut all_the_values: Vec<usize> = (0..(size * size)).collect();
         let mut data = vec![0usize; size * size];
         data.iter_mut().for_each(|value| {
-                while {
-                    *value = all_the_values
-                        [rand::thread_rng().gen_range(0, all_the_values.clone().iter().count())];
-                    !all_the_values.contains(value)
-                } {}
-                all_the_values.remove(
-                    all_the_values
-                        .clone()
-                        .iter()
-                        .position(|&x| x == *value)
-                        .unwrap(),
-                );
+            while {
+                *value = all_the_values
+                    [rand::thread_rng().gen_range(0, all_the_values.clone().iter().count())];
+                !all_the_values.contains(value)
+            } {}
+            all_the_values.remove(
+                all_the_values
+                    .clone()
+                    .iter()
+                    .position(|&x| x == *value)
+                    .unwrap(),
+            );
         });
         let puzzle = Puzzle { data, size };
         if Puzzle::is_solvable(puzzle.clone()) {
@@ -78,7 +78,7 @@ impl Puzzle {
     }
 
     pub fn new_from_file(data: Vec<usize>, size: usize) -> Puzzle {
-        let puzzle= Puzzle { data, size };
+        let puzzle = Puzzle { data, size };
         if !Puzzle::is_solvable(puzzle.clone()) {
             panic!("Unsolvable puzzle\n");
         } else {
@@ -87,8 +87,8 @@ impl Puzzle {
     }
 
     /*
-    ** an inversion is a pair of tiles (a,b) such that a appears before b, but a>b.
-    */
+     ** an inversion is a pair of tiles (a,b) such that a appears before b, but a>b.
+     */
     pub fn inversion(puzzle: Puzzle) -> usize {
         let data = puzzle.data; //Puzzle::get_current_data_sequence(puzzle);
         let mut sort_count = 0;
@@ -104,7 +104,6 @@ impl Puzzle {
 
         sort_count
     }
-
 
     pub fn is_solvable(puzzle: Puzzle) -> bool {
         let size = puzzle.size;
@@ -136,7 +135,7 @@ impl Puzzle {
 
     pub fn get_final_state(size: usize) -> Puzzle {
         let data = vec![0usize; size * size];
-        let mut puzzle = Puzzle {data, size};
+        let mut puzzle = Puzzle { data, size };
 
         let mut current_number = 1;
         let mut min_x = 0;

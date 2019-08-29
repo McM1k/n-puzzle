@@ -117,7 +117,10 @@ impl Graph {
             Node::calculate_next_nodes(curr_node.clone(), self.clone().final_node, self.heuristic);
         next_nodes.sort_by(|a, b| {
             (b.clone().distance + (self.heuristic)(b.clone().state, self.clone().final_node.state))
-                .partial_cmp(&(a.clone().distance + (self.heuristic)(a.clone().state, self.clone().final_node.state)))
+                .partial_cmp(
+                    &(a.clone().distance
+                        + (self.heuristic)(a.clone().state, self.clone().final_node.state)),
+                )
                 .unwrap()
         });
 

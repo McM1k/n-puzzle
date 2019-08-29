@@ -78,9 +78,9 @@ impl Node {
 
     pub fn calculate_next_states(puzzle: &Puzzle) -> Vec<Puzzle> {
         let (x, y) = puzzle.get_position(0);
-        let mut childs= vec![];
+        let mut childs = vec![];
 
-        if y != 0{
+        if y != 0 {
             childs.push(Node::swap_two_positions(puzzle, x, y, x, y - 1));
         }
         if y != puzzle.size - 1 {
@@ -102,13 +102,13 @@ impl Node {
         heuristic: fn(Puzzle, Puzzle) -> usize,
     ) -> Vec<Node> {
         let mut childs = Vec::new();
-        let next_states= Node::calculate_next_states(&parent.state);
+        let next_states = Node::calculate_next_states(&parent.state);
         for state in next_states {
             childs.push(Node {
                 state: state.clone(),
                 distance: parent.distance + 1,
                 f_score: parent.distance + 1 + heuristic(state, final_node.clone().state),
-                });
+            });
         }
 
         childs

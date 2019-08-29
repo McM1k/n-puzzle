@@ -19,11 +19,11 @@ fn get_possible_values_in_row(
     let (current_x, _) = puzzle.get_position(value);
     if final_x < current_x {
         for x in (final_x..current_x).rev() {
-            values.push(puzzle.get_value(x ,y));
+            values.push(puzzle.get_value(x, y));
         }
     } else {
         for x in (current_x + 1)..=final_x {
-            values.push(puzzle.get_value(x ,y));
+            values.push(puzzle.get_value(x, y));
         }
     }
 
@@ -42,11 +42,11 @@ fn get_possible_values_in_column(
     let (_, current_y) = puzzle.get_position(value);
     if final_y < current_y {
         for y in (final_y..current_y).rev() {
-            values.push(puzzle.get_value(x ,y));
+            values.push(puzzle.get_value(x, y));
         }
     } else {
         for y in (current_y + 1)..=final_y {
-            values.push(puzzle.get_value(x ,y));
+            values.push(puzzle.get_value(x, y));
         }
     }
 
@@ -55,7 +55,7 @@ fn get_possible_values_in_column(
 
 fn check_in_correct_column(puzzle: Puzzle, value: usize, x: usize) -> bool {
     for y in 0..puzzle.size {
-        if puzzle.get_value(x ,y) == value {
+        if puzzle.get_value(x, y) == value {
             return true;
         }
     }
@@ -65,7 +65,7 @@ fn check_in_correct_column(puzzle: Puzzle, value: usize, x: usize) -> bool {
 
 fn check_in_correct_row(puzzle: Puzzle, value: usize, y: usize) -> bool {
     for x in 0..puzzle.size {
-        if puzzle.get_value(x ,y) == value {
+        if puzzle.get_value(x, y) == value {
             return true;
         }
     }
@@ -80,7 +80,8 @@ fn check_column_conflict(
     x: usize,
     number_list: &[usize],
 ) -> usize {
-    let possible_values = get_possible_values_in_column(current_puzzle, final_puzzle.clone(), value, x);
+    let possible_values =
+        get_possible_values_in_column(current_puzzle, final_puzzle.clone(), value, x);
     for possible_value in possible_values {
         if check_in_correct_column(final_puzzle.clone(), possible_value, x)
             && number_list.contains(&possible_value)
@@ -99,7 +100,8 @@ fn check_row_conflict(
     y: usize,
     number_list: &[usize],
 ) -> usize {
-    let possible_values = get_possible_values_in_row(current_puzzle, final_puzzle.clone(), value, y);
+    let possible_values =
+        get_possible_values_in_row(current_puzzle, final_puzzle.clone(), value, y);
     for possible_value in possible_values {
         if check_in_correct_row(final_puzzle.clone(), possible_value, y)
             && number_list.contains(&possible_value)
@@ -117,7 +119,8 @@ pub fn hamming_distance(puzzle: Puzzle, final_puzzle: Puzzle) -> usize {
 
     for y in 0..puzzle.size {
         for x in 0..puzzle.size {
-            if final_puzzle.get_value(x, y) != puzzle.get_value(x, y) && puzzle.get_value(x, y) != 0 {
+            if final_puzzle.get_value(x, y) != puzzle.get_value(x, y) && puzzle.get_value(x, y) != 0
+            {
                 heuristic += 1;
             }
         }
@@ -132,7 +135,8 @@ pub fn manhattan_distance(puzzle: Puzzle, final_puzzle: Puzzle) -> usize {
 
     for y in 0..puzzle.size {
         for x in 0..puzzle.size {
-            if final_puzzle.get_value(x, y) != puzzle.get_value(x, y) && puzzle.get_value(x, y) != 0 {
+            if final_puzzle.get_value(x, y) != puzzle.get_value(x, y) && puzzle.get_value(x, y) != 0
+            {
                 let value = puzzle.get_value(x, y);
                 let (x2, y2) = final_puzzle.get_position(value);
                 heuristic += get_distance(x, y, x2, y2);
@@ -154,9 +158,19 @@ pub fn linear_conflict(puzzle: Puzzle, final_puzzle: Puzzle) -> usize {
             let final_value = &final_puzzle.get_value(x, y);
             let value = &puzzle.get_value(x, y);
             if final_value != value && *value != 0 {
-                let conflict_value =
-                    check_column_conflict(puzzle.clone(), final_puzzle.clone(), *value, x, &number_list)
-                        + check_row_conflict(puzzle.clone(), final_puzzle.clone(), *value, y, &number_list);
+                let conflict_value = check_column_conflict(
+                    puzzle.clone(),
+                    final_puzzle.clone(),
+                    *value,
+                    x,
+                    &number_list,
+                ) + check_row_conflict(
+                    puzzle.clone(),
+                    final_puzzle.clone(),
+                    *value,
+                    y,
+                    &number_list,
+                );
                 if conflict_value != 0usize {
                     heuristic += conflict_value;
                     let index = number_list.iter().position(|x| *x == *value).unwrap();
@@ -170,7 +184,8 @@ pub fn linear_conflict(puzzle: Puzzle, final_puzzle: Puzzle) -> usize {
 }
 
 pub fn manhattan_linear_conflict_heuristic(puzzle: Puzzle, final_puzzle: Puzzle) -> usize {
-    manhattan_distance(puzzle.clone(), final_puzzle.clone()) + 2 * linear_conflict(puzzle, final_puzzle)
+    manhattan_distance(puzzle.clone(), final_puzzle.clone())
+        + 2 * linear_conflict(puzzle, final_puzzle)
 }
 
 #[cfg(test)]
