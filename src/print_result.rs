@@ -59,13 +59,14 @@ fn select_previous_node(curr_node: Node, graph: Graph) -> Result<Node, String> {
 #[cfg(test)]
 mod print_result {
     mod select_previous_node {
+        use crate::graph::Graph;
         use crate::node::*;
         use crate::print_result::*;
         use crate::puzzle::*;
 
         #[test]
         fn normal_use_case() {
-            let data1 = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
+            let data1 = vec![1, 2, 3, 8, 0, 4, 7, 6, 5];
             let node1 = Node {
                 state: Puzzle {
                     data: data1,
@@ -74,7 +75,7 @@ mod print_result {
                 f_score: 1,
                 distance: 1,
             };
-            let data3 = vec![vec![1, 2, 3], vec![8, 4, 5], vec![7, 6, 0]];
+            let data3 = vec![1, 2, 3, 8, 4, 5, 7, 6, 0];
             let node3 = Node {
                 state: Puzzle {
                     data: data3,
@@ -83,7 +84,7 @@ mod print_result {
                 f_score: 1,
                 distance: 3,
             };
-            let data2 = vec![vec![1, 2, 3], vec![8, 4, 0], vec![7, 6, 5]];
+            let data2 = vec![1, 2, 3, 8, 4, 0, 7, 6, 5];
             let node2 = Node {
                 state: Puzzle {
                     data: data2,
@@ -93,13 +94,21 @@ mod print_result {
                 distance: 2,
             };
 
-            assert_eq!(select_previous_node(node2), Ok(node1));
+            let graph = Graph {
+                open_list: vec![node1.clone(), node2.clone(), node3.clone()],
+                closed_list: vec![],
+                start_node: node3.clone(),
+                final_node: node1.clone(),
+                heuristic: |_a, _b| 0,
+                max_states: 0,
+            };
+
+            assert_eq!(select_previous_node(node2, graph), Ok(node1));
         }
 
         #[test]
-        #[should_panic]
         fn dead_end() {
-            let data1 = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
+            let data1 = vec![1, 2, 3, 8, 0, 4, 7, 6, 5];
             let node1 = Node {
                 state: Puzzle {
                     data: data1,
@@ -108,18 +117,37 @@ mod print_result {
                 f_score: 1,
                 distance: 2,
             };
-            select_previous_node(node1);
+            let start_node = Node {
+                state: Puzzle {
+                    data: vec![1, 2, 3, 4, 5, 6, 7, 8, 0],
+                    size: 0,
+                },
+                f_score: 0,
+                distance: 0,
+            };
+
+            let graph = Graph {
+                open_list: vec![node1.clone()],
+                closed_list: vec![],
+                start_node,
+                final_node: node1.clone(),
+                heuristic: |_a, _b| 0,
+                max_states: 0,
+            };
+
+            assert_eq!(select_previous_node(node1, graph), Err("".to_string()));
         }
     }
 
     mod recursive_path {
+        use crate::graph::Graph;
         use crate::node::*;
         use crate::print_result::*;
         use crate::puzzle::*;
 
         #[test]
         fn print_small_solution() {
-            let data1 = vec![vec![1, 2, 3], vec![8, 0, 4], vec![7, 6, 5]];
+            let data1 = vec![1, 2, 3, 8, 0, 4, 7, 6, 5];
             let node1 = Node {
                 state: Puzzle {
                     data: data1,
@@ -128,7 +156,7 @@ mod print_result {
                 f_score: 1,
                 distance: 0,
             };
-            let data2 = vec![vec![1, 2, 3], vec![8, 4, 0], vec![7, 6, 5]];
+            let data2 = vec![1, 2, 3, 8, 4, 0, 7, 6, 5];
             let node2 = Node {
                 state: Puzzle {
                     data: data2,
@@ -137,7 +165,7 @@ mod print_result {
                 f_score: 1,
                 distance: 1,
             };
-            let data3 = vec![vec![1, 2, 3], vec![8, 4, 5], vec![7, 6, 0]];
+            let data3 = vec![1, 2, 3, 8, 4, 5, 7, 6, 0];
             let node3 = Node {
                 state: Puzzle {
                     data: data3,
@@ -147,19 +175,28 @@ mod print_result {
                 distance: 2,
             };
 
+            let graph = Graph {
+                open_list: vec![node1.clone(), node2.clone(), node3.clone()],
+                closed_list: vec![],
+                start_node: node3.clone(),
+                final_node: node1,
+                heuristic: |_a, _b| 0,
+                max_states: 0,
+            };
+
             assert_eq!(
-                recursive_path(&node3),
-                "1   2   3   \n\
-                 8   0   4   \n\
-                 7   6   5   \n\
+                recursive_path(&node3, graph),
+                "1  2  3  \n\
+                 8  0  4  \n\
+                 7  6  5  \n\
                  \n\
-                 1   2   3   \n\
-                 8   4   0   \n\
-                 7   6   5   \n\
+                 1  2  3  \n\
+                 8  4  0  \n\
+                 7  6  5  \n\
                  \n\
-                 1   2   3   \n\
-                 8   4   5   \n\
-                 7   6   0   \n\
+                 1  2  3  \n\
+                 8  4  5  \n\
+                 7  6  0  \n\
                  \n"
             );
         }

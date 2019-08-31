@@ -78,9 +78,9 @@ impl Node {
 
     pub fn calculate_next_states(puzzle: &Puzzle) -> Vec<Puzzle> {
         let (x, y) = puzzle.get_position(0);
-        let mut childs= vec![];
+        let mut childs = vec![];
 
-        if y != 0{
+        if y != 0 {
             childs.push(Node::swap_two_positions(puzzle, x, y, x, y - 1));
         }
         if y != puzzle.size - 1 {
@@ -102,13 +102,13 @@ impl Node {
         heuristic: fn(Puzzle, Puzzle) -> usize,
     ) -> Vec<Node> {
         let mut childs = Vec::new();
-        let next_states= Node::calculate_next_states(&parent.state);
+        let next_states = Node::calculate_next_states(&parent.state);
         for state in next_states {
             childs.push(Node {
                 state: state.clone(),
                 distance: parent.distance + 1,
                 f_score: parent.distance + 1 + heuristic(state, final_node.clone().state),
-                });
+            });
         }
 
         childs
@@ -126,14 +126,15 @@ impl Node {
 #[cfg(test)]
 mod node_tests {
     mod swap_two_positions {
-        use crate::node::*;
+        use super::super::Puzzle;
+        use crate::node::Node;
 
         #[test]
         fn down_swap() {
             let size = 3;
-            let data = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
+            let data = vec![0, 1, 2, 3, 4, 5, 6, 8, 7];
             let puzzle = Puzzle { data, size };
-            let result_data = vec![vec![3, 1, 2], vec![0, 4, 5], vec![6, 8, 7]];
+            let result_data = vec![3, 1, 2, 0, 4, 5, 6, 8, 7];
             let result_puzzle = Puzzle {
                 data: result_data,
                 size,
@@ -145,9 +146,9 @@ mod node_tests {
         #[test]
         fn right_swap() {
             let size = 3;
-            let data = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
+            let data = vec![0, 1, 2, 3, 4, 5, 6, 8, 7];
             let puzzle = Puzzle { data, size };
-            let result_data = vec![vec![1, 0, 2], vec![3, 4, 5], vec![6, 8, 7]];
+            let result_data = vec![1, 0, 2, 3, 4, 5, 6, 8, 7];
             let result_puzzle = Puzzle {
                 data: result_data,
                 size,
@@ -157,76 +158,42 @@ mod node_tests {
         }
     }
 
-    mod get_void_position {
-        use crate::node::*;
-
-        #[test]
-        fn center_pos() {
-            let size = 3;
-            let data = vec![vec![4, 1, 2], vec![3, 0, 5], vec![6, 8, 7]];
-            let puzzle = Puzzle { data, size };
-
-            let (x, y) = Node::get_void_position(&puzzle);
-            assert!(x == 1 && y == 1);
-        }
-
-        #[test]
-        fn lower_right_pos() {
-            let size = 3;
-            let data = vec![vec![4, 1, 2], vec![3, 7, 5], vec![6, 8, 0]];
-            let puzzle = Puzzle { data, size };
-
-            let (x, y) = Node::get_void_position(&puzzle);
-            assert!(x == 2 && y == 2);
-        }
-
-        #[test]
-        fn lower_left_pos() {
-            let size = 3;
-            let data = vec![vec![4, 1, 2], vec![3, 7, 5], vec![0, 8, 6]];
-            let puzzle = Puzzle { data, size };
-
-            let (x, y) = Node::get_void_position(&puzzle);
-            assert!(x == 0 && y == 2);
-        }
-    }
-
     mod calculate_next_state {
-        use crate::node::*;
+        use super::super::Puzzle;
+        use crate::node::Node;
 
         #[test]
-        fn wrong_direction() {
+        fn two_dir() {
             let size = 3;
-            let data = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
-            let puzzle = Puzzle { data, size };
 
-            assert_eq!(Node::calculate_next_state(&puzzle, Direction::Up), None);
-        }
-
-        #[test]
-        fn good_direction() {
-            let size = 3;
-            let data = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
-            let puzzle = Puzzle { data, size };
-
-            let result_data = vec![vec![3, 1, 2], vec![0, 4, 5], vec![6, 8, 7]];
-            let result_puzzle = Puzzle {
-                data: result_data,
+            let puzzle = Puzzle {
+                data: vec![0, 1, 2, 3, 4, 5, 6, 8, 7],
                 size,
             };
 
-            assert!(Node::calculate_next_state(&puzzle, Direction::Down).unwrap() == result_puzzle);
+            let result1 = Puzzle {
+                data: vec![3, 1, 2, 0, 4, 5, 6, 8, 7],
+                size,
+            };
+
+            let result2 = Puzzle {
+                data: vec![1, 0, 2, 3, 4, 5, 6, 8, 7],
+                size,
+            };
+
+            assert_eq!(Node::calculate_next_states(&puzzle), vec![result1, result2]);
         }
     }
 
     mod partial_eq {
-        use crate::node::*;
+        use super::super::Puzzle;
+        use crate::node::Node;
 
         #[test]
         fn equals() {
             let len = 0;
             let size = 3;
-            let data = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
+            let data = vec![0, 1, 2, 3, 4, 5, 6, 8, 7];
             let puzzle = Puzzle { data, size };
             let node = Node {
                 state: puzzle,
@@ -235,9 +202,8 @@ mod node_tests {
             };
 
             let len2 = 0;
-            let data2 = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
+            let data2 = vec![0, 1, 2, 3, 4, 5, 6, 8, 7];
             let puzzle2 = Puzzle { data: data2, size };
-            let next = Some(Box::new(node.clone()));
             let node2 = Node {
                 state: puzzle2,
                 distance: len2,
@@ -251,7 +217,7 @@ mod node_tests {
         fn not_equals() {
             let len = 0;
             let size = 3;
-            let data = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
+            let data = vec![0, 1, 2, 3, 4, 5, 6, 8, 7];
             let puzzle = Puzzle { data, size };
             let node = Node {
                 state: puzzle,
@@ -259,7 +225,7 @@ mod node_tests {
                 f_score: len,
             };
 
-            let data2 = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 7, 8]];
+            let data2 = vec![0, 1, 2, 3, 4, 5, 6, 7, 8];
             let puzzle2 = Puzzle { data: data2, size };
             let node2 = Node {
                 state: puzzle2,
@@ -270,28 +236,4 @@ mod node_tests {
             assert_ne!(node, node2);
         }
     }
-
-    // mod add_node {
-    // 	use crate::graph::*;
-
-    // 	#[test]
-    // 	fn node_is_correctly_added() {
-    // 		let data = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
-    // 		let puzzle = Puzzle{data, 3};
-    // 		let node = Node::new_starting_node(puzzle);
-
-    // 		let result_data = vec![vec![1, 0, 2], vec![3, 4, 5], vec![6, 8, 7]];
-    // 		let result_puzzle = Puzzle{result_data, 3};
-
-    // 		assert_eq!(Node::add_node(node, Direction::Left), Some(result_puzzle));
-    // 	}
-
-    // 	fn trying_an_unpossible_move() {
-    // 		let data = vec![vec![0, 1, 2], vec![3, 4, 5], vec![6, 8, 7]];
-    // 		let puzzle = Puzzle{data, 3};
-    // 		let node = Node::new_starting_node(puzzle);
-
-    // 		assert_eq!(Node::add_node(node, Direction::Left), None);
-    // 	}
-    // }
 }
