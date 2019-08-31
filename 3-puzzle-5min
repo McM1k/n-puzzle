@@ -2,9 +2,9 @@
 6  5  0
 8  7  4
 1  2  3
-# - Time elapsed: 41.352ms
+# - Time elapsed: 41.352ms vs 300s
 # - Solution length: 30
 # - Maximum states in memory: 15306
-# - Open states at time of solution: 6239
-# - Total opened states: 15306
-# - Total closed states: 9067
+# - Open states at time of solution: 6239 vs 14594
+# - Total opened states: 15306 vs 36344
+# - Total closed states: 9067 vs 21750

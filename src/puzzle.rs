@@ -5,22 +5,20 @@ use std::fmt;
 
 #[derive(Debug, Clone, Eq)]
 pub struct Puzzle {
-    pub data: Vec<Vec<usize>>,
+    pub data: Vec<usize>,
     pub size: usize,
 }
 
 impl fmt::Display for Puzzle {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        for line_data in self.data.iter() {
-            for value in line_data.iter() {
-                if self.size < 11 {
-                    write!(f, "{:<3}", value)?;
-                } else {
-                    write!(f, "{:<4}", value)?;
-                }
+        let padding= if self.size < 11 { 3 } else { 4 };
+        for i in 0..self.data.len() {
+            if i % self.size == 0 && i != 0 {
+                writeln!(f)?;
             }
-            writeln!(f)?;
+            write!(f, "{0:<1$}", self.data[i], padding)?;
         }
+        writeln!(f)?;
         Ok(())
     }
 }
@@ -32,16 +30,32 @@ impl cmp::PartialEq for Puzzle {
 }
 
 impl Puzzle {
+    pub fn get_value(&self, x: usize, y: usize) -> usize{
+        self.data[y * self.size + x]
+    }
+
+    pub fn get_position(&self, value: usize) -> (usize, usize) {
+        let size = self.size;
+        for pos in 0..(size * size) {
+            if self.data[pos] == value {
+                return (pos % size, pos / size);
+            }
+        }
+        panic!("value not found inside the puzzle");
+    }
+
+    pub fn set_value(&mut self, x: usize, y: usize, value: usize){
+        self.data[y * self.size + x] = value;
+    }
+
     pub fn new(size: usize) -> Puzzle {
         if size < 2 {
             panic!("Size should be higher than 1")
         }
 
         let mut all_the_values: Vec<usize> = (0..(size * size)).collect();
-        let mut data = vec![vec![0usize; size]; size];
-
-        data.iter_mut().for_each(|one_line_data| {
-            one_line_data.iter_mut().for_each(|value| {
+        let mut data = vec![0usize; size * size];
+        data.iter_mut().for_each(|value| {
                 while {
                     *value = all_the_values
                         [rand::thread_rng().gen_range(0, all_the_values.clone().iter().count())];
@@ -54,84 +68,35 @@ impl Puzzle {
                         .position(|&x| x == *value)
                         .unwrap(),
                 );
-            })
         });
-
-        if Puzzle::is_solvable(&data) {
-            Puzzle { data, size }
+        let puzzle = Puzzle { data, size };
+        if Puzzle::is_solvable(puzzle.clone()) {
+            puzzle
         } else {
             Puzzle::new(size)
         }
     }
 
-    pub fn new_from_file(data: Vec<Vec<usize>>, size: usize) -> Puzzle {
-        if !Puzzle::is_solvable(&data) {
+    pub fn new_from_file(data: Vec<usize>, size: usize) -> Puzzle {
+        let puzzle= Puzzle { data, size };
+        if !Puzzle::is_solvable(puzzle.clone()) {
             panic!("Unsolvable puzzle\n");
         } else {
-            Puzzle { data, size }
+            puzzle
         }
     }
 
-    fn get_current_data_sequence(puzzle: &[Vec<usize>]) -> Vec<usize> {
-        let mut data: Vec<usize> = Vec::new();
-        let size = puzzle.len();
-
-        let mut current_index = 1;
-        let mut min_x = 0;
-        let mut min_y = 0;
-        let mut max_x = size - 1;
-        let mut max_y = size - 1;
-
-        loop {
-            for right in min_x..=max_x {
-                data.push(puzzle[min_x][right]);
-                current_index += 1;
-                if current_index >= size * size {
-                    return data;
-                }
-            }
-            min_y += 1;
-            for down in puzzle.iter().take(max_y + 1).skip(min_y) {
-                data.push(down[max_x]);
-                current_index += 1;
-                if current_index >= size * size {
-                    return data;
-                }
-            }
-            max_x -= 1;
-            for left in (min_x..=max_x).rev() {
-                data.push(puzzle[max_y][left]);
-                current_index += 1;
-                if current_index >= size * size {
-                    return data;
-                }
-            }
-            max_y -= 1;
-            for up in (min_y..=max_y).rev() {
-                data.push(puzzle[up][min_x]);
-                current_index += 1;
-                if current_index >= size * size {
-                    return data;
-                }
-            }
-            min_x += 1;
-        }
-    }
-
-    pub fn inversion(puzzle: &[Vec<usize>], size: usize) -> usize {
-        let mut data = vec![0; size * size]; //Puzzle::get_current_data_sequence(puzzle);
+    /*
+    ** an inversion is a pair of tiles (a,b) such that a appears before b, but a>b.
+    */
+    pub fn inversion(puzzle: Puzzle) -> usize {
+        let data = puzzle.data; //Puzzle::get_current_data_sequence(puzzle);
         let mut sort_count = 0;
-
-        for i in 0..size {
-            for j in 0..size {
-                data[i * size + j] = puzzle[i][j];
-            }
-        }
 
         for i in 0..data.len() {
             let value = data[i];
-            for j in i..data.len() {
-                if value > data[j] && data[j] != 0 {
+            for other in data.iter().skip(i) {
+                if value > *other && *other != 0 {
                     sort_count += 1;
                 }
             }
@@ -140,44 +105,38 @@ impl Puzzle {
         sort_count
     }
 
-    /*
-     *	The solvable pattern is a snail one
-     *	1  2  3
-     *	8  0  4
-     *	7  6  5
-     */
 
-    pub fn is_solvable(puzzle: &[Vec<usize>]) -> bool {
-        let size = puzzle.len();
-        let goal_state = Puzzle::get_final_state(size);
-        let mut start_inversion = Puzzle::inversion(puzzle, size);
-        let mut goal_inversion = Puzzle::inversion(&goal_state, size);
-
+    pub fn is_solvable(puzzle: Puzzle) -> bool {
+        let size = puzzle.size;
+        let goal_puzzle = Puzzle::get_final_state(size);
+        let mut start_inversion = Puzzle::inversion(puzzle.clone());
+        let mut goal_inversion = Puzzle::inversion(goal_puzzle.clone());
         if size % 2 == 0 {
             let (mut x1, mut y1) = (0, 0);
             let (mut x2, mut y2) = (0, 0);
 
             for i in 0..size {
                 for j in 0..size {
-                    if puzzle[i][j] == 0 {
-                        x1 = i;
-                        y1 = j;
+                    if puzzle.get_value(j, i) == 0 {
+                        x1 = j;
+                        y1 = i;
                     }
-                    if goal_state[i][j] == 0 {
-                        x2 = i;
-                        y2 = j;
+                    if goal_puzzle.get_value(j, i) == 0 {
+                        x2 = j;
+                        y2 = i;
                     }
                 }
             }
             start_inversion += (y1 * size + x1) / size;
             goal_inversion += (y2 * size + x2) / size;
-            return start_inversion % 2 != goal_inversion % 2;
+            //return start_inversion % 2 != goal_inversion % 2;
         }
         start_inversion % 2 == goal_inversion % 2
     }
 
-    pub fn get_final_state(size: usize) -> Vec<Vec<usize>> {
-        let mut data = vec![vec![0usize; size]; size];
+    pub fn get_final_state(size: usize) -> Puzzle {
+        let data = vec![0usize; size * size];
+        let mut puzzle = Puzzle {data, size};
 
         let mut current_number = 1;
         let mut min_x = 0;
@@ -187,36 +146,36 @@ impl Puzzle {
 
         loop {
             for right in min_x..=max_x {
-                data[min_x][right] = current_number;
+                puzzle.set_value(right, min_x, current_number);
                 current_number += 1;
             }
             min_y += 1;
-            for down in data.iter_mut().take(max_y + 1).skip(min_y) {
-                down[max_x] = current_number;
+            for down in min_y..=max_y {
+                puzzle.set_value(max_x, down, current_number);
                 current_number += 1;
             }
             max_x -= 1;
             if current_number == size * size {
-                data[max_y][max_x] = 0;
+                puzzle.set_value(max_x, max_y, 0);
                 break;
             }
+
             for left in (min_x..=max_x).rev() {
-                data[max_y][left] = current_number;
+                puzzle.set_value(left, max_y, current_number);
                 current_number += 1;
             }
             max_y -= 1;
             for up in (min_y..=max_y).rev() {
-                data[up][min_x] = current_number;
+                puzzle.set_value(min_x, up, current_number);
                 current_number += 1;
             }
             min_x += 1;
             if current_number == size * size {
-                data[min_x][min_x] = 0;
+                puzzle.set_value(max_x, max_y, 0);
                 break;
             }
         }
-
-        data
+        puzzle
     }
 }
 

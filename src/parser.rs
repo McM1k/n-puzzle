@@ -38,74 +38,57 @@ pub fn check_only_numbers_and_spaces(lines: &[String]) {
 		 })
 }
 
-pub fn check_values_are_incremental(size: usize, data: &[Vec<usize>]) {
+pub fn check_values_are_incremental(size: usize, data: Vec<usize>) {
     let mut all_the_values: Vec<usize> = (0..(size * size)).collect();
 
-    data.iter().for_each(|one_line_data| {
-        one_line_data.iter().for_each(|value| {
-            all_the_values.remove(
-                all_the_values
-                    .clone()
-                    .iter()
-                    .position(|&x| x == *value)
-                    .unwrap(),
-            );
-        })
+    data.iter().for_each(|value| {
+        all_the_values.remove(
+            all_the_values
+                .clone()
+                .iter()
+                .position(|&x| x == *value)
+                .unwrap(),
+        );
     });
+
     if !all_the_values.is_empty() {
         panic!("All the values needed for chosen size are not present.\n")
     }
 }
 
-pub fn check_values_form_correct_square(size: usize, data: &[Vec<usize>]) {
+pub fn check_values_form_correct_square(size: usize, data: Vec<usize>) {
     if size < 3 {
         panic!("Square too small, must be at least 3 of size !\n")
     }
-    if data.len() != size {
+    if data.len() != size * size {
         panic!("Wrong number of lines !\n")
     }
-
-    data.iter().for_each(|one_line_data| {
-        if one_line_data.clone().iter().count() != size {
-            panic!("Too few columns in a line !\n")
-        }
-    });
 }
 
-pub fn get_data(lines: Vec<String>) -> (usize, Vec<Vec<usize>>) {
-    let mut raw_data = get_raw_data(lines);
-    let size_line = raw_data.remove(0);
-    if size_line.len() != 1 {
-        panic!("first line should only contain one value\n");
+pub fn get_data(mut lines: Vec<String>) -> (usize, Vec<usize>) {
+    let size = match lines.remove(0).parse::<usize>() {
+        Err(_e) => panic!("first line should only contain one value\n"),
+        Ok(x)=> x,
+    };
+
+    let mut data = vec![];
+    for line in lines {
+        data.append(&mut line.split_whitespace().map(|token| -> usize {
+            token.parse::<usize>().expect("Unable to parse data into u32\n")
+        }).collect())
     }
 
-    (size_line[0], raw_data)
+    (size, data)
 }
 
-pub fn get_raw_data(lines: Vec<String>) -> Vec<Vec<usize>> {
-    // could fail because of lifetime
-    lines
-        .iter()
-        .map(|line| -> Vec<usize> {
-            line.split_whitespace()
-                .map(|token| -> usize {
-                    token
-                        .parse::<usize>()
-                        .expect("Unable to parse data into u32\n")
-                })
-                .collect()
-        })
-        .collect()
-}
-
-pub fn parse(mut lines: Vec<String>) -> Puzzle {
+pub fn parse(mut lines: Vec<String>) -> Puzzle { //bad naming, possible confusion with str::parse
     check_empty_lines(&lines);
     lines = remove_comments(lines);
     check_empty_vec(&lines);
     check_only_numbers_and_spaces(&lines);
     let (size, data) = get_data(lines);
-    check_values_are_incremental(size, &data);
-    check_values_form_correct_square(size, &data);
+    check_values_are_incremental(size, data.clone());
+    check_values_form_correct_square(size, data.clone());
 
     Puzzle::new_from_file(data, size)
 }

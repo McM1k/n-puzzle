@@ -1,18 +1,6 @@
 use crate::puzzle::Puzzle;
 use std::cmp::Ordering;
 use std::fmt;
-extern crate strum;
-extern crate strum_macros;
-use strum::IntoEnumIterator;
-use strum_macros::EnumIter;
-
-#[derive(EnumIter)]
-pub enum Direction {
-    Up,
-    Left,
-    Down,
-    Right,
-}
 
 #[derive(Clone, Eq)]
 pub struct Node {
@@ -38,21 +26,6 @@ impl PartialEq for Node {
         self.f_score == other.f_score && self.state == other.state
     }
 }
-
-/*
-impl Clone for Node {
-    fn clone(&self) -> Self {
-
-        Node {
-            state: self.state.clone(),
-            distance: self.distance,
-            upper_state: None,
-            lower_state: None,
-            left_state: None,
-            right_state: None,
-        }
-    }
-}*/
 
 impl fmt::Debug for Node {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -89,10 +62,6 @@ impl Node {
         }
     }
 
-    //	pub fn add_node(curr_node: &Node, dir: Direction) -> Option<Node> {
-
-    //	}
-
     pub fn swap_two_positions(
         puzzle: &Puzzle,
         x: usize,
@@ -100,110 +69,46 @@ impl Node {
         x_next: usize,
         y_next: usize,
     ) -> Puzzle {
-        let mut new_data = puzzle.data.clone();
-        new_data[y][x] = puzzle.data[y_next][x_next];
-        new_data[y_next][x_next] = puzzle.data[y][x];
-        let size = new_data.len();
+        let mut new_puzzle = puzzle.clone();
+        new_puzzle.set_value(x, y, puzzle.get_value(x_next, y_next));
+        new_puzzle.set_value(x_next, y_next, puzzle.get_value(x, y));
 
-        Puzzle {
-            data: new_data,
-            size,
-        }
+        new_puzzle
     }
 
-    pub fn get_void_position(puzzle: &Puzzle) -> (usize, usize) {
-        let x = 0;
-        let y = 0;
+    pub fn calculate_next_states(puzzle: &Puzzle) -> Vec<Puzzle> {
+        let (x, y) = puzzle.get_position(0);
+        let mut childs= vec![];
 
-        for y in 0..puzzle.data.len() {
-            for x in 0..puzzle.data[y].len() {
-                if puzzle.data[y][x] == 0 {
-                    return (x, y);
-                }
-            }
+        if y != 0{
+            childs.push(Node::swap_two_positions(puzzle, x, y, x, y - 1));
+        }
+        if y != puzzle.size - 1 {
+            childs.push(Node::swap_two_positions(puzzle, x, y, x, y + 1));
+        }
+        if x != 0 {
+            childs.push(Node::swap_two_positions(puzzle, x, y, x - 1, y));
+        }
+        if x != puzzle.size - 1 {
+            childs.push(Node::swap_two_positions(puzzle, x, y, x + 1, y));
         }
 
-        (x, y)
-    }
-
-    pub fn next_nodes_to_vec(
-        node: &Node,
-        final_node: &Node,
-        heuristic: fn(&Puzzle, &Puzzle) -> usize,
-    ) -> Vec<Node> {
-        let mut next_nodes = vec![];
-        let mut curr_puzzle;
-
-        for dir in Direction::iter() {
-            curr_puzzle = Node::calculate_next_state(&node.state, dir);
-            if curr_puzzle != None {
-                next_nodes.push(Node {
-                    state: curr_puzzle.clone().unwrap(),
-                    distance: node.distance + 1,
-                    f_score: node.distance
-                        + 1
-                        + heuristic(&curr_puzzle.unwrap(), &final_node.state),
-                });
-            }
-        }
-
-        next_nodes
-    }
-
-    pub fn calculate_next_state(puzzle: &Puzzle, dir: Direction) -> Option<Puzzle> {
-        let (x, y) = Node::get_void_position(puzzle);
-        let mut new_puzzle;
-
-        match dir {
-            Direction::Up => {
-                if y == 0 {
-                    return None;
-                } else {
-                    new_puzzle = Node::swap_two_positions(puzzle, x, y, x, y - 1);
-                }
-            }
-            Direction::Down => {
-                if y == puzzle.size - 1 {
-                    return None;
-                } else {
-                    new_puzzle = Node::swap_two_positions(puzzle, x, y, x, y + 1);
-                }
-            }
-            Direction::Left => {
-                if x == 0 {
-                    return None;
-                } else {
-                    new_puzzle = Node::swap_two_positions(puzzle, x, y, x - 1, y);
-                }
-            }
-            Direction::Right => {
-                if x == puzzle.size - 1 {
-                    return None;
-                } else {
-                    new_puzzle = Node::swap_two_positions(puzzle, x, y, x + 1, y);
-                }
-            }
-        }
-
-        Some(new_puzzle)
+        childs
     }
 
     pub fn calculate_next_nodes(
         parent: Node,
         final_node: Node,
-        heuristic: fn(&Puzzle, &Puzzle) -> usize,
+        heuristic: fn(Puzzle, Puzzle) -> usize,
     ) -> Vec<Node> {
         let mut childs = Vec::new();
-
-        for dir in Direction::iter() {
-            let dir_opt = Node::calculate_next_state(&parent.state, dir);
-            if dir_opt != None {
-                childs.push(Node {
-                    state: dir_opt.clone().unwrap(),
-                    distance: parent.distance + 1,
-                    f_score: parent.distance + 1 + heuristic(&dir_opt.unwrap(), &final_node.state),
+        let next_states= Node::calculate_next_states(&parent.state);
+        for state in next_states {
+            childs.push(Node {
+                state: state.clone(),
+                distance: parent.distance + 1,
+                f_score: parent.distance + 1 + heuristic(state, final_node.clone().state),
                 });
-            }
         }
 
         childs
@@ -211,10 +116,7 @@ impl Node {
 
     pub fn get_final_node(size: usize) -> Node {
         Node {
-            state: Puzzle {
-                data: Puzzle::get_final_state(size),
-                size,
-            },
+            state: Puzzle::get_final_state(size),
             distance: 0,
             f_score: 0,
         }
