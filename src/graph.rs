@@ -1,6 +1,7 @@
 use crate::node::Node;
 use crate::puzzle::Puzzle;
 use std::time::SystemTime;
+use std::collections::BinaryHeap;
 
 #[derive(Clone)]
 pub struct Graph {
@@ -25,7 +26,7 @@ impl Graph {
         if self
             .open_list
             .iter()
-            .any(|n| n.state == node.state && n.f_score > node.f_score)
+            .any(|n| n.state == node.state && n.f_score() > node.f_score())
         {
             return false;
         }
@@ -39,12 +40,12 @@ impl Graph {
             .position(|n| n.state == new_node.state)
             .unwrap();
         let old_node = self.open_list[pos].clone();
-        if old_node.f_score > new_node.f_score {
+        if old_node.f_score() > new_node.f_score() {
             self.open_list.remove(pos);
             self.open_list.insert(
                 self.open_list
                     .iter()
-                    .position(|n| new_node.f_score > n.f_score)
+                    .position(|n| new_node.f_score() > n.f_score())
                     .unwrap_or_else(|| self.open_list.len()),
                 new_node,
             );
@@ -64,7 +65,7 @@ impl Graph {
         self.open_list.insert(
             self.open_list
                 .iter()
-                .position(|n| node.f_score > n.f_score)
+                .position(|n| node.f_score() > n.f_score())
                 .unwrap_or_else(|| self.open_list.len()),
             node,
         );
@@ -87,7 +88,7 @@ impl Graph {
         }
     }
 
-    pub fn a_star_greedy(state: Puzzle, heuristic: fn(Puzzle, Puzzle) -> usize) {
+    pub fn recursive(state: Puzzle, heuristic: fn(Puzzle, Puzzle) -> usize) {
         let start_time = SystemTime::now();
         let mut graph = Graph {
             open_list: vec![],
@@ -116,9 +117,9 @@ impl Graph {
         let mut next_nodes =
             Node::calculate_next_nodes(curr_node.clone(), self.clone().final_node, self.heuristic);
         next_nodes.sort_by(|a, b| {
-            (b.clone().distance + (self.heuristic)(b.clone().state, self.clone().final_node.state))
+            (b.clone().g_score + (self.heuristic)(b.clone().state, self.clone().final_node.state))
                 .partial_cmp(
-                    &(a.clone().distance
+                    &(a.clone().g_score
                         + (self.heuristic)(a.clone().state, self.clone().final_node.state)),
                 )
                 .unwrap()

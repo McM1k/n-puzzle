@@ -5,13 +5,13 @@ use std::fmt;
 #[derive(Clone, Eq)]
 pub struct Node {
     pub state: Puzzle,
-    pub distance: usize,
-    pub f_score: usize,
+    pub g_score: usize,
+    pub h_score: usize,
 }
 
 impl Ord for Node {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.f_score.cmp(&other.f_score)
+        self.f_score().cmp(&other.f_score())
     }
 }
 
@@ -23,7 +23,7 @@ impl PartialOrd for Node {
 
 impl PartialEq for Node {
     fn eq(&self, other: &Self) -> bool {
-        self.f_score == other.f_score && self.state == other.state
+        self.state == other.state
     }
 }
 
@@ -32,33 +32,37 @@ impl fmt::Debug for Node {
         writeln!(
             f,
             "{0:?}, {1}, {2}",
-            self.state, self.distance, self.f_score
+            self.state, self.g_score, self.h_score
         )
     }
 }
 
 impl fmt::Display for Node {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeln!(f, "{} nodes away from the start position", self.distance)?;
+        writeln!(f, "{} nodes away from the start position", self.g_score)?;
         writeln!(f, "{}", self.state)?;
         Ok(())
     }
 }
 
 impl Node {
+    pub fn f_score(&self) -> usize {
+        self.g_score + self.h_score
+    }
+
     pub fn partial_copy(&self) -> Node {
         Node {
             state: self.state.clone(),
-            distance: self.distance,
-            f_score: self.f_score,
+            g_score: self.g_score,
+            h_score: self.h_score,
         }
     }
 
     pub fn new_starting_node(state: Puzzle) -> Node {
         Node {
             state: state.clone(),
-            distance: 0,
-            f_score: 0,
+            g_score: 0,
+            h_score: 0,
         }
     }
 
@@ -106,8 +110,8 @@ impl Node {
         for state in next_states {
             childs.push(Node {
                 state: state.clone(),
-                distance: parent.distance + 1,
-                f_score: parent.distance + 1 + heuristic(state, final_node.clone().state),
+                g_score: parent.g_score + 1,
+                h_score: heuristic(state, final_node.clone().state),
             });
         }
 
@@ -117,8 +121,8 @@ impl Node {
     pub fn get_final_node(size: usize) -> Node {
         Node {
             state: Puzzle::get_final_state(size),
-            distance: 0,
-            f_score: 0,
+            g_score: 0,
+            h_score: 0,
         }
     }
 }
