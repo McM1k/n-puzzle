@@ -18,6 +18,8 @@ use crate::options::HeuristicValues;
 use options::Opt;
 use puzzle::Puzzle;
 
+type AlgoType = fn(Puzzle, fn(Puzzle, Puzzle) -> usize, usize, usize);
+
 fn open_file(filename: PathBuf) -> File {
     File::open(filename).expect("Could not open file")
 }
@@ -40,7 +42,7 @@ pub fn get_heuristic(heuristic_value: &HeuristicValues) -> fn(Puzzle, Puzzle) ->
     }
 }
 
-pub fn get_algorithm(algorithm_value: &AlgorithmValues) -> fn(Puzzle, fn(Puzzle, Puzzle) -> usize, usize, usize) {
+pub fn get_algorithm(algorithm_value: &AlgorithmValues) -> AlgoType {
     match algorithm_value {
         AlgorithmValues::Recursive => Graph::recursive,
         AlgorithmValues::Astar => Graph::a_star,

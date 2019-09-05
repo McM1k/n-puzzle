@@ -36,7 +36,13 @@ fn recursive_path(curr_node: &Node, graph: Graph) -> String {
 
 fn select_previous_node(curr_node: Node, graph: Graph) -> Result<Node, String> {
     //println!("{}", curr_node.clone().distance);
-    let mut childs = Node::calculate_next_nodes(curr_node.clone(), graph.final_node, |_x, _y| 0, graph.g_mul, graph.h_mul);
+    let mut childs = Node::calculate_next_nodes(
+        curr_node.clone(),
+        graph.final_node,
+        |_x, _y| 0,
+        graph.g_mul,
+        graph.h_mul,
+    );
     while !childs.is_empty() {
         let child = childs.pop().unwrap();
         //println!("{}", child.clone());
@@ -72,7 +78,8 @@ mod print_result {
                     data: data1,
                     size: 3,
                 },
-                f_score: 1,
+                g_score: 1,
+                h_score: 1,
                 distance: 1,
             };
             let data3 = vec![1, 2, 3, 8, 4, 5, 7, 6, 0];
@@ -81,7 +88,8 @@ mod print_result {
                     data: data3,
                     size: 3,
                 },
-                f_score: 1,
+                g_score: 3,
+                h_score: 1,
                 distance: 3,
             };
             let data2 = vec![1, 2, 3, 8, 4, 0, 7, 6, 5];
@@ -90,7 +98,8 @@ mod print_result {
                     data: data2,
                     size: 3,
                 },
-                f_score: 1,
+                g_score: 2,
+                h_score: 1,
                 distance: 2,
             };
 
@@ -100,6 +109,8 @@ mod print_result {
                 start_node: node3.clone(),
                 final_node: node1.clone(),
                 heuristic: |_a, _b| 0,
+                g_mul: 1,
+                h_mul: 1,
                 max_states: 0,
             };
 
@@ -114,7 +125,8 @@ mod print_result {
                     data: data1,
                     size: 3,
                 },
-                f_score: 1,
+                g_score: 2,
+                h_score: 1,
                 distance: 2,
             };
             let start_node = Node {
@@ -122,7 +134,8 @@ mod print_result {
                     data: vec![1, 2, 3, 4, 5, 6, 7, 8, 0],
                     size: 0,
                 },
-                f_score: 0,
+                g_score: 0,
+                h_score: 0,
                 distance: 0,
             };
 
@@ -132,6 +145,8 @@ mod print_result {
                 start_node,
                 final_node: node1.clone(),
                 heuristic: |_a, _b| 0,
+                g_mul: 1,
+                h_mul: 1,
                 max_states: 0,
             };
 
@@ -153,7 +168,8 @@ mod print_result {
                     data: data1,
                     size: 3,
                 },
-                f_score: 1,
+                g_score: 0,
+                h_score: 1,
                 distance: 0,
             };
             let data2 = vec![1, 2, 3, 8, 4, 0, 7, 6, 5];
@@ -162,7 +178,8 @@ mod print_result {
                     data: data2,
                     size: 3,
                 },
-                f_score: 1,
+                g_score: 1,
+                h_score: 1,
                 distance: 1,
             };
             let data3 = vec![1, 2, 3, 8, 4, 5, 7, 6, 0];
@@ -171,7 +188,8 @@ mod print_result {
                     data: data3,
                     size: 3,
                 },
-                f_score: 1,
+                g_score: 2,
+                h_score: 1,
                 distance: 2,
             };
 
@@ -181,6 +199,8 @@ mod print_result {
                 start_node: node3.clone(),
                 final_node: node1,
                 heuristic: |_a, _b| 0,
+                g_mul: 1,
+                h_mul: 1,
                 max_states: 0,
             };
 

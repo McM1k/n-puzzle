@@ -30,11 +30,7 @@ impl PartialEq for Node {
 
 impl fmt::Debug for Node {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeln!(
-            f,
-            "{0:?}, {1}, {2}",
-            self.state, self.g_score, self.h_score
-        )
+        writeln!(f, "{0:?}, {1}, {2}", self.state, self.g_score, self.h_score)
     }
 }
 
@@ -115,7 +111,7 @@ impl Node {
         for state in next_states {
             childs.push(Node {
                 state: state.clone(),
-                g_score: parent.g_score + 1 * g_mul,
+                g_score: (parent.g_score + 1) * g_mul,
                 h_score: heuristic(state, final_node.clone().state) * h_mul,
                 distance: parent.distance + 1,
             });
@@ -209,7 +205,8 @@ mod node_tests {
             let node = Node {
                 state: puzzle,
                 distance: len,
-                f_score: len,
+                g_score: len,
+                h_score: len,
             };
 
             let len2 = 0;
@@ -218,7 +215,8 @@ mod node_tests {
             let node2 = Node {
                 state: puzzle2,
                 distance: len2,
-                f_score: len2,
+                g_score: len2,
+                h_score: len2,
             };
 
             assert_eq!(node, node2);
@@ -233,7 +231,8 @@ mod node_tests {
             let node = Node {
                 state: puzzle,
                 distance: len,
-                f_score: len,
+                g_score: len,
+                h_score: len,
             };
 
             let data2 = vec![0, 1, 2, 3, 4, 5, 6, 7, 8];
@@ -241,7 +240,8 @@ mod node_tests {
             let node2 = Node {
                 state: puzzle2,
                 distance: len,
-                f_score: len + 1,
+                g_score: len,
+                h_score: len + 1,
             };
 
             assert_ne!(node, node2);

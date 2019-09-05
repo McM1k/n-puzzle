@@ -1,7 +1,7 @@
 use crate::node::Node;
 use crate::puzzle::Puzzle;
-use std::time::SystemTime;
 use std::collections::BinaryHeap;
+use std::time::SystemTime;
 
 #[derive(Clone)]
 pub struct Graph {
@@ -79,8 +79,13 @@ impl Graph {
     }
 
     fn add_child_nodes_to_open_list(&mut self, parent: Node) {
-        let mut childs =
-            Node::calculate_next_nodes(parent, self.clone().final_node, self.heuristic, self.g_mul, self.h_mul);
+        let mut childs = Node::calculate_next_nodes(
+            parent,
+            self.clone().final_node,
+            self.heuristic,
+            self.g_mul,
+            self.h_mul,
+        );
 
         while !childs.is_empty() {
             let child = childs.pop();
@@ -90,7 +95,12 @@ impl Graph {
         }
     }
 
-    pub fn recursive(state: Puzzle, heuristic: fn(Puzzle, Puzzle) -> usize, g_mul: usize, h_mul: usize) {
+    pub fn recursive(
+        state: Puzzle,
+        heuristic: fn(Puzzle, Puzzle) -> usize,
+        g_mul: usize,
+        h_mul: usize,
+    ) {
         let start_time = SystemTime::now();
         let mut graph = Graph {
             open_list: vec![],
@@ -118,8 +128,13 @@ impl Graph {
             return true;
         }
         //println!("{}, score : {}",curr_node.clone(), curr_node.clone().distance + (self.clone().heuristic)(&(curr_node.clone().state)));
-        let mut next_nodes =
-            Node::calculate_next_nodes(curr_node.clone(), self.clone().final_node, self.heuristic, self.g_mul, self.h_mul);
+        let mut next_nodes = Node::calculate_next_nodes(
+            curr_node.clone(),
+            self.clone().final_node,
+            self.heuristic,
+            self.g_mul,
+            self.h_mul,
+        );
         next_nodes.sort_by(|a, b| {
             (b.clone().g_score + (self.heuristic)(b.clone().state, self.clone().final_node.state))
                 .partial_cmp(
@@ -146,7 +161,12 @@ impl Graph {
         false
     }
 
-    pub fn a_star(state: Puzzle, heuristic: fn(Puzzle, Puzzle) -> usize, g_mul: usize, h_mul: usize) {
+    pub fn a_star(
+        state: Puzzle,
+        heuristic: fn(Puzzle, Puzzle) -> usize,
+        g_mul: usize,
+        h_mul: usize,
+    ) {
         let start_time = SystemTime::now();
 
         let mut graph = Graph {
@@ -215,6 +235,8 @@ mod graph_tests {
                 }),
                 final_node: Node::get_final_node(3),
                 heuristic: heuristic::manhattan_linear_conflict_heuristic,
+                g_mul: 1,
+                h_mul: 1,
                 max_states: 1,
             };
 
@@ -223,7 +245,8 @@ mod graph_tests {
                     data: vec![0, 1, 2, 3, 4, 5, 6, 8, 7],
                     size: 3,
                 },
-                f_score: 1,
+                g_score: 2,
+                h_score: 1,
                 distance: 2,
             };
 
@@ -232,7 +255,8 @@ mod graph_tests {
                     data: vec![0, 1, 2, 3, 4, 5, 6, 8, 7],
                     size: 3,
                 },
-                f_score: 1,
+                g_score: 2,
+                h_score: 1,
                 distance: 2,
             };
 
@@ -253,6 +277,8 @@ mod graph_tests {
                 }),
                 final_node: Node::get_final_node(3),
                 heuristic: heuristic::manhattan_distance,
+                g_mul: 1,
+                h_mul: 1,
                 max_states: 1,
             };
 
@@ -261,7 +287,8 @@ mod graph_tests {
                     data: vec![1, 2, 3, 8, 0, 4, 7, 6, 5],
                     size: 3,
                 },
-                f_score: 1,
+                g_score: 1,
+                h_score: 1,
                 distance: 1,
             };
 
@@ -270,7 +297,8 @@ mod graph_tests {
                     data: vec![1, 2, 3, 8, 4, 5, 7, 6, 0],
                     size: 3,
                 },
-                f_score: 5,
+                g_score: 3,
+                h_score: 5,
                 distance: 3,
             };
 
@@ -279,7 +307,8 @@ mod graph_tests {
                     data: vec![1, 2, 3, 8, 4, 0, 7, 6, 5],
                     size: 3,
                 },
-                f_score: 3,
+                g_score: 2,
+                h_score: 3,
                 distance: 2,
             };
 
