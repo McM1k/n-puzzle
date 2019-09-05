@@ -12,7 +12,7 @@ pub struct Node {
 
 impl Ord for Node {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.f_score().cmp(&other.f_score())
+        other.f_score().cmp(&self.f_score())
     }
 }
 

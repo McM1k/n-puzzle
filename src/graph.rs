@@ -5,7 +5,7 @@ use std::time::SystemTime;
 
 #[derive(Clone)]
 pub struct Graph {
-    pub open_list: Vec<Node>,
+    pub open_list: BinaryHeap<Node>,
     pub closed_list: Vec<Node>,
     pub start_node: Node,
     pub final_node: Node,
@@ -35,7 +35,7 @@ impl Graph {
         true
     }
 
-    fn update_cost(&mut self, new_node: Node) {
+ /*   fn update_cost(&mut self, new_node: Node) {
         let pos = self
             .open_list
             .iter()
@@ -52,25 +52,19 @@ impl Graph {
                 new_node,
             );
         }
-    }
+    }*/
 
     fn add_in_sorted_open_list(&mut self, node: Node) {
         if self.closed_list.contains(&node) {
             return;
         }
 
-        if self.open_list.contains(&node) {
+      /*  if self.open_list.contains(&node) {
             self.update_cost(node);
             return;
-        }
+        }*/
 
-        self.open_list.insert(
-            self.open_list
-                .iter()
-                .position(|n| node.f_score() > n.f_score())
-                .unwrap_or_else(|| self.open_list.len()),
-            node,
-        );
+        self.open_list.push(node);
 
         //println!("{:?}", self.open_list);
         if self.max_states < self.open_list.len() {
@@ -103,7 +97,7 @@ impl Graph {
     ) {
         let start_time = SystemTime::now();
         let mut graph = Graph {
-            open_list: vec![],
+            open_list: BinaryHeap::new(),
             closed_list: vec![],
             start_node: Node::new_starting_node(state.clone()),
             final_node: Node::get_final_node(state.size),
@@ -170,7 +164,7 @@ impl Graph {
         let start_time = SystemTime::now();
 
         let mut graph = Graph {
-            open_list: vec![],
+            open_list: BinaryHeap::new(),
             closed_list: vec![],
             start_node: Node::new_starting_node(state.clone()),
             final_node: Node::get_final_node(state.size),
