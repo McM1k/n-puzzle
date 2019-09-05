@@ -7,6 +7,7 @@ pub struct Node {
     pub state: Puzzle,
     pub g_score: usize,
     pub h_score: usize,
+    pub distance: usize,
 }
 
 impl Ord for Node {
@@ -55,6 +56,7 @@ impl Node {
             state: self.state.clone(),
             g_score: self.g_score,
             h_score: self.h_score,
+            distance: self.distance,
         }
     }
 
@@ -63,6 +65,7 @@ impl Node {
             state: state.clone(),
             g_score: 0,
             h_score: 0,
+            distance: 0,
         }
     }
 
@@ -104,14 +107,17 @@ impl Node {
         parent: Node,
         final_node: Node,
         heuristic: fn(Puzzle, Puzzle) -> usize,
+        g_mul: usize,
+        h_mul: usize,
     ) -> Vec<Node> {
         let mut childs = Vec::new();
         let next_states = Node::calculate_next_states(&parent.state);
         for state in next_states {
             childs.push(Node {
                 state: state.clone(),
-                g_score: parent.g_score + 1,
-                h_score: heuristic(state, final_node.clone().state),
+                g_score: parent.g_score + 1 * g_mul,
+                h_score: heuristic(state, final_node.clone().state) * h_mul,
+                distance: parent.distance + 1,
             });
         }
 
@@ -123,6 +129,7 @@ impl Node {
             state: Puzzle::get_final_state(size),
             g_score: 0,
             h_score: 0,
+            distance: 0,
         }
     }
 }

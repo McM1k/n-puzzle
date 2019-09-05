@@ -48,9 +48,9 @@ arg_enum! {
     #[derive(Debug)]
     pub enum AlgorithmValues {
         Recursive,
-       Astar,
-//        Greedy,
-//        Uniform,
+        Astar,
+        Greedy,
+        Uniform,
     }
 }
 

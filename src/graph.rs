@@ -11,6 +11,8 @@ pub struct Graph {
     pub final_node: Node,
     pub heuristic: fn(Puzzle, Puzzle) -> usize,
     pub max_states: usize,
+    pub g_mul: usize,
+    pub h_mul: usize,
 }
 
 impl Graph {
@@ -78,7 +80,7 @@ impl Graph {
 
     fn add_child_nodes_to_open_list(&mut self, parent: Node) {
         let mut childs =
-            Node::calculate_next_nodes(parent, self.clone().final_node, self.heuristic);
+            Node::calculate_next_nodes(parent, self.clone().final_node, self.heuristic, self.g_mul, self.h_mul);
 
         while !childs.is_empty() {
             let child = childs.pop();
@@ -88,7 +90,7 @@ impl Graph {
         }
     }
 
-    pub fn recursive(state: Puzzle, heuristic: fn(Puzzle, Puzzle) -> usize) {
+    pub fn recursive(state: Puzzle, heuristic: fn(Puzzle, Puzzle) -> usize, g_mul: usize, h_mul: usize) {
         let start_time = SystemTime::now();
         let mut graph = Graph {
             open_list: vec![],
@@ -97,6 +99,8 @@ impl Graph {
             final_node: Node::get_final_node(state.size),
             heuristic,
             max_states: 1,
+            g_mul,
+            h_mul,
         };
         graph.add_to_open_list(graph.start_node.partial_copy());
 
@@ -115,7 +119,7 @@ impl Graph {
         }
         //println!("{}, score : {}",curr_node.clone(), curr_node.clone().distance + (self.clone().heuristic)(&(curr_node.clone().state)));
         let mut next_nodes =
-            Node::calculate_next_nodes(curr_node.clone(), self.clone().final_node, self.heuristic);
+            Node::calculate_next_nodes(curr_node.clone(), self.clone().final_node, self.heuristic, self.g_mul, self.h_mul);
         next_nodes.sort_by(|a, b| {
             (b.clone().g_score + (self.heuristic)(b.clone().state, self.clone().final_node.state))
                 .partial_cmp(
@@ -142,7 +146,7 @@ impl Graph {
         false
     }
 
-    pub fn a_star(state: Puzzle, heuristic: fn(Puzzle, Puzzle) -> usize) {
+    pub fn a_star(state: Puzzle, heuristic: fn(Puzzle, Puzzle) -> usize, g_mul: usize, h_mul: usize) {
         let start_time = SystemTime::now();
 
         let mut graph = Graph {
@@ -152,6 +156,8 @@ impl Graph {
             final_node: Node::get_final_node(state.size),
             heuristic,
             max_states: 1,
+            g_mul,
+            h_mul,
         };
         graph.add_to_open_list(graph.start_node.clone());
 

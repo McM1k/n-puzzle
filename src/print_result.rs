@@ -3,7 +3,7 @@ use crate::node::Node;
 use std::time::SystemTime;
 
 pub fn print_data(graph: Graph, final_node: Node, start_time: SystemTime) {
-    println!("Number of moves : {}", final_node.g_score);
+    println!("Number of moves : {}", final_node.distance);
     println!("Time elapsed : {:?}", start_time.elapsed().unwrap());
     println!("Open list size : {}", graph.open_list.len());
     println!("Closed list size : {}", graph.closed_list.len());
@@ -23,7 +23,7 @@ pub fn print_solution_with_retrieving(final_node: Node, graph: Graph) {
 }
 
 fn recursive_path(curr_node: &Node, graph: Graph) -> String {
-    let str = if curr_node.g_score > 0 {
+    let str = if curr_node.distance > 0 {
         match select_previous_node(curr_node.clone(), graph.clone()) {
             Ok(prev_node) => recursive_path(&prev_node, graph),
             Err(str) => str,
@@ -36,18 +36,18 @@ fn recursive_path(curr_node: &Node, graph: Graph) -> String {
 
 fn select_previous_node(curr_node: Node, graph: Graph) -> Result<Node, String> {
     //println!("{}", curr_node.clone().distance);
-    let mut childs = Node::calculate_next_nodes(curr_node.clone(), graph.final_node, |_x, _y| 0);
+    let mut childs = Node::calculate_next_nodes(curr_node.clone(), graph.final_node, |_x, _y| 0, graph.g_mul, graph.h_mul);
     while !childs.is_empty() {
         let child = childs.pop().unwrap();
         //println!("{}", child.clone());
         for open in graph.open_list.clone() {
-            if open.g_score == curr_node.g_score - 1 && open.state == child.clone().state {
+            if open.distance == curr_node.distance - 1 && open.state == child.clone().state {
                 return Ok(open.clone());
             }
         }
 
         for closed in graph.closed_list.clone() {
-            if closed.g_score == curr_node.g_score - 1 && closed.state == child.state {
+            if closed.distance == curr_node.distance - 1 && closed.state == child.state {
                 return Ok(closed.clone());
             }
         }
